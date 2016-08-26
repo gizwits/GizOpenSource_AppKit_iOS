@@ -12,13 +12,14 @@
 #import <GizWifiSDK/GizWifiSDK.h>
 #import "GosCommon.h"
 
-#import <TencentOpenAPI/TencentOAuth.h>
-
 #import "GosPushManager.h"
+
+#import <TencentOpenAPI/TencentOAuth.h>
+#import "WXApi.h"
 
 #import "GosDeviceController.h"
 
-@interface AppDelegate () <GizWifiSDKDelegate>
+@interface AppDelegate () <GizWifiSDKDelegate, WXApiDelegate>
 
 @end
 
@@ -26,71 +27,92 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    
     [GosCommon sharedInstance].controlHandler = ^(GizWifiDevice *device, UIViewController *deviceListController) {
         GosDeviceController *devCtrl = [[GosDeviceController alloc] initWithDevice:device];
         [deviceListController.navigationController pushViewController:devCtrl animated:YES];
     };
     
-    [GizWifiSDK sharedInstance].delegate = self;
-    
-    // 初始化 GizWifiSDK
-    [GizWifiSDK startWithAppID:APP_ID];
-    [GizWifiSDK setLogLevel:GizLogPrintAll];
-    [[UINavigationBar appearance] setTintColor:[UIColor blackColor]];
-//    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-//    self.window.backgroundColor = [UIColor whiteColor];
-    
-    // 初始化 推送服务
-    [GosPushManager initManager:launchOptions];
-    
-#if (!defined __JPush) && (!defined __BPush)
-    // ios8 注册推送通知
-    if ([UIDevice currentDevice].systemVersion.floatValue >= 8.0) {
-        UIUserNotificationType type =  UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound;
-        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:type categories:nil];
-        [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
-    } else {
-        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
-         (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+    if ([APP_ID isEqualToString:@"your_app_id"] || APP_ID.length == 0 || [APP_SECRET isEqualToString:@"your_app_secret"] || APP_SECRET.length == 0) {
+        [[[UIAlertView alloc] initWithTitle:nil message:@"请替换 GOpenSourceModules/CommonModule/UIConfig.json 中的参数定义为您申请到的机智云 app id、app secret、product key 等" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil] show];
     }
-#endif
+    else {
+        // 初始化 推送服务
+        [GosPushManager initManager:launchOptions];
+        if (!PUSH_TYPE) {
+            // ios8 注册推送通知
+            if ([UIDevice currentDevice].systemVersion.floatValue >= 8.0) {
+                UIUserNotificationType type =  UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound;
+                UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:type categories:nil];
+                [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+            } else {
+                [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
+                 (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+            }
+        }
+        // 初始化 GizWifiSDK
+        [GizWifiSDK sharedInstance].delegate = self;
+        [GizWifiSDK startWithAppID:APP_ID];
+    }
     
-    [[UIApplication sharedApplication] setStatusBarStyle:[GosCommon sharedInstance].statusBarStyle];
     [[UINavigationBar appearance] setBackgroundColor:[GosCommon sharedInstance].navigationBarColor];
-    [UINavigationBar appearance].barStyle = UIStatusBarStyleDefault;
+    [UINavigationBar appearance].barStyle = (UIBarStyle)[GosCommon sharedInstance].statusBarStyle;
     [[UINavigationBar appearance] setBarTintColor:[GosCommon sharedInstance].navigationBarColor];
     [[UINavigationBar appearance] setTintColor:[GosCommon sharedInstance].navigationBarTextColor];
     [[UINavigationBar appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName:[GosCommon sharedInstance].navigationBarTextColor}];
     
-    // 设置生成设备控制页面的委托
-//    [GizDeviceControllerInstance sharedInstance].delegate = self;
-    
     return YES;
 }
 
-//- (void)deviceListController:(GizDeviceListViewController *)controller device:(GizWifiDevice *)device {
-//    DeviceViewController *devVC = [[DeviceViewController alloc] init];
-//    devVC.device = device;
-//    [controller.navigationController pushViewController:devVC animated:YES];
-//}
+- (void)wifiSDK:(GizWifiSDK *)wifiSDK didNotifyEvent:(GizEventType)eventType eventSource:(id)eventSource eventID:(GizWifiErrorCode)eventID eventMessage:(NSString*)eventMessage {
+    if (eventType == GizEventSDK && eventID == GIZ_SDK_START_SUCCESS) {
+        // [GosCommon shareInstance].sdk是否启动
+        [GizWifiSDK setLogLevel:GizLogPrintAll];
+        if ([GosCommon sharedInstance].cloudDomainDict.count > 0) {
+            [GizWifiSDK setCloudService:[GosCommon sharedInstance].cloudDomainDict];
+        }
+        self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"GosUser" bundle:nil];
+        self.window.rootViewController = [storyboard instantiateInitialViewController];
+        [self.window makeKeyAndVisible];
+    }
+    else {
+        if (eventID != GIZ_SDK_EXEC_DAEMON_FAILED) {
+            [[GosCommon sharedInstance] showAlert:[[GosCommon sharedInstance] checkErrorCode:eventID] disappear:YES];
+        }
+    }
+}
 
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
     GIZ_LOG_BIZ("switch_wifi_notify_click", "success", "wifi switch success notify is clicked");
 }
 
-- (void)wifiSDK:(GizWifiSDK *)wifiSDK didNotifyEvent:(GizEventType)eventType eventSource:(id)eventSource eventID:(GizWifiErrorCode)eventID eventMessage:(NSString*)eventMessage {
-    
-}
-
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
-    return [TencentOAuth HandleOpenURL:url];
+    if ([[url absoluteString] hasPrefix:@"tencent"]) {
+        return [TencentOAuth HandleOpenURL:url];
+    }
+    else {
+        return [WXApi handleOpenURL:url delegate:self];
+    }
 }
 
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
 {
-    return [TencentOAuth HandleOpenURL:url];
+    if ([[url absoluteString] hasPrefix:@"tencent"]) {
+        return [TencentOAuth HandleOpenURL:url];
+    }
+    else {
+        return  [WXApi handleOpenURL:url delegate:self];
+    }
+}
+
+#pragma mark - WXApiDelegate
+- (void)onResp:(BaseResp *)resp {
+    [GosCommon sharedInstance].WXApiOnRespHandler(resp);
+}
+
+- (void)onReq:(BaseReq *)req {
+    
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {

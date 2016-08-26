@@ -38,6 +38,10 @@
     }
     
 //    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"more"] style:UIBarButtonItemStylePlain target:self action:@selector(actionSheet:)];
+    
+    [self.addDeviceLabelBtn.layer setCornerRadius:20.0];
+    [self.addDeviceLabelBtn.layer setBorderWidth:1.0];
+    self.addDeviceLabelBtn.layer.borderColor=[UIColor grayColor].CGColor;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -57,7 +61,7 @@
 }
 
 - (IBAction)refreshBtnPressed:(id)sender {
-    [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     [self getBoundDevice];
 }
 
@@ -70,7 +74,7 @@
     if (token.length == 0) {
         token = nil;
     }
-    [[GizWifiSDK sharedInstance] getBoundDevices:uid token:token specialProductKeys:nil];
+    [[GizWifiSDK sharedInstance] getBoundDevices:uid token:token specialProductKeys:[GosCommon sharedInstance].productKey];
 }
 
 - (IBAction)actionSheet:(id)sender {
@@ -131,7 +135,7 @@
     }
     else {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [GosPushManager unbindToGDMS];
+            [GosPushManager unbindToGDMS:YES];
             self.deviceListArray  = @[@[],@[],@[]];
             [[GosCommon sharedInstance] removeUserDefaults];
             [GosCommon sharedInstance].currentLoginStatus = GizLoginAnonymousCancel;
@@ -171,7 +175,7 @@
 #pragma mark - alert view
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if (1 == buttonIndex) {
-        [GosPushManager unbindToGDMS];
+        [GosPushManager unbindToGDMS:YES];
         self.deviceListArray  = @[@[],@[],@[]];
         [[GosCommon sharedInstance] removeUserDefaults];
         [GosCommon sharedInstance].currentLoginStatus = GizLoginNone;
@@ -252,6 +256,7 @@
     }
     else {
         cell.textLabel.text = NSLocalizedString(@"No device", nil);
+        cell.title.text = @"";
         cell.mac.text = @"";
         cell.lan.text = @"";
         [cell.imageView setImage:nil];
@@ -268,8 +273,7 @@
     UIImageView *subImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"08-icon-Device"]];
     CGRect frame = subImageView.frame;
     
-    //将图片居中
-    frame.origin = CGPointMake(4, 9);
+    frame.origin = CGPointMake(12, 6);
     subImageView.frame = frame;
     
     [cell.imageView addSubview:subImageView];
@@ -309,7 +313,7 @@
 //        }
         GizWifiDevice *dev = [devArr objectAtIndex:indexPath.row];
         if (dev.netStatus == GizDeviceOnline || dev.netStatus == GizDeviceControlled) {
-            [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
+            [MBProgressHUD showHUDAddedTo:self.view animated:YES];
             dev.delegate = self;
             [dev setSubscribe:YES];
         }
@@ -332,7 +336,7 @@
         NSString *uid = [GosCommon sharedInstance].uid;
         NSString *token = [GosCommon sharedInstance].token;
         GizWifiDevice *dev = [self getDeviceFromTable:indexPath];
-        [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
+        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
         [[GizWifiSDK sharedInstance] unbindDevice:uid token:token did:dev.did];
     }
     else if (editingStyle == UITableViewCellEditingStyleInsert) {
@@ -391,37 +395,38 @@
 
 #pragma mark - GizWifiSDK Delegate
 - (void)wifiSDK:(GizWifiSDK *)wifiSDK didDiscovered:(NSError *)result deviceList:(NSArray *)deviceList {
-    [MBProgressHUD hideHUDForView:self.navigationController.view animated:YES];
+    [MBProgressHUD hideHUDForView:self.view animated:YES];
     [self refreshTableView];
 }
 
 - (void)wifiSDK:(GizWifiSDK *)wifiSDK didBindDevice:(NSError *)result did:(NSString *)did {
-    [MBProgressHUD hideHUDForView:self.navigationController.view animated:YES];
+    [MBProgressHUD hideHUDForView:self.view animated:YES];
     if (result.code != GIZ_SDK_SUCCESS) {
-        NSString *info = [NSString stringWithFormat:@"%@\n%@ - %@", NSLocalizedString(@"Add Device Failure", nil), @(result.code), [result.userInfo objectForKey:@"NSLocalizedDescription"]];
+        NSString *info = [[GosCommon sharedInstance] checkErrorCode:result.code];
         [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"tip", nil) message:info delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", nil) otherButtonTitles:nil, nil] show];
     }
 }
 
 - (void)wifiSDK:(GizWifiSDK *)wifiSDK didUnbindDevice:(NSError *)result did:(NSString *)did {
-    [MBProgressHUD hideHUDForView:self.navigationController.view animated:YES];
+    [MBProgressHUD hideHUDForView:self.view animated:YES];
     if (result.code == GIZ_SDK_SUCCESS) {
 //        [self getBoundDevice];
     }
     else {
-        NSString *info = [NSString stringWithFormat:@"%@\n%@ - %@", NSLocalizedString(@"Unbinding fail", nil), @(result.code), [result.userInfo objectForKey:@"NSLocalizedDescription"]];
+        NSString *info = [[GosCommon sharedInstance] checkErrorCode:result.code];
         [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"tip", nil) message:info delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", nil) otherButtonTitles:nil, nil] show];
     }
 }
 
 - (void)wifiSDK:(GizWifiSDK *)wifiSDK didUserLogin:(NSError *)result uid:(NSString *)uid token:(NSString *)token {
-//    [MBProgressHUD hideHUDForView:self.navigationController.view animated:YES];
+//    [MBProgressHUD hideHUDForView:self.view animated:YES];
     if (result.code == GIZ_SDK_SUCCESS) {
 //        [GizCommon sharedInstance].hasBeenLoggedIn = YES;
         NSString *info = [NSString stringWithFormat:@"%@，%@ - %@", NSLocalizedString(@"Login successful", nil), @(result.code), [result.userInfo objectForKey:@"NSLocalizedDescription"]];
         GIZ_LOG_BIZ("userLoginAnonymous_end", "success", "%s", info.UTF8String);
         [[GosCommon sharedInstance] saveUserDefaults:nil password:nil uid:uid token:token];
         [GosCommon sharedInstance].currentLoginStatus = GizLoginAnonymous;
+        [GosPushManager unbindToGDMS:NO];
         [GosPushManager bindToGDMS];
     }
     else {
@@ -439,13 +444,17 @@
     }
 }
 
+- (void)wifiSDK:(GizWifiSDK *)wifiSDK didChannelIDUnBind:(NSError *)result {
+    [GosPushManager didUnbind:result];
+}
+
 - (void)wifiSDK:(GizWifiSDK *)wifiSDK didChannelIDBind:(NSError *)result {
     [GosPushManager didBind:result];
 }
 
 #pragma mark - GizWifiSDKDeviceDelegate
 - (void)device:(GizWifiDevice *)device didSetSubscribe:(NSError *)result isSubscribed:(BOOL)isSubscribed {
-    [MBProgressHUD hideHUDForView:self.navigationController.view animated:YES];
+    [MBProgressHUD hideHUDForView:self.view animated:YES];
     if (result.code == GIZ_SDK_SUCCESS && isSubscribed == YES) {
         [GosCommon sharedInstance].controlHandler(device, self);
     }
@@ -494,12 +503,17 @@
             {
                 NSString *uid = [GosCommon sharedInstance].uid;
                 NSString *token = [GosCommon sharedInstance].token;
-                [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
+                [MBProgressHUD showHUDAddedTo:self.view animated:YES];
                 [[GizWifiSDK sharedInstance] bindDeviceWithUid:uid token:token did:did passCode:passcode remark:nil];
             }
+            else {
+                [self showAlert:NSLocalizedString(@"Unknown QR Code", nil)];
+            }
         }
-        
-        
+        else {
+            [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+            [[GizWifiSDK sharedInstance] bindDeviceByQRCode:[GosCommon sharedInstance].uid token:[GosCommon sharedInstance].token QRContent:result];
+        }
     }];
     AppDelegate *del = (AppDelegate *)[UIApplication sharedApplication].delegate;
     [del.window.rootViewController addChildViewController:qrcodeVC];

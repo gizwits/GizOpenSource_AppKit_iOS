@@ -8,25 +8,21 @@
 
 #import <UIKit/UIKit.h>
 
-#warning - please replace your app info
+#define APP_ID  [GosCommon sharedInstance].appID
+#define APP_SECRET  [GosCommon sharedInstance].appSecret
 
-#define APP_ID  @"please replace your app id"
-#define APP_SECRET  @"please replace your app secret"
+#define TENCENT_APP_ID [GosCommon sharedInstance].tencentAppID
 
-#define TENCENT_APP_ID @"please replace your tencent app id"
+#define WECHAT_APP_ID [GosCommon sharedInstance].wechatAppID
+#define WECHAT_APP_SECRET [GosCommon sharedInstance].wechatAppSecret
 
-#define JPUSH_APP_KEY @"please replace your jpush app key"
-
-#define BPUSH_API_KEY @"please replace your bpush api key"
-
-// 只能选择支持其中一种
-//#define __JPush       // 极光推送
-//#define __BPush         // 百度推送
+#define PUSH_TYPE [GosCommon sharedInstance].pushType
+#define JPUSH_APP_KEY [GosCommon sharedInstance].jpushAppKey
+#define BPUSH_API_KEY [GosCommon sharedInstance].bpushAppKey
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
-
 
 @end
 
