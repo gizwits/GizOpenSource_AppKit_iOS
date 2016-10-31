@@ -96,12 +96,15 @@
 	configProgressViewColor：配置中界面 progress view 颜色
 	statusBarStyle：状态文字栏颜色 【0：黑色，1：白色】
 	addDeviceTitle：添加设备界面 导航栏标题文字
+    qq：是否打开QQ登录【true：打开】
+    wechat：是否打开微信登录【true：打开】
+    anonymousLogin：是否打开匿名登录【true：打开】
 
     具体细节可以参考【开源框架工程使用文档】：http://docs.gizwits.com/hc/kb/article/181715/
 
 ## 6. 第三方账号登录的使用
 
-    使用微信、QQ登录功能，需要在info.plist设置URLScheme
+    使用微信、QQ登录功能，需要在info.plist设置URLScheme，登录完成后可从第三方应用跳回此应用
 
     使用QQ，把tencentxxx中的"xxx"换成UIConfig.json中对应的"tencent_app_id"字段的值
     使用微信，把"xxx"换成UIConfig.json中对应的"wechat_app_id"字段的值
