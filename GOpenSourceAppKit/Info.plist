@@ -27,7 +27,7 @@
 			<string>tencent</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>tencent1105509702</string>
+				<string>tencentxxx</string>
 			</array>
 		</dict>
 		<dict>
@@ -39,7 +39,7 @@
 			<string>wechat</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>wxea48754eb6142684</string>
+				<string>xxx</string>
 			</array>
 		</dict>
 	</array>
