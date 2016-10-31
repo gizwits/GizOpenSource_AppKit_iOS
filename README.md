@@ -103,8 +103,8 @@
 
     使用微信、QQ登录功能，需要在info.plist设置URLScheme
 
-    使用QQ，把tencentxxx中的"xxx"换成UIConfig.json中对应的"tencent_app_id"字段
-    使用微信，把"xxx"换成UIConfig.json中对应的"wechat_app_id"字段
+    使用QQ，把tencentxxx中的"xxx"换成UIConfig.json中对应的"tencent_app_id"字段的值
+    使用微信，把"xxx"换成UIConfig.json中对应的"wechat_app_id"字段的值
 
 # GoKit硬件依赖
 
