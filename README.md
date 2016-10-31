@@ -109,18 +109,18 @@
     使用QQ，把tencentxxx中的"xxx"换成UIConfig.json中对应的"tencent_app_id"字段的值
     使用微信，把"xxx"换成UIConfig.json中对应的"wechat_app_id"字段的值
 
-# GoKit硬件依赖
+# 程序调试
 
-    需要有调试设备的支持，您可以使用虚拟设备或者实体设备搭建调试环境。
+    您可以使用虚拟设备或者实体设备搭建调试环境。
 
     ▪	虚拟设备
         机智云官网提供GoKit虚拟设备的支持，链接地址：
-        http://site.gizwits.com/developer/product/631/virtualdevice
+	http://dev.gizwits.com/zh-cn/developer/product/
 
     ▪	实体设备
-        GoKit开发板。您可以在机智云官方网站上免费预约申请（限量10000台），申请地址：
-        http://gizwits.com/zh-cn/gokit
-
+        GoKit开发板。您可以在机智云官方网站上免费预约申请，申请地址：
+	http://www.gizwits.com/zh-cn/gokit
+	
     GoKit开发板提供MCU开源代码供智能硬件设计者参考，请去此处下载：https://github.com/gizwits/gokit-mcu
 
 
