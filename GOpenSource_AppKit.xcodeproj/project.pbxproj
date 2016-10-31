@@ -708,8 +708,7 @@
 				TargetAttributes = {
 					1A38874A1CA11CB3001D4BAF = {
 						CreatedOnToolsVersion = 7.2;
-						DevelopmentTeam = 4F4JWNAD79;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Push = {
 								enabled = 1;
@@ -1041,7 +1040,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = GOpenSourceAppKit.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = 4F4JWNAD79;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1063,8 +1062,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.gizwits.opensourceappkit;
 				PRODUCT_NAME = GOpenSourceAppKit;
-				PROVISIONING_PROFILE = "47600152-d819-463c-bacc-4f7b1f59957d";
-				PROVISIONING_PROFILE_SPECIFIER = "Gizwits OpenSource AppKit Development";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -1074,8 +1073,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = GOpenSourceAppKit.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				DEVELOPMENT_TEAM = 4F4JWNAD79;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1097,8 +1096,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.gizwits.opensourceappkit;
 				PRODUCT_NAME = GOpenSourceAppKit;
-				PROVISIONING_PROFILE = "1d6a54a5-cf9d-4e0e-9d46-3a59e0a41270";
-				PROVISIONING_PROFILE_SPECIFIER = "Gizwits OpenSource AppKit Distribution";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
