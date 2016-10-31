@@ -130,7 +130,7 @@ static NSString *makeEncryptKey(Class class, NSString *ssid) {
         [configValueArray addObject:@(GizGAgentTI)];
         [configValueArray addObject:@(GizGAgentFSK)];
         [configValueArray addObject:@(GizGAgentMXCHIP3)];
-//        [configValueArray addObject:@(GizGAgentBL)];
+        [configValueArray addObject:@(GizGAgentBL)];
         [configValueArray addObject:@(GizGAgentAtmelEE)];
         [configValueArray addObject:@(GizGAgentOther)];
 
@@ -145,7 +145,7 @@ static NSString *makeEncryptKey(Class class, NSString *ssid) {
         [configTextArray addObject:NSLocalizedString(@"TI", @"TI")];
         [configTextArray addObject:NSLocalizedString(@"FSK", @"宇音天下")];
         [configTextArray addObject:NSLocalizedString(@"MXCHIP3", @"庆科V3")];
-//        [configTextArray addObject:NSLocalizedString(@"BL", @"古北")];
+        [configTextArray addObject:NSLocalizedString(@"BL", @"古北")];
         [configTextArray addObject:NSLocalizedString(@"Atmel", @"AtmelEE")];
         [configTextArray addObject:NSLocalizedString(@"Other", @"其他")];
         _cloudDomainDict = [[NSMutableDictionary alloc] init];
