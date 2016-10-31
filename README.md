@@ -86,9 +86,9 @@
 	push_type：推送类型 【0：关闭，1：极光，2：百度】
 	jpush_app_key：极光推送 app key
 	bpush_app_key：百度推送 app key
-	openAPI_URL：openAPI 域名及端口，格式：“api.gizwits.com:80”，不写端口默认80
-	site_URL：site 域名及端口，格式：“site.gizwits.com:80”，不写端口默认80
-	push_URL：推送绑定服务器 域名及端口，格式：“push.gizwits.com:80”，不写端口默认80
+	openAPIDomain：openAPI 域名及端口，格式：“api.gizwits.com”。要指定端口，格式为：”xxx.xxxxxxx.com:81&8443”
+	siteDomain：site 域名及端口，格式：“site.gizwits.com”。要指定端口，格式为：”xxx.xxxxxxx.com:81&8443”
+	pushDomain：推送绑定服务器 域名及端口，格式：“push.gizwits.com”。要指定端口，格式为：”xxx.xxxxxxx.com:81&8443”
 	buttonColor：按钮颜色
 	buttonTextColor：按钮文字颜色
 	navigationBarColor：导航栏颜色

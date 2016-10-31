@@ -19,7 +19,7 @@
     "configProgressViewColor":"",
     "statusBarStyle":0,
     "addDeviceTitle":"",
-    "qq": true,
-    "wechat": true,
-    "anonymousLogin": true
+    "qq": false,
+    "wechat": false,
+    "anonymousLogin": false
 }
