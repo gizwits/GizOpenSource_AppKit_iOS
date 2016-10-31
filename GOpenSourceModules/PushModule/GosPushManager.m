@@ -5,7 +5,7 @@
 //  Created by Zono on 16/6/20.
 //  Copyright © 2016年 Gizwits. All rights reserved.
 //
-// @note 推送功能仅限企业用户使用
+// @note 推送功能仅限于企业开发者使用，目前版本暂不支持推送
 
 #import "GosPushManager.h"
 #import "AppDelegate.h"
