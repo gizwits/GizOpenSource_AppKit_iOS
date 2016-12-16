@@ -7,6 +7,10 @@
 //
 
 #import "GosSettingsViewController.h"
+#import "GosCommon.h"
+
+#import "GosUserLoginCell.h"
+#import "GosUserManagementCell.h"
 
 @interface GosSettingsViewController ()
 
@@ -16,7 +20,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.automaticallyAdjustsScrollViewInsets = false;
+//    self.automaticallyAdjustsScrollViewInsets = false;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -29,7 +33,7 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
+    return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -41,14 +45,41 @@
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"CellIdentifier"];
     }
-    cell.textLabel.text = NSLocalizedString(@"About", nil);
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    if (indexPath.section == 0) {
+        cell.textLabel.text = NSLocalizedString(@"About", nil);
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    } else if (indexPath.section == 1) {
+        if ([GosCommon sharedInstance].currentLoginStatus == GizLoginUser) {
+            GosUserManagementCell *cell = GetControllerWithClass([GosUserManagementCell class], tableView, @"GosUserManagerIdentifier");
+            if ([GosCommon sharedInstance].isThirdAccount) {
+                NSString *uid = [GosCommon sharedInstance].uid;
+                NSString *uid_pre = [uid substringToIndex:2];
+                NSString *uid_end = [uid substringFromIndex:uid.length-4];
+                cell.textPhoneNumber.text = [NSString stringWithFormat:@"%@***%@", uid_pre, uid_end];
+            } else {
+                cell.textPhoneNumber.text = [GosCommon sharedInstance].tmpUser;
+            }
+            return cell;
+        } else {
+            return GetControllerWithClass([GosUserLoginCell class], tableView, @"GosUserLoginIdentifier");
+        }
+    }
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    [self performSegueWithIdentifier:@"toAbout" sender:self];
+    if (indexPath.section == 0) {
+        [self performSegueWithIdentifier:@"toAbout" sender:self];
+    } else if (indexPath.section == 1) {
+        if ([GosCommon sharedInstance].currentLoginStatus == GizLoginUser) {
+            UINavigationController *nav = [[UIStoryboard storyboardWithName:@"GosUserManager" bundle:nil] instantiateInitialViewController];
+            UIViewController *userManagerController = nav.viewControllers.firstObject;
+            [self.navigationController pushViewController:userManagerController animated:YES];
+        } else {
+            [self.navigationController popToRootViewControllerAnimated:YES];
+        }
+    }
 }
 
 /*

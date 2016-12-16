@@ -107,7 +107,21 @@
 		E21CCA081D9D1C650051C6D3 /* GizWifiSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A804A0F1D5ADE500014F7B1 /* GizWifiSDK.framework */; };
 		E21CCA091D9D1C650051C6D3 /* GizWifiSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A804A0F1D5ADE500014F7B1 /* GizWifiSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E22855691D94DE0D00F3B6A0 /* GosMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E22855681D94DE0D00F3B6A0 /* GosMain.storyboard */; };
+		E26E42661DF80F7C005BF72D /* GosUserManager.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E26E42641DF80F7C005BF72D /* GosUserManager.storyboard */; };
 		E29D03251D8649FD0011588C /* GosAnonymousLogin.m in Sources */ = {isa = PBXBuildFile; fileRef = E29D03241D8649FD0011588C /* GosAnonymousLogin.m */; };
+		E2C46ABB1DDF0B9E00743859 /* GosUserChangeTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C46AB91DDF0B9E00743859 /* GosUserChangeTableViewCell.m */; };
+		E2C46ABD1DDF0C1800743859 /* GosUserChangeTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2C46ABF1DDF0C1800743859 /* GosUserChangeTableViewCell.xib */; };
+		E2C46AC41DDF0CF500743859 /* GosUserPasswordTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C46AC21DDF0CF500743859 /* GosUserPasswordTableViewCell.m */; };
+		E2C46AC51DDF0CF500743859 /* GosUserPasswordTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2C46AC31DDF0CF500743859 /* GosUserPasswordTableViewCell.xib */; };
+		E2E6505F1E012DE5002D2632 /* GizKeychainRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = E2E6505E1E012DE5002D2632 /* GizKeychainRecorder.m */; };
+		E2ED6ECD1DDEB64600297595 /* GosUserManagementCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2ED6ECB1DDEB64600297595 /* GosUserManagementCell.m */; };
+		E2ED6ED21DDEB65200297595 /* GosUserLoginCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2ED6ED01DDEB65200297595 /* GosUserLoginCell.m */; };
+		E2ED6ED41DDEB66F00297595 /* GosUserLoginCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2ED6ED61DDEB66F00297595 /* GosUserLoginCell.xib */; };
+		E2ED6ED81DDEB7F700297595 /* GosUserManagementCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2ED6EDA1DDEB7F700297595 /* GosUserManagementCell.xib */; };
+		E2ED6EE11DDEF22000297595 /* GosUserManagerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E2ED6EE01DDEF22000297595 /* GosUserManagerViewController.m */; };
+		E2ED6EE41DDEF23900297595 /* GosChangeUserPasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E2ED6EE31DDEF23900297595 /* GosChangeUserPasswordViewController.m */; };
+		E2ED6EE81DDEF6F100297595 /* GosUserLogoutTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2ED6EE61DDEF6F100297595 /* GosUserLogoutTableViewCell.m */; };
+		E2ED6EEA1DDEF74300297595 /* GosUserLogoutTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2ED6EEC1DDEF74300297595 /* GosUserLogoutTableViewCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -278,10 +292,112 @@
 		1ADE600F1D3F31DE00FC2BFE /* sms.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sms.png; sourceTree = "<group>"; };
 		1ADE60101D3F31DE00FC2BFE /* wechat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wechat.png; sourceTree = "<group>"; };
 		1ADE602C1D3F349600FC2BFE /* UIConfig.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UIConfig.json; sourceTree = "<group>"; };
+		E22680B91DDEF7AF008A40A9 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "zh-Hans"; path = "zh-Hans.lproj/GosUserLogoutTableViewCell.xib"; sourceTree = "<group>"; };
 		E22855681D94DE0D00F3B6A0 /* GosMain.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = GosMain.storyboard; sourceTree = "<group>"; };
+		E26E42651DF80F7C005BF72D /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = GOpenSourceModules/SettingsModule/en.lproj/GosUserManager.storyboard; sourceTree = SOURCE_ROOT; };
+		E26E42671DF80F86005BF72D /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "zh-Hans"; path = "GOpenSourceModules/SettingsModule/zh-Hans.lproj/GosUserManager.storyboard"; sourceTree = SOURCE_ROOT; };
+		E27E52521DF517EF00F9D148 /* aes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aes.h; sourceTree = "<group>"; };
+		E27E52531DF517EF00F9D148 /* asn1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asn1.h; sourceTree = "<group>"; };
+		E27E52541DF517EF00F9D148 /* asn1_mac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asn1_mac.h; sourceTree = "<group>"; };
+		E27E52551DF517EF00F9D148 /* asn1t.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asn1t.h; sourceTree = "<group>"; };
+		E27E52561DF517EF00F9D148 /* bio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bio.h; sourceTree = "<group>"; };
+		E27E52571DF517EF00F9D148 /* blowfish.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blowfish.h; sourceTree = "<group>"; };
+		E27E52581DF517EF00F9D148 /* bn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bn.h; sourceTree = "<group>"; };
+		E27E52591DF517EF00F9D148 /* buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = buffer.h; sourceTree = "<group>"; };
+		E27E525A1DF517EF00F9D148 /* camellia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = camellia.h; sourceTree = "<group>"; };
+		E27E525B1DF517EF00F9D148 /* cast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cast.h; sourceTree = "<group>"; };
+		E27E525C1DF517EF00F9D148 /* cmac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cmac.h; sourceTree = "<group>"; };
+		E27E525D1DF517EF00F9D148 /* cms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cms.h; sourceTree = "<group>"; };
+		E27E525E1DF517EF00F9D148 /* comp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = comp.h; sourceTree = "<group>"; };
+		E27E525F1DF517EF00F9D148 /* conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf.h; sourceTree = "<group>"; };
+		E27E52601DF517EF00F9D148 /* conf_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_api.h; sourceTree = "<group>"; };
+		E27E52611DF517EF00F9D148 /* crypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto.h; sourceTree = "<group>"; };
+		E27E52621DF517EF00F9D148 /* des.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = des.h; sourceTree = "<group>"; };
+		E27E52631DF517EF00F9D148 /* des_old.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = des_old.h; sourceTree = "<group>"; };
+		E27E52641DF517EF00F9D148 /* dh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dh.h; sourceTree = "<group>"; };
+		E27E52651DF517EF00F9D148 /* dsa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dsa.h; sourceTree = "<group>"; };
+		E27E52661DF517EF00F9D148 /* dso.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dso.h; sourceTree = "<group>"; };
+		E27E52671DF517EF00F9D148 /* dtls1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dtls1.h; sourceTree = "<group>"; };
+		E27E52681DF517EF00F9D148 /* e_os2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = e_os2.h; sourceTree = "<group>"; };
+		E27E52691DF517EF00F9D148 /* ebcdic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ebcdic.h; sourceTree = "<group>"; };
+		E27E526A1DF517EF00F9D148 /* ec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ec.h; sourceTree = "<group>"; };
+		E27E526B1DF517EF00F9D148 /* ecdh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ecdh.h; sourceTree = "<group>"; };
+		E27E526C1DF517EF00F9D148 /* ecdsa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ecdsa.h; sourceTree = "<group>"; };
+		E27E526D1DF517EF00F9D148 /* engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = engine.h; sourceTree = "<group>"; };
+		E27E526E1DF517EF00F9D148 /* err.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = err.h; sourceTree = "<group>"; };
+		E27E526F1DF517EF00F9D148 /* evp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = evp.h; sourceTree = "<group>"; };
+		E27E52701DF517EF00F9D148 /* hmac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hmac.h; sourceTree = "<group>"; };
+		E27E52711DF517EF00F9D148 /* idea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = idea.h; sourceTree = "<group>"; };
+		E27E52721DF517EF00F9D148 /* krb5_asn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = krb5_asn.h; sourceTree = "<group>"; };
+		E27E52731DF517EF00F9D148 /* kssl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kssl.h; sourceTree = "<group>"; };
+		E27E52741DF517EF00F9D148 /* lhash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lhash.h; sourceTree = "<group>"; };
+		E27E52751DF517EF00F9D148 /* md4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = md4.h; sourceTree = "<group>"; };
+		E27E52761DF517EF00F9D148 /* md5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = md5.h; sourceTree = "<group>"; };
+		E27E52771DF517EF00F9D148 /* mdc2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mdc2.h; sourceTree = "<group>"; };
+		E27E52781DF517EF00F9D148 /* modes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = modes.h; sourceTree = "<group>"; };
+		E27E52791DF517EF00F9D148 /* obj_mac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = obj_mac.h; sourceTree = "<group>"; };
+		E27E527A1DF517EF00F9D148 /* objects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objects.h; sourceTree = "<group>"; };
+		E27E527B1DF517EF00F9D148 /* ocsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ocsp.h; sourceTree = "<group>"; };
+		E27E527C1DF517EF00F9D148 /* opensslconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opensslconf.h; sourceTree = "<group>"; };
+		E27E527D1DF517EF00F9D148 /* opensslv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opensslv.h; sourceTree = "<group>"; };
+		E27E527E1DF517EF00F9D148 /* ossl_typ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ossl_typ.h; sourceTree = "<group>"; };
+		E27E527F1DF517EF00F9D148 /* pem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pem.h; sourceTree = "<group>"; };
+		E27E52801DF517EF00F9D148 /* pem2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pem2.h; sourceTree = "<group>"; };
+		E27E52811DF517EF00F9D148 /* pkcs12.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pkcs12.h; sourceTree = "<group>"; };
+		E27E52821DF517EF00F9D148 /* pkcs7.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pkcs7.h; sourceTree = "<group>"; };
+		E27E52831DF517EF00F9D148 /* pqueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pqueue.h; sourceTree = "<group>"; };
+		E27E52841DF517EF00F9D148 /* rand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rand.h; sourceTree = "<group>"; };
+		E27E52851DF517EF00F9D148 /* rc2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rc2.h; sourceTree = "<group>"; };
+		E27E52861DF517EF00F9D148 /* rc4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rc4.h; sourceTree = "<group>"; };
+		E27E52871DF517EF00F9D148 /* ripemd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ripemd.h; sourceTree = "<group>"; };
+		E27E52881DF517EF00F9D148 /* rsa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rsa.h; sourceTree = "<group>"; };
+		E27E52891DF517EF00F9D148 /* safestack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = safestack.h; sourceTree = "<group>"; };
+		E27E528A1DF517EF00F9D148 /* seed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = seed.h; sourceTree = "<group>"; };
+		E27E528B1DF517EF00F9D148 /* sha.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sha.h; sourceTree = "<group>"; };
+		E27E528C1DF517EF00F9D148 /* srp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = srp.h; sourceTree = "<group>"; };
+		E27E528D1DF517EF00F9D148 /* srtp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = srtp.h; sourceTree = "<group>"; };
+		E27E528E1DF517EF00F9D148 /* ssl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssl.h; sourceTree = "<group>"; };
+		E27E528F1DF517EF00F9D148 /* ssl2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssl2.h; sourceTree = "<group>"; };
+		E27E52901DF517EF00F9D148 /* ssl23.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssl23.h; sourceTree = "<group>"; };
+		E27E52911DF517EF00F9D148 /* ssl3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssl3.h; sourceTree = "<group>"; };
+		E27E52921DF517EF00F9D148 /* stack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stack.h; sourceTree = "<group>"; };
+		E27E52931DF517EF00F9D148 /* symhacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = symhacks.h; sourceTree = "<group>"; };
+		E27E52941DF517EF00F9D148 /* tls1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tls1.h; sourceTree = "<group>"; };
+		E27E52951DF517EF00F9D148 /* ts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ts.h; sourceTree = "<group>"; };
+		E27E52961DF517EF00F9D148 /* txt_db.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = txt_db.h; sourceTree = "<group>"; };
+		E27E52971DF517EF00F9D148 /* ui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ui.h; sourceTree = "<group>"; };
+		E27E52981DF517EF00F9D148 /* ui_compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ui_compat.h; sourceTree = "<group>"; };
+		E27E52991DF517EF00F9D148 /* whrlpool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = whrlpool.h; sourceTree = "<group>"; };
+		E27E529A1DF517EF00F9D148 /* x509.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x509.h; sourceTree = "<group>"; };
+		E27E529B1DF517EF00F9D148 /* x509_vfy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x509_vfy.h; sourceTree = "<group>"; };
+		E27E529C1DF517EF00F9D148 /* x509v3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x509v3.h; sourceTree = "<group>"; };
 		E29D03231D8649FD0011588C /* GosAnonymousLogin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GosAnonymousLogin.h; sourceTree = "<group>"; };
 		E29D03241D8649FD0011588C /* GosAnonymousLogin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GosAnonymousLogin.m; sourceTree = "<group>"; };
+		E2C46AB81DDF0B9E00743859 /* GosUserChangeTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GosUserChangeTableViewCell.h; sourceTree = "<group>"; };
+		E2C46AB91DDF0B9E00743859 /* GosUserChangeTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GosUserChangeTableViewCell.m; sourceTree = "<group>"; };
+		E2C46ABE1DDF0C1800743859 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/GosUserChangeTableViewCell.xib; sourceTree = "<group>"; };
+		E2C46AC01DDF0C2300743859 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "zh-Hans"; path = "zh-Hans.lproj/GosUserChangeTableViewCell.xib"; sourceTree = "<group>"; };
+		E2C46AC11DDF0CF500743859 /* GosUserPasswordTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GosUserPasswordTableViewCell.h; sourceTree = "<group>"; };
+		E2C46AC21DDF0CF500743859 /* GosUserPasswordTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GosUserPasswordTableViewCell.m; sourceTree = "<group>"; };
+		E2C46AC31DDF0CF500743859 /* GosUserPasswordTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GosUserPasswordTableViewCell.xib; sourceTree = "<group>"; };
 		E2C918861D95053400F422CB /* GOpenSourceAppKit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GOpenSourceAppKit.entitlements; sourceTree = "<group>"; };
+		E2E6505D1E012DE5002D2632 /* GizKeychainRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GizKeychainRecorder.h; sourceTree = "<group>"; };
+		E2E6505E1E012DE5002D2632 /* GizKeychainRecorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GizKeychainRecorder.m; sourceTree = "<group>"; };
+		E2ED6ECA1DDEB64600297595 /* GosUserManagementCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GosUserManagementCell.h; sourceTree = "<group>"; };
+		E2ED6ECB1DDEB64600297595 /* GosUserManagementCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GosUserManagementCell.m; sourceTree = "<group>"; };
+		E2ED6ECF1DDEB65200297595 /* GosUserLoginCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GosUserLoginCell.h; sourceTree = "<group>"; };
+		E2ED6ED01DDEB65200297595 /* GosUserLoginCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GosUserLoginCell.m; sourceTree = "<group>"; };
+		E2ED6ED51DDEB66F00297595 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/GosUserLoginCell.xib; sourceTree = "<group>"; };
+		E2ED6ED71DDEB7B900297595 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "zh-Hans"; path = "zh-Hans.lproj/GosUserLoginCell.xib"; sourceTree = "<group>"; };
+		E2ED6ED91DDEB7F700297595 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/GosUserManagementCell.xib; sourceTree = "<group>"; };
+		E2ED6EDB1DDEB80200297595 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "zh-Hans"; path = "zh-Hans.lproj/GosUserManagementCell.xib"; sourceTree = "<group>"; };
+		E2ED6EDF1DDEF22000297595 /* GosUserManagerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GosUserManagerViewController.h; sourceTree = "<group>"; };
+		E2ED6EE01DDEF22000297595 /* GosUserManagerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GosUserManagerViewController.m; sourceTree = "<group>"; };
+		E2ED6EE21DDEF23900297595 /* GosChangeUserPasswordViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GosChangeUserPasswordViewController.h; sourceTree = "<group>"; };
+		E2ED6EE31DDEF23900297595 /* GosChangeUserPasswordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GosChangeUserPasswordViewController.m; sourceTree = "<group>"; };
+		E2ED6EE51DDEF6F100297595 /* GosUserLogoutTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GosUserLogoutTableViewCell.h; sourceTree = "<group>"; };
+		E2ED6EE61DDEF6F100297595 /* GosUserLogoutTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GosUserLogoutTableViewCell.m; sourceTree = "<group>"; };
+		E2ED6EEB1DDEF74300297595 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/GosUserLogoutTableViewCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -355,6 +471,7 @@
 		1A35CD171CE99B3C0073627C /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				E27E52511DF517EF00F9D148 /* openssl */,
 				1A804A0E1D5ADE500014F7B1 /* GizWifiSDK */,
 				1ADE5FDD1D3F2F6400FC2BFE /* WechatOpenSDK */,
 				1A083C921D17D0780050B161 /* BPush */,
@@ -503,6 +620,8 @@
 				E22855681D94DE0D00F3B6A0 /* GosMain.storyboard */,
 				1AAC33381CF6FBFC00A5D1A9 /* CustomCell */,
 				1ADE5FF71D3F31DE00FC2BFE /* Images */,
+				E2E6505D1E012DE5002D2632 /* GizKeychainRecorder.h */,
+				E2E6505E1E012DE5002D2632 /* GizKeychainRecorder.m */,
 			);
 			path = CommonModule;
 			sourceTree = "<group>";
@@ -608,6 +727,8 @@
 		1AAC337F1CF6FBFC00A5D1A9 /* SettingsModule */ = {
 			isa = PBXGroup;
 			children = (
+				E2ED6EDC1DDEF1F000297595 /* UserManager */,
+				E2ED6EC91DDEB61E00297595 /* Cell */,
 				1AAC34311CFC3BAC00A5D1A9 /* GosSettings.storyboard */,
 				1AAC33831CF6FBFC00A5D1A9 /* GosSettingsViewController.h */,
 				1AAC33841CF6FBFC00A5D1A9 /* GosSettingsViewController.m */,
@@ -676,6 +797,122 @@
 			path = Images;
 			sourceTree = "<group>";
 		};
+		E27E52511DF517EF00F9D148 /* openssl */ = {
+			isa = PBXGroup;
+			children = (
+				E27E52521DF517EF00F9D148 /* aes.h */,
+				E27E52531DF517EF00F9D148 /* asn1.h */,
+				E27E52541DF517EF00F9D148 /* asn1_mac.h */,
+				E27E52551DF517EF00F9D148 /* asn1t.h */,
+				E27E52561DF517EF00F9D148 /* bio.h */,
+				E27E52571DF517EF00F9D148 /* blowfish.h */,
+				E27E52581DF517EF00F9D148 /* bn.h */,
+				E27E52591DF517EF00F9D148 /* buffer.h */,
+				E27E525A1DF517EF00F9D148 /* camellia.h */,
+				E27E525B1DF517EF00F9D148 /* cast.h */,
+				E27E525C1DF517EF00F9D148 /* cmac.h */,
+				E27E525D1DF517EF00F9D148 /* cms.h */,
+				E27E525E1DF517EF00F9D148 /* comp.h */,
+				E27E525F1DF517EF00F9D148 /* conf.h */,
+				E27E52601DF517EF00F9D148 /* conf_api.h */,
+				E27E52611DF517EF00F9D148 /* crypto.h */,
+				E27E52621DF517EF00F9D148 /* des.h */,
+				E27E52631DF517EF00F9D148 /* des_old.h */,
+				E27E52641DF517EF00F9D148 /* dh.h */,
+				E27E52651DF517EF00F9D148 /* dsa.h */,
+				E27E52661DF517EF00F9D148 /* dso.h */,
+				E27E52671DF517EF00F9D148 /* dtls1.h */,
+				E27E52681DF517EF00F9D148 /* e_os2.h */,
+				E27E52691DF517EF00F9D148 /* ebcdic.h */,
+				E27E526A1DF517EF00F9D148 /* ec.h */,
+				E27E526B1DF517EF00F9D148 /* ecdh.h */,
+				E27E526C1DF517EF00F9D148 /* ecdsa.h */,
+				E27E526D1DF517EF00F9D148 /* engine.h */,
+				E27E526E1DF517EF00F9D148 /* err.h */,
+				E27E526F1DF517EF00F9D148 /* evp.h */,
+				E27E52701DF517EF00F9D148 /* hmac.h */,
+				E27E52711DF517EF00F9D148 /* idea.h */,
+				E27E52721DF517EF00F9D148 /* krb5_asn.h */,
+				E27E52731DF517EF00F9D148 /* kssl.h */,
+				E27E52741DF517EF00F9D148 /* lhash.h */,
+				E27E52751DF517EF00F9D148 /* md4.h */,
+				E27E52761DF517EF00F9D148 /* md5.h */,
+				E27E52771DF517EF00F9D148 /* mdc2.h */,
+				E27E52781DF517EF00F9D148 /* modes.h */,
+				E27E52791DF517EF00F9D148 /* obj_mac.h */,
+				E27E527A1DF517EF00F9D148 /* objects.h */,
+				E27E527B1DF517EF00F9D148 /* ocsp.h */,
+				E27E527C1DF517EF00F9D148 /* opensslconf.h */,
+				E27E527D1DF517EF00F9D148 /* opensslv.h */,
+				E27E527E1DF517EF00F9D148 /* ossl_typ.h */,
+				E27E527F1DF517EF00F9D148 /* pem.h */,
+				E27E52801DF517EF00F9D148 /* pem2.h */,
+				E27E52811DF517EF00F9D148 /* pkcs12.h */,
+				E27E52821DF517EF00F9D148 /* pkcs7.h */,
+				E27E52831DF517EF00F9D148 /* pqueue.h */,
+				E27E52841DF517EF00F9D148 /* rand.h */,
+				E27E52851DF517EF00F9D148 /* rc2.h */,
+				E27E52861DF517EF00F9D148 /* rc4.h */,
+				E27E52871DF517EF00F9D148 /* ripemd.h */,
+				E27E52881DF517EF00F9D148 /* rsa.h */,
+				E27E52891DF517EF00F9D148 /* safestack.h */,
+				E27E528A1DF517EF00F9D148 /* seed.h */,
+				E27E528B1DF517EF00F9D148 /* sha.h */,
+				E27E528C1DF517EF00F9D148 /* srp.h */,
+				E27E528D1DF517EF00F9D148 /* srtp.h */,
+				E27E528E1DF517EF00F9D148 /* ssl.h */,
+				E27E528F1DF517EF00F9D148 /* ssl2.h */,
+				E27E52901DF517EF00F9D148 /* ssl23.h */,
+				E27E52911DF517EF00F9D148 /* ssl3.h */,
+				E27E52921DF517EF00F9D148 /* stack.h */,
+				E27E52931DF517EF00F9D148 /* symhacks.h */,
+				E27E52941DF517EF00F9D148 /* tls1.h */,
+				E27E52951DF517EF00F9D148 /* ts.h */,
+				E27E52961DF517EF00F9D148 /* txt_db.h */,
+				E27E52971DF517EF00F9D148 /* ui.h */,
+				E27E52981DF517EF00F9D148 /* ui_compat.h */,
+				E27E52991DF517EF00F9D148 /* whrlpool.h */,
+				E27E529A1DF517EF00F9D148 /* x509.h */,
+				E27E529B1DF517EF00F9D148 /* x509_vfy.h */,
+				E27E529C1DF517EF00F9D148 /* x509v3.h */,
+			);
+			path = openssl;
+			sourceTree = "<group>";
+		};
+		E2ED6EC91DDEB61E00297595 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				E2ED6ECA1DDEB64600297595 /* GosUserManagementCell.h */,
+				E2ED6ECB1DDEB64600297595 /* GosUserManagementCell.m */,
+				E2ED6EDA1DDEB7F700297595 /* GosUserManagementCell.xib */,
+				E2ED6ECF1DDEB65200297595 /* GosUserLoginCell.h */,
+				E2ED6ED01DDEB65200297595 /* GosUserLoginCell.m */,
+				E2ED6ED61DDEB66F00297595 /* GosUserLoginCell.xib */,
+				E2ED6EE51DDEF6F100297595 /* GosUserLogoutTableViewCell.h */,
+				E2ED6EE61DDEF6F100297595 /* GosUserLogoutTableViewCell.m */,
+				E2ED6EEC1DDEF74300297595 /* GosUserLogoutTableViewCell.xib */,
+				E2C46AB81DDF0B9E00743859 /* GosUserChangeTableViewCell.h */,
+				E2C46AB91DDF0B9E00743859 /* GosUserChangeTableViewCell.m */,
+				E2C46ABF1DDF0C1800743859 /* GosUserChangeTableViewCell.xib */,
+				E2C46AC11DDF0CF500743859 /* GosUserPasswordTableViewCell.h */,
+				E2C46AC21DDF0CF500743859 /* GosUserPasswordTableViewCell.m */,
+				E2C46AC31DDF0CF500743859 /* GosUserPasswordTableViewCell.xib */,
+			);
+			path = Cell;
+			sourceTree = "<group>";
+		};
+		E2ED6EDC1DDEF1F000297595 /* UserManager */ = {
+			isa = PBXGroup;
+			children = (
+				E2ED6EDF1DDEF22000297595 /* GosUserManagerViewController.h */,
+				E2ED6EE01DDEF22000297595 /* GosUserManagerViewController.m */,
+				E26E42641DF80F7C005BF72D /* GosUserManager.storyboard */,
+				E2ED6EE21DDEF23900297595 /* GosChangeUserPasswordViewController.h */,
+				E2ED6EE31DDEF23900297595 /* GosChangeUserPasswordViewController.m */,
+			);
+			path = UserManager;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -708,7 +945,8 @@
 				TargetAttributes = {
 					1A38874A1CA11CB3001D4BAF = {
 						CreatedOnToolsVersion = 7.2;
-						ProvisioningStyle = Automatic;
+						DevelopmentTeam = 4F4JWNAD79;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.Push = {
 								enabled = 1;
@@ -749,8 +987,12 @@
 				1AAC34231CF85AFC00A5D1A9 /* GosVerificationCell.xib in Resources */,
 				1AAB22FD1D474438000F49E9 /* nav_btn_update@2x.png in Resources */,
 				1AAC33301CF6F80300A5D1A9 /* Assets.xcassets in Resources */,
+				E2ED6EEA1DDEF74300297595 /* GosUserLogoutTableViewCell.xib in Resources */,
+				E2ED6ED41DDEB66F00297595 /* GosUserLoginCell.xib in Resources */,
+				E2ED6ED81DDEB7F700297595 /* GosUserManagementCell.xib in Resources */,
 				1ADE601B1D3F31DE00FC2BFE /* 08-icon-add@2x.png in Resources */,
 				1AAC33B81CF6FBFC00A5D1A9 /* GosDeviceController.xib in Resources */,
+				E26E42661DF80F7C005BF72D /* GosUserManager.storyboard in Resources */,
 				1ADE60231D3F31DE00FC2BFE /* LoginBanner.png in Resources */,
 				1AAC34351CFC3D6300A5D1A9 /* GosAirLink.storyboard in Resources */,
 				1ADE602A1D3F31DE00FC2BFE /* wechat.png in Resources */,
@@ -760,6 +1002,7 @@
 				1ADE5FE41D3F2F6400FC2BFE /* README.txt in Resources */,
 				1ADE601F1D3F31DE00FC2BFE /* Icon@2x.png in Resources */,
 				1ADE60131D3F31DE00FC2BFE /* 01-iconfont-xianshimima@2x.png in Resources */,
+				E2C46AC51DDF0CF500743859 /* GosUserPasswordTableViewCell.xib in Resources */,
 				1ADE60191D3F31DE00FC2BFE /* 04-softap.gif in Resources */,
 				1ADE601D1D3F31DE00FC2BFE /* back_arrow@2x.png in Resources */,
 				1ADE601C1D3F31DE00FC2BFE /* 08-icon-Device@2x.png in Resources */,
@@ -769,6 +1012,7 @@
 				1ADE60261D3F31DE00FC2BFE /* qq.png in Resources */,
 				1ADE602D1D3F349600FC2BFE /* UIConfig.json in Resources */,
 				1A083C451D111E5A0050B161 /* TencentOpenApi_IOS_Bundle.bundle in Resources */,
+				E2C46ABD1DDF0C1800743859 /* GosUserChangeTableViewCell.xib in Resources */,
 				1ADE5FEA1D3F2FAA00FC2BFE /* GosWifiPasswordCell.xib in Resources */,
 				1AAC341D1CF85ABD00A5D1A9 /* GosTextCell.xib in Resources */,
 				1ADE60171D3F31DE00FC2BFE /* 02-airlink.gif in Resources */,
@@ -800,6 +1044,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1AAC33BC1CF6FBFC00A5D1A9 /* GosSettingsViewController.m in Sources */,
+				E2E6505F1E012DE5002D2632 /* GizKeychainRecorder.m in Sources */,
 				1AAC33AB1CF6FBFC00A5D1A9 /* GosConfigStart.m in Sources */,
 				E29D03251D8649FD0011588C /* GosAnonymousLogin.m in Sources */,
 				1AAC33B01CF6FBFC00A5D1A9 /* GosConfigSoftAPHelp.m in Sources */,
@@ -814,16 +1059,22 @@
 				1AAC33911CF6FBFC00A5D1A9 /* GosSSIDCell.m in Sources */,
 				1AAC33BF1CF6FBFC00A5D1A9 /* GosRegisterViewController.m in Sources */,
 				1AAC33AE1CF6FBFC00A5D1A9 /* GosConfigSoftAPCheckPwd.m in Sources */,
+				E2ED6ED21DDEB65200297595 /* GosUserLoginCell.m in Sources */,
 				1A0805091D000B4800DF3FD6 /* GosConfigModuleSelection.m in Sources */,
 				1AAC33931CF6FBFC00A5D1A9 /* GosTextCell.m in Sources */,
 				1AAC33951CF6FBFC00A5D1A9 /* GosVerificationCell.m in Sources */,
 				1A35CD501CE99B3C0073627C /* UIImageView+PlayGIF.m in Sources */,
 				1AAC338F1CF6FBFC00A5D1A9 /* GosPhoneCell.m in Sources */,
+				E2ED6EE41DDEF23900297595 /* GosChangeUserPasswordViewController.m in Sources */,
+				E2ED6EE11DDEF22000297595 /* GosUserManagerViewController.m in Sources */,
 				1AAC33BB1CF6FBFC00A5D1A9 /* GosAboutViewController.m in Sources */,
 				1AAC33B31CF6FBFC00A5D1A9 /* GosConfigSoftAPWaiting.m in Sources */,
+				E2C46AC41DDF0CF500743859 /* GosUserPasswordTableViewCell.m in Sources */,
+				E2C46ABB1DDF0B9E00743859 /* GosUserChangeTableViewCell.m in Sources */,
 				1AAC33971CF6FBFC00A5D1A9 /* GosCommon.m in Sources */,
 				1A35CD511CE99B3C0073627C /* YFGIFImageView.m in Sources */,
 				1A35CD4E1CE99B3C0073627C /* RadioButton.m in Sources */,
+				E2ED6EE81DDEF6F100297595 /* GosUserLogoutTableViewCell.m in Sources */,
 				1A083C3B1D08112A0050B161 /* GosDeviceListCell.m in Sources */,
 				1AAC33AA1CF6FBFC00A5D1A9 /* GosConfigAirlinkTips.m in Sources */,
 				1A35CD4F1CE99B3C0073627C /* UAProgressView.m in Sources */,
@@ -838,6 +1089,7 @@
 				1AAC338D1CF6FBFC00A5D1A9 /* GosPasswordCell.m in Sources */,
 				1AAC33341CF6F80300A5D1A9 /* main.m in Sources */,
 				1AAC33BE1CF6FBFC00A5D1A9 /* GosLoginViewController.m in Sources */,
+				E2ED6ECD1DDEB64600297595 /* GosUserManagementCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -943,6 +1195,51 @@
 			name = GosWifiPasswordCell.xib;
 			sourceTree = "<group>";
 		};
+		E26E42641DF80F7C005BF72D /* GosUserManager.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E26E42651DF80F7C005BF72D /* en */,
+				E26E42671DF80F86005BF72D /* zh-Hans */,
+			);
+			name = GosUserManager.storyboard;
+			sourceTree = "<group>";
+		};
+		E2C46ABF1DDF0C1800743859 /* GosUserChangeTableViewCell.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E2C46ABE1DDF0C1800743859 /* en */,
+				E2C46AC01DDF0C2300743859 /* zh-Hans */,
+			);
+			name = GosUserChangeTableViewCell.xib;
+			sourceTree = "<group>";
+		};
+		E2ED6ED61DDEB66F00297595 /* GosUserLoginCell.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E2ED6ED51DDEB66F00297595 /* en */,
+				E2ED6ED71DDEB7B900297595 /* zh-Hans */,
+			);
+			name = GosUserLoginCell.xib;
+			sourceTree = "<group>";
+		};
+		E2ED6EDA1DDEB7F700297595 /* GosUserManagementCell.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E2ED6ED91DDEB7F700297595 /* en */,
+				E2ED6EDB1DDEB80200297595 /* zh-Hans */,
+			);
+			name = GosUserManagementCell.xib;
+			sourceTree = "<group>";
+		};
+		E2ED6EEC1DDEF74300297595 /* GosUserLogoutTableViewCell.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E2ED6EEB1DDEF74300297595 /* en */,
+				E22680B91DDEF7AF008A40A9 /* zh-Hans */,
+			);
+			name = GosUserLogoutTableViewCell.xib;
+			sourceTree = "<group>";
+		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -1040,7 +1337,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = GOpenSourceAppKit.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 4F4JWNAD79;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1062,8 +1359,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.gizwits.opensourceappkit;
 				PRODUCT_NAME = GOpenSourceAppKit;
-				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE = "47600152-d819-463c-bacc-4f7b1f59957d";
+				PROVISIONING_PROFILE_SPECIFIER = "Gizwits OpenSource AppKit Development";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -1073,8 +1370,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = GOpenSourceAppKit.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				DEVELOPMENT_TEAM = 4F4JWNAD79;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1096,8 +1393,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.gizwits.opensourceappkit;
 				PRODUCT_NAME = GOpenSourceAppKit;
-				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE = "1d6a54a5-cf9d-4e0e-9d46-3a59e0a41270";
+				PROVISIONING_PROFILE_SPECIFIER = "Gizwits OpenSource AppKit Distribution";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;

@@ -158,7 +158,6 @@
 "tip" = "提示";
 "please input cellphone" = "请输入登录账号";
 "please input password" = "请输入密码";
-"The password must be at least six characters" = "密码不能小于6位";
 "OK" = "确定";
 "Login failed" = "登录失败";
 "Login successful" = "登录成功";
@@ -182,7 +181,19 @@
 "Scan QR code" = "扫码绑定设备";
 "Add Device" = "添加设备";
 "Add" = "添加";
-"Setting" = "设置";
+"Personal Center" = "个人中心";
+
+"User Account" = "用户账号";
+"Edit password" = "修改密码";
+
+"Enter current password" = "请输入原密码";
+"Enter new password" = "请设置新密码";
+"Re-enter new password" = "请再次确认密码";
+"Password does not match the confirm password" = "新密码和确认密码不相同";
+"Password change successful" = "密码修改成功";
+"Current password invalid" = "原密码输入有误";
+"Password change failed" = "密码修改失败";
+
 "Logout" = "注销";
 "Login" = "登录";
 "Logout?" = "确定要退出账号？";

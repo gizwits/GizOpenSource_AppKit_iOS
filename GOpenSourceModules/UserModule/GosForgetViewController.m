@@ -140,10 +140,6 @@
         [common showAlert:NSLocalizedString(@"please input password", nil) disappear:YES];
         return;
     }
-    if (self.passwordCell.textPassword.text.length < 6) {
-        [common showAlert:NSLocalizedString(@"The password must be at least six characters", nil) disappear:YES];
-        return;
-    }
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     [[GizWifiSDK sharedInstance] resetPassword:self.phoneCell.textInput.text verifyCode:self.verfiyCell.textInput.text newPassword:self.passwordCell.textPassword.text accountType:GizUserPhone];
 }
@@ -168,8 +164,8 @@
 - (void)wifiSDK:(GizWifiSDK *)wifiSDK didChangeUserPassword:(NSError *)result {
     [MBProgressHUD hideHUDForView:self.view animated:YES];
     if (result.code == GIZ_SDK_SUCCESS) {
+        [common removeUserDefaults];
         [common showAlert:NSLocalizedString(@"Reset success", nil) disappear:YES];
-        [[GosCommon sharedInstance] saveUserDefaults:self.phoneCell.textInput.text password:self.passwordCell.textPassword.text uid:nil token:nil];
         [self.navigationController popViewControllerAnimated:YES];
     }
     else {

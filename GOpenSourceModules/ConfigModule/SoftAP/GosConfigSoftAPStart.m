@@ -10,6 +10,10 @@
 #import "GosSoftAPDetection.h"
 #import "GosCommon.h"
 
+#if USE_UMENG
+#import <UMMobClick/MobClick.h>
+#endif
+
 @interface GosConfigSoftAPStart () <GizSoftAPDetectionDelegate, UIAlertViewDelegate>
 
 @property (strong) GosSoftAPDetection *softapDetection;
@@ -39,6 +43,10 @@
     [self.btnHelp setAttributedTitle:mstr forState:UIControlStateNormal];
 
     self.imgSoftapTips.gifPath = [[NSBundle mainBundle] pathForResource:@"04-softap-tips" ofType:@"gif"];
+
+#if USE_UMENG
+    [MobClick event:@"configuration_airlink_pop_bad_network_swich_to_manual_connection"];
+#endif
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -112,6 +120,9 @@
 
 - (IBAction)onOpenConfig:(id)sender {
     // 开启后台 SoftAP 状态检测
+#if USE_UMENG
+    [MobClick event:@"configuration_softap_btn_connect_softap"];
+#endif
     
     self.softapDetection = [[GosSoftAPDetection alloc] initWithSoftAPSSID:SSID_PREFIX delegate:self];
 
@@ -131,6 +142,9 @@
 }
 
 - (IBAction)onCancel:(id)sender {
+#if USE_UMENG
+    [MobClick event:@"configuration_btn_cancel"];
+#endif
     SHOW_ALERT_CANCEL_CONFIG(self);
 }
 

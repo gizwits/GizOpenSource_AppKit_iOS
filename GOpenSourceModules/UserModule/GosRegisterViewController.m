@@ -13,6 +13,10 @@
 #import <GizWifiSDK/GizWifiSDK.h>
 #import "AppDelegate.h"
 
+#if USE_UMENG
+#import <UMMobClick/MobClick.h>
+#endif
+
 @interface GosRegisterViewController () <GizPhoneCellDelegate, GizWifiSDKDelegate>
 @property (strong, nonatomic) GosPhoneCell *phoneCell;
 @property (strong, nonatomic) GosVerificationCell *verfiyCell;
@@ -33,6 +37,10 @@
     [self.registerBtn setTitleColor:[GosCommon sharedInstance].buttonTextColor forState:UIControlStateNormal];
     [self.registerBtn.layer setCornerRadius:22.0];
     self.automaticallyAdjustsScrollViewInsets = false;
+    
+#if USE_UMENG
+    [MobClick event:@"login_btn_regsiter"];
+#endif
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -139,10 +147,6 @@
     }
     if ([self.passwordCell.textPassword.text isEqualToString:@""]) {
         [common showAlert:NSLocalizedString(@"please input password", nil) disappear:YES];
-        return;
-    }
-    if (self.passwordCell.textPassword.text.length < 6) {
-        [common showAlert:NSLocalizedString(@"The password must be at least six characters", nil) disappear:YES];
         return;
     }
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];

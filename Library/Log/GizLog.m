@@ -13,6 +13,17 @@
 #include <arpa/inet.h>
 #include <netinet/ip.h>
 #include <sys/socket.h>
+#include <netinet/tcp.h>
+
+#include "ssl.h"
+#include "err.h"
+#include "rand.h"
+
+typedef struct _sslConnection_st {
+    int fd;
+    SSL *handle;
+    SSL_CTX *context;
+} sslConnection_st;
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,69 +48,12 @@ typedef struct _ICMPPHead_t {
 } ICMPPHead_t;
 
 static GizLog_t gGizLog = { 3 };   //默认打印error+debug+data+busi
-static char gInitedGizLogMutex = 0; //是否初始化过日志锁
-static pthread_mutex_t gMutexGizLog; //加锁防止多线程同时修改GizLog造成异常
 static char gTimeStr[32] = { 0 };  //时间格式化输出字符串
 static char gSysInfoLogBuf[LOG_MAX_LEN] = { 0 }; //缓存系统信息，每创建一个新文件时存入文件首行供排查问题用
-static const char *gGizLogVersion = "1.0.0.16011500"; //GizWits日志版本号
-
-static void mutexLock(void)
-{
-    pthread_mutex_lock(&gMutexGizLog);
-}
-
-static void mutexUnlock(void)
-{
-    pthread_mutex_unlock(&gMutexGizLog);
-}
-
-static int writen(int fd, const void *buf, size_t n)
-{
-    int nwritten;
-    size_t nleft;
-    const char *ptr;
-    
-    ptr = (const char *) buf;
-    nleft = n;
-    while (nleft > 0) {
-        if ((nwritten = (int)send(fd, ptr, nleft, 0)) <= 0) {
-            if (nwritten < 0 && errno == EINTR)
-                nwritten = 0;
-            else
-                return (-1);
-        }
-        nleft -= nwritten;
-        ptr += nwritten;
-    }
-    
-    return (int)n;
-}
-
-static int readn(int fd, void *buf, size_t n)
-{
-    char *ptr;
-    int nread;
-    size_t nleft;
-    
-    ptr = (char *) buf;
-    nleft = n;
-    while (nleft > 0) {
-        if ((nread = (int)recv(fd, ptr, nleft, 0)) < 0) {
-            if (EINTR == errno)
-                nread = 0;
-            else
-                
-                return -1;
-        } else if (nread == 0) {
-            break;
-        }
-        
-        nleft -= nread;
-        ptr += nread;
-    }
-    
-    return (int)(n - nleft);
-}
+static char gInitedGizLogMutex = 0; //是否初始化过日志锁
+static char gUploadedTheInitLog = 0; //是否上传过初始日志(程序启动前就已经存在的日志)
+static pthread_mutex_t gMutexGizLog; //加锁防止多线程同时修改GizLog造成异常
+static const char *gGizLogVersion = "2.1.0.16120219"; //GizWits日志版本号
 
 static int setSockTime(int fd, int readSec, int writeSec)
 {
@@ -154,6 +108,9 @@ static void getIPByDomain(const char *domain, char ip[LOG_IP_BUF_LENGTH])
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_protocol = IPPROTO_TCP;
+#ifndef __ANDROID__
+    hints.ai_flags = AI_ADDRCONFIG | AI_V4MAPPED;
+#endif
     
     gettimeofday(&start, NULL);
     error = getaddrinfo(domain, 0, &hints, &result);
@@ -166,6 +123,12 @@ static void getIPByDomain(const char *domain, char ip[LOG_IP_BUF_LENGTH])
                 inet_ntop(AF_INET, &((struct sockaddr_in *)pAddrInfo->ai_addr)->sin_addr, ip, LOG_IP_BUF_LENGTH);
                 break;
             }
+#ifndef __ANDROID__
+            else if (AF_INET6 == pAddrInfo->ai_family) {
+                inet_ntop(AF_INET6, &((struct sockaddr_in6 *)pAddrInfo->ai_addr)->sin6_addr, ip, LOG_IP_BUF_LENGTH);
+                break;
+            }
+#endif
             
             pAddrInfo = pAddrInfo->ai_next;
         }
@@ -435,68 +398,212 @@ static void pingBaiduAsync(void)
     }
 }
 
+static int sslWriten(SSL *sslHandle, const void *buf, size_t n)
+{
+    size_t nleft;
+    ssize_t nwritten;
+    const char *ptr;
+    
+    if (!sslHandle) return -1;
+    
+    ptr = (const char *)buf;
+    nleft = n;
+    while (nleft > 0) {
+        if ((nwritten = SSL_write(sslHandle, ptr, (int)nleft)) <= 0) {
+            if (nwritten < 0 && errno == EINTR)
+                nwritten = 0;
+            else
+                return (-1);
+        }
+        nleft -= nwritten;
+        ptr += nwritten;
+    }
+    
+    return (int)n;
+}
+
+static int sslReadn(SSL *sslHandle, void *buf, size_t n)
+{
+    size_t nleft;
+    ssize_t nread;
+    char *ptr;
+    
+    ptr = (char *) buf;
+    nleft = n;
+    while (nleft > 0) {
+        if ((nread = SSL_read(sslHandle, ptr, (int)nleft)) < 0) {
+            if (EINTR == errno)
+                nread = 0;
+            else
+                return -1;
+        } else if (nread == 0) {
+            break;
+        }
+        
+        nleft -= nread;
+        ptr += nread;
+    }
+    
+    return (int)(n - nleft);
+}
+
 static int connectByIPPort(const char *ip, int port, int timeoutSec)
 {
     int fd = 0;
     int yes = 1;
+    int error = 0;
+    char portStr[16] = { 0 };
     struct timeval end;
     struct timeval start;
-    struct sockaddr_in addr;
+    struct addrinfo hints;
+    struct addrinfo *pAddr = NULL;
     
-    if (!ip || !ip[0] || port <= 0) {
-        GIZ_LOG_ERROR("Invalid parameter, ip %s, port %d", ip, port);
+    if (!ip || !ip[0] || port <= 0) return -1;
+    
+    //兼容IPv4跟IPv6
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_protocol = IPPROTO_TCP;
+#ifndef __ANDROID__
+    hints.ai_flags = AI_ADDRCONFIG | AI_V4MAPPED;
+#endif
+    snprintf(portStr, sizeof(portStr), "%d", port);
+    error = getaddrinfo(ip, portStr, &hints, &pAddr);
+    if (error) {
+        GIZ_LOG_ERROR("getaddrinfo failed, return %d: %s",
+                      error, gai_strerror(error));
+        freeaddrinfo(pAddr);
         return -1;
     }
     
-    memset(&addr, 0, sizeof(addr));
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = inet_addr(ip);
-    addr.sin_port = htons(port);
-    
-    fd = socket(AF_INET, SOCK_STREAM, 0);
+    fd = socket(pAddr->ai_family, pAddr->ai_socktype, pAddr->ai_protocol);
     if (fd <= 0) {
-        GIZ_LOG_ERROR("new a socket failed errno %d: %s", errno, strerror(errno));
-        return -1;
+        
+        GIZ_LOG_ERROR("create socket for family %d failed, errno %d: %s",
+                      pAddr->ai_family, errno, strerror(errno));
+        freeaddrinfo(pAddr);
+        return -2;
     }
     
     //允许端口复用
     if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (const char *)&yes, sizeof(int))) {
         GIZ_LOG_ERROR("setsockopt<SO_REUSEADDR> errno %d: %s", errno, strerror(errno));
         GIZ_CLOSE(fd);
-        return -2;
+        freeaddrinfo(pAddr);
+        return -3;
     }
+    
+#ifdef __APPLE__
+    //设置TCP连接超时时间(iOS系统支持设置该套接字选项)
+    if (setsockopt(fd, IPPROTO_TCP, TCP_CONNECTIONTIMEOUT, &timeoutSec, sizeof(timeoutSec))) {
+        GIZ_LOG_ERROR("setsockopt<TCP_CONNECTIONTIMEOUT> errno %d: %s", errno, strerror(errno));
+        GIZ_CLOSE(fd);
+        freeaddrinfo(pAddr);
+        return -4;
+    }
+#endif
     
     if (setSockTime(fd, timeoutSec, timeoutSec)) {
         GIZ_LOG_ERROR("setSockTime failed errno %d: %s", errno, strerror(errno));
         GIZ_CLOSE(fd);
-        return -3;
+        freeaddrinfo(pAddr);
+        return -5;
     }
     
     gettimeofday(&start, NULL);
-    if (connect(fd, (struct sockaddr*) &addr, sizeof(struct sockaddr_in))) {
+    if (connect(fd, pAddr->ai_addr, pAddr->ai_addrlen)) {
         gettimeofday(&end, NULL);
-        GIZ_LOG_ERROR("connect to %s, port %d failed errno %d: %s, elapsed %.6fs",
+        GIZ_LOG_ERROR("connect to %s port %d failed errno %d: %s, elapsed %.6fs",
                       ip, port, errno, strerror(errno), getDiffTime(start, end));
-        GIZ_CLOSE(fd);
-        
         if (ETIMEDOUT == errno) {
             pingBaiduAsync();
         }
-        
-        return -4;
+        GIZ_CLOSE(fd);
+        freeaddrinfo(pAddr);
+        return -6;
     } else {
         gettimeofday(&end, NULL);
-        GIZ_LOG_DEBUG("connect to %s, port %d success, fd %d, elapsed %.6fs",
+        GIZ_LOG_DEBUG("connect to %s port %d success, fd %d, elapsed %.6fs",
                       ip, port, fd, getDiffTime(start, end));
+        freeaddrinfo(pAddr);
+        return fd;
     }
-    
-    return fd;
 }
 
-static char *httpPost(const char *domain, int port, int timeoutSec, const char *dest, const char *headCustom,
-                      const char *content, int *answerLen, int *responseCode)
+static void sslConnectionFree(sslConnection_st *sslConnection)
+{
+    if (!sslConnection) return;
+    
+    if (sslConnection->handle) {
+        SSL_shutdown(sslConnection->handle);
+        SSL_free(sslConnection->handle);
+    }
+    if (sslConnection->context) {
+        SSL_CTX_free(sslConnection->context);
+    }
+    if (sslConnection->fd > 0) {
+        GIZ_CLOSE(sslConnection->fd);
+    }
+    
+    free(sslConnection);
+}
+
+static sslConnection_st *sslConnectByIPPort(const char *ip, int port, int timeoutSec)
 {
     int fd = 0;
+    int failedFlag = 1;
+    sslConnection_st *sslConnection = NULL;
+    
+    sslConnection = (sslConnection_st *)malloc(sizeof(sslConnection_st));
+    if (sslConnection) {
+        memset(sslConnection, 0, sizeof(sslConnection_st));
+        // Register the available ciphers and digests
+        SSL_library_init ();
+        
+        // New context saying we are a client, and using TLSv1.2
+        sslConnection->context = SSL_CTX_new(TLSv1_2_client_method());
+        if (sslConnection->context) {
+            // Create an SSL struct for the connection
+            sslConnection->handle = SSL_new(sslConnection->context);
+            if (sslConnection->handle) {
+                fd = connectByIPPort(ip, port, timeoutSec);
+                if (fd > 0) {
+                    sslConnection->fd = fd;
+                    // Connect the SSL struct to our connection
+                    if (1 == SSL_set_fd(sslConnection->handle, fd)) {
+                        // Initiate SSL handshake
+                        if (1 == SSL_connect(sslConnection->handle)) {
+                            failedFlag = 0;
+                        } else {
+                            GIZ_LOG_ERROR("SSL handshake, SSL_connect failed, %s", strerror(errno));
+                        }
+                    }
+                } else {
+                    GIZ_LOG_ERROR("connectByIPPort %s:%d failed, return %d, errno %d, %s",
+                                  ip, port, fd, errno, strerror(errno));
+                    if (ETIMEDOUT == errno) {
+                        pingBaiduAsync();
+                    }
+                }
+            }
+        }
+        
+        if (failedFlag) {
+            sslConnectionFree(sslConnection);
+            sslConnection = NULL;
+        }
+    } else {
+        GIZ_LOG_ERROR("malloc a %lu bytes of space failed, errno %d: %s",
+                      sizeof(sslConnection_st), errno, strerror(errno));
+    }
+    
+    return sslConnection;
+}
+
+static char *httpsPost(const char *domain, int port, int timeoutSec, const char *dest, const char *headCustom,
+                       const char *content, int *answerLen, int *responseCode)
+{
     int iRet = 0;
     int iLen = 0;
     int index = 0;
@@ -507,6 +614,7 @@ static char *httpPost(const char *domain, int port, int timeoutSec, const char *
     char *pEnd = NULL;
     char *answer = NULL;
     char *pStart = NULL;
+    sslConnection_st *sslConnection = NULL;
     char ip[LOG_IP_BUF_LENGTH + 1] = { 0 };
     char buf[LOG_SEND_BUF_LENGTH + 1] = { 0 };
     
@@ -535,51 +643,49 @@ static char *httpPost(const char *domain, int port, int timeoutSec, const char *
         GIZ_LOG_ERROR("getIPByDomain failed, domain:%s", domain);
     } else {
         //通过IP，端口创建限时的TCP套接字
-        fd = connectByIPPort(ip, port, timeoutSec);
-        if (fd > 0) {
+        sslConnection = sslConnectByIPPort(ip, port, timeoutSec);
+        if (sslConnection) {
             //发送请求数据
-            iRet = writen(fd, buf, headLen);
+            iRet = sslWriten(sslConnection->handle, buf, headLen);
             if (iRet != headLen) {
-                GIZ_LOG_ERROR("writen to fd %d failed, expect %d, return %d, errno %d: %s",
-                              fd, headLen, iRet, errno, strerror(errno));
+                GIZ_LOG_ERROR("sslWriten to fd %d failed, expect %d, return %d, errno %d: %s",
+                              sslConnection->fd, headLen, iRet, errno, strerror(errno));
             } else {
-                iRet = writen(fd, content ? content : "", contentLen);
+                GIZ_LOG_DEBUG("sslWriten HTTPS head to %s:%d success: %s", domain, port, buf);
+                iRet = sslWriten(sslConnection->handle, content ? content : "", contentLen);
                 if (iRet != contentLen) {
-                    GIZ_LOG_ERROR("writen to fd %d failed, expect %d, return %d, errno %d: %s",
-                                  fd, contentLen, iRet, errno, strerror(errno));
+                    GIZ_LOG_ERROR("sslWriten to fd %d failed, expect %d, return %d, errno %d: %s",
+                                  sslConnection->fd, contentLen, iRet, errno, strerror(errno));
                 } else {
-                    memset(buf, 0, sizeof(buf));
-                    headLen = 0;
+                    GIZ_LOG_DEBUG("sslWriten https body:%s", content ? content : "");
                     
                     //读取完整的HTTP返回包数据
-                    while (!strstr(buf, "\r\n\r\n")) {
-                        iRet = (int)recv(fd, buf + headLen, sizeof(buf) - headLen - 1, 0);
-                        headLen += iRet;
-                        if (iRet <= 0 || headLen >= sizeof(buf) - 1) {
-                            break;
-                        }
-                    }
+                    memset(buf, 0, sizeof(buf));
+                    while ((iRet = sslReadn(sslConnection->handle, buf + index, 1)) > 0 &&
+                           !strstr(buf, "\r\n\r\n") && ++index < sizeof(buf));
                     
                     //解析收到的数据包
                     if (iRet > 0) {
-                        //取到HTTP回复的状态码
+                        GIZ_LOG_DEBUG("https response:\n%s", buf);
+                        
+                        //取到HTTPS回复的状态码
                         pStart = strstr(buf, " ");
                         pEnd = strstr(++pStart, " ");
                         if (pEnd) {
                             pEnd[0] = '\0';
                         }
                         *responseCode = atoi(pStart);
-                        if  (pEnd) {
+                        if (pEnd) {
                             pEnd[0] = ' ';
                         }
                         
                         //Content-Length方式解析HTTP包体长度
-                        pStart = strstr(buf, "Content-Length:");
+                        pStart = strcasestr(buf, "Content-Length:");
                         if (pStart) {
                             pEnd = strstr(pStart, "\r\n");
                             if (pEnd) {
                                 pEnd[0] = '\0';
-                                iLen = atoi(pStart + strlen("Content-Length:"));
+                                *answerLen = atoi(pStart + strlen("Content-Length:"));
                                 pEnd[0] = '\r';
                                 pEnd = strstr(pEnd, "\r\n\r\n");
                                 if (pEnd) {
@@ -588,99 +694,101 @@ static char *httpPost(const char *domain, int port, int timeoutSec, const char *
                             }
                         }
                         
-                        //Transfer-Encoding方式解析HTTP包体长度（只考虑chunked size指定整个包体长度的情况，即不考虑分包）
-                        pStart = strstr(buf, "Transfer-Encoding:");
+                        //Transfer-Encoding方式解析HTTP包体长度
+                        pStart = strcasestr(buf, "Transfer-Encoding:");
                         if (pStart) {
                             isTransferEncoding = 1;
                             pEnd = strstr(pStart, "\r\n\r\n");
-                            if (pEnd) {
-                                pStart = pEnd + strlen("\r\n\r\n");
-                                pEnd = strstr(pStart, "\r\n");
-                                if (pEnd) {
+                        }
+                    } else {
+                        GIZ_LOG_ERROR("sslReadn failed, return %d, errno %d: %s",
+                                      iRet, errno, strerror(errno));
+                    }
+                    
+                    //读取并解析正文数据
+                    if (pEnd) {
+                        if (isTransferEncoding) {
+                            //初始化
+                            index = 0;
+                            memset(buf, 0, sizeof(buf));
+                            while (index < sizeof(buf) && sslReadn(sslConnection->handle, buf + index, 1) > 0) {
+                                ++index;
+                                
+                                if ((pEnd = strstr(buf + 1, "\r\n"))) {
                                     pEnd[0] = '\0';
-                                    //chuncked size为16进制字符串表示
-                                    sscanf(pStart, "%x", &iLen);
-                                    pEnd += strlen("\r\n");
+                                    if (remainLength) {
+                                        //如果是后续ChunckedSize字段,则偏移"\r\n"到下一包的长度部分
+                                        sscanf(buf + strlen("\r\n"), "%x", &remainLength);
+                                    } else {
+                                        //如果是首个ChunckedSize字段,则无须偏移直接是包长部分
+                                        sscanf(buf, "%x", &remainLength);
+                                    }
+                                    pEnd[0] = '\r';
+                                    if (remainLength < 0) {
+                                        GIZ_LOG_ERROR("invalid http ChunckedSize:%d", remainLength);
+                                        if (answer) free(answer);
+                                        answer = NULL;
+                                        break; //ChunckedSize长度非法视为HTTP应答参数错误,放弃数据,退出循环
+                                    } else if (!remainLength) {
+                                        //后续包长度为0视为结束,读掉\r\n再退出循环
+                                        sslReadn(sslConnection->handle, buf + index, strlen("\r\n"));
+                                        break;
+                                    }
+                                    
+                                    *answerLen += remainLength;
+                                    GIZ_LOG_DEBUG("https ChunckedSize:%d, sumSize:%d", remainLength, *answerLen);
+                                    answer = (char *)realloc(answer, *answerLen + 1);
+                                    if (answer) {
+                                        answer[*answerLen] = '\0';
+                                        iRet = sslReadn(sslConnection->handle, answer + *answerLen - remainLength, remainLength);
+                                        if (iRet != remainLength) {
+                                            GIZ_LOG_ERROR("sslReadn return %d, expect %d, errno %d: %s",
+                                                          iRet, remainLength, errno, strerror(errno));
+                                            free(answer);
+                                            answer = NULL;
+                                            break;
+                                        }
+                                    } else {
+                                        GIZ_LOG_ERROR("realloc a size of %d space failed, errno %d: %s",
+                                                      *answerLen + 1, errno, strerror(errno));
+                                        break;
+                                    }
+                                    
+                                    index = 0;
+                                    memset(buf, 0, sizeof(buf));
+                                }
+                            }
+                        } else {
+                            if (*answerLen > 0) {
+                                GIZ_LOG_DEBUG("https Content-Length:%d", *answerLen);
+                                answer = (char *) malloc(*answerLen + 1);
+                                if (answer) {
+                                    answer[*answerLen] = '\0';
+                                    iRet = sslReadn(sslConnection->handle, answer, *answerLen);
+                                    if (iRet != *answerLen) {
+                                        free(answer);
+                                        answer = NULL;
+                                        GIZ_LOG_ERROR("sslReadn return %d, expect %d, errno %d: %s",
+                                                      iRet, *answerLen, errno, strerror(errno));
+                                    }
+                                } else {
+                                    GIZ_LOG_ERROR("malloc a size of %d space failed, errno %d: %s",
+                                                  *answerLen + 1, errno, strerror(errno));
                                 }
                             }
                         }
                     } else {
-                        GIZ_LOG_ERROR("read failed, return %d, errno %d: %s", iRet, errno, strerror(errno));
-                    }
-                    
-                    //解析正文数据
-                    if (iLen > 0 && pEnd) {
-                        GIZ_LOG_DEBUG("Http Content-Length or first ChunckedSize: %d", iLen);
-                        *answerLen = iLen;
-                        remainLength = (int)(iLen - (headLen - (pEnd - buf)));
-                        answer = (char *) malloc(iLen + 1);
-                        if (answer) {
-                            memset(answer, 0, iLen + 1);
-                            if (remainLength > 0) {
-                                memcpy(answer, pEnd, headLen - (pEnd - buf));
-                                iRet = readn(fd, answer + headLen - (pEnd - buf), remainLength);
-                                if (iRet != remainLength) {
-                                    free(answer);
-                                    answer = NULL;
-                                    GIZ_LOG_ERROR("readn return %d, expect %d, errno %d: %s",
-                                                  iRet, remainLength, errno, strerror(errno));
-                                } else {
-                                    if (isTransferEncoding) {
-                                        //循环读取Transfer-Encoding方式传输的后续分包
-                                        memset(buf, 0, sizeof(buf));
-                                        while (index < sizeof(buf) && 1 == readn(fd, buf + index, 1)) {
-                                            ++index;
-                                            
-                                            if ((pEnd = strstr(buf + 1, "\r\n"))) {
-                                                pEnd[0] = '\0';
-                                                //偏移"\r\n"到下一包的长度部分
-                                                sscanf(buf + strlen("\r\n"), "%x", &remainLength);
-                                                if (remainLength <= 0) {
-                                                    break;
-                                                }
-                                                
-                                                *answerLen += remainLength;
-                                                answer = (char *)realloc(answer, iLen + remainLength + 1);
-                                                if (answer) {
-                                                    answer[iLen + remainLength] = '\0';
-                                                    iRet = readn(fd, answer + iLen, remainLength);
-                                                    if (iRet != remainLength) {
-                                                        GIZ_LOG_ERROR("readn return %d, expect %d, errno %d: %s",
-                                                                      iRet, remainLength, errno, strerror(errno));
-                                                        free(answer);
-                                                        answer = NULL;
-                                                        break;
-                                                    } else {
-                                                        iLen += remainLength;
-                                                    }
-                                                } else {
-                                                    GIZ_LOG_ERROR("realloc a size of %d space failed, errno %d: %s",
-                                                                  iLen + remainLength + 1, errno, strerror(errno));
-                                                    break;
-                                                }
-                                                
-                                                index = 0;
-                                                memset(buf, 0, sizeof(buf));
-                                            }
-                                        }
-                                    }
-                                }
-                            } else {
-                                //remainLength小于或等于0意味着一次性读完了所有HTTP包体
-                                //iRet - (pEnd - buf)会大于或等于answser空间长度，直接拷贝iLen长度才行
-                                memcpy(answer, pEnd, iLen);
-                            }
-                        } else {
-                            GIZ_LOG_ERROR("malloc a size of %d space failed, errno %d: %s",
-                                          iLen + 1, errno, strerror(errno));
+                        if (iRet > 0) {
+                            GIZ_LOG_ERROR("response invalid https head: %s", buf);
                         }
                     }
                 }
             }
             
-            GIZ_CLOSE(fd);
+            sslConnectionFree(sslConnection);
         } else {
-            GIZ_LOG_ERROR("connectByIPPort %s:%d failed, return %d", ip, port, fd);
+            GIZ_LOG_ERROR("sslConnectByIPPort %s:%d failed, errno %d, %s",
+                          ip, port, errno, strerror(errno));
         }
     }
     
@@ -691,12 +799,282 @@ static char *httpPost(const char *domain, int port, int timeoutSec, const char *
     return answer;
 }
 
+static void mkdirs(const char *dirs)
+{
+    int i = 0;
+    int len = 0;
+    char path[LOG_MAX_PATH_LEN + 1] = { 0 };
+    
+    if (!dirs) return;
+    
+    strncpy(path, dirs, sizeof(path) - 1);
+    len = (int)strlen(dirs);
+    
+    for(i = 0; i < len; ++i) {
+        if('/' == path[i]) {
+            path[i] = '\0';
+            if (access(path, 0)) {
+                mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+            }
+            path[i] = '/';
+        }
+    }
+    
+    if(len > 0 && access(path, 0)) {
+        mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    }
+}
+
+static const char *printSysInfo(const char *fileName, int fileLine, const char *function)
+{
+    snprintf(gSysInfoLogBuf, sizeof(gSysInfoLogBuf), "[APPSYS][DEBUG][%s][%s:%d %s][GizLog Version:%s, sysInfoJson:%s]",
+             GizTimeStr(), __FILENAME__, __LINE__, __FUNCTION__, gGizLogVersion, gGizLog.sysInfoJson);
+    
+    return gSysInfoLogBuf;
+}
+
+static char *getFileContentByPath(const char *path)
+{
+    FILE *file = NULL;
+    char *fileContent = NULL;
+    struct stat fileStat = { 0 };
+    
+    if (!stat(path, &fileStat)) {
+        file = fopen(path, "r");
+        if (file) {
+            fileContent = (char *)malloc((size_t)fileStat.st_size + 1);
+            if (fileContent) {
+                fread(fileContent, 1, (size_t)fileStat.st_size, file);
+                fileContent[fileStat.st_size] = 0;
+            } else {
+                GIZ_LOG_ERROR("malloc %d bytes space filed, errno %d: %s",
+                                       fileStat.st_size + 1, errno, strerror(errno));
+            }
+            
+            fclose(file);
+        }
+    }
+    
+    return fileContent;
+}
+
+static int listenFileForUploadByPath(const char *path)
+{
+    int answerLen = 0;
+    int httpBodyLen = 0;
+    int responseCode = 0;
+    char *answer = NULL;
+    char *httpBody = NULL;
+    char *fileContent = NULL;
+    char httpHeadCustom[LOG_SEND_BUF_LENGTH] = { 0 };
+    
+    fileContent = getFileContentByPath(path);
+    if (fileContent) {
+        snprintf(httpHeadCustom, sizeof(httpHeadCustom),
+                 "X-Gizwits-Application-Id: %s\r\n"
+                 "X-Gizwits-User-token: %s\r\n"
+                 "Content-Type: multipart/form-data; boundary=%s\r\n",
+                 gGizLog.appID, gGizLog.token, LOG_HTTP_BOUNDARY);
+        httpBodyLen = (int)strlen(fileContent) + 1024; //填充boundary部分新增1K足够
+        httpBody = (char *)malloc(httpBodyLen);
+        if (httpBody) {
+            snprintf(httpBody, httpBodyLen, "--%s\r\n"
+                     "Content-Disposition: form-data; name=\"logfile\"; filename=\"GizLogFile.old\"\r\n"
+                     "Content-Type: application/octet-stream\r\n\r\n"
+                     "%s"
+                     "\r\n"
+                     "--%s--\r\n",
+                     LOG_HTTP_BOUNDARY, fileContent, LOG_HTTP_BOUNDARY);
+            
+            answer = httpsPost(gGizLog.domain, gGizLog.sslPort, LOG_HTTP_TIMEOUT,
+                               "/app/logging", httpHeadCustom, httpBody, &answerLen, &responseCode);
+            //打印结果
+            GIZ_LOG_DEBUG("Upload Log HTTPS responseCode:%d, body:%s, upload file:%s",
+                          responseCode, answer, path);
+            
+            if (answer) free(answer);
+            free(httpBody);
+        } else {
+            GIZ_LOG_ERROR("malloc %d bytes space filed, errno %d: %s",
+                          httpBodyLen, errno, strerror(errno));
+        }
+        
+        free(fileContent);
+    }
+    
+    return responseCode;
+}
+
+static void logRenameSys(void)
+{
+    char curPath[LOG_MAX_PATH_LEN] = { 0 };
+    char oldPath[LOG_MAX_PATH_LEN] = { 0 };
+    
+    //处理系统日志文件
+    if (gGizLog.fileSys) fclose(gGizLog.fileSys);
+    snprintf(curPath, sizeof(curPath), "%s%s.sys", gGizLog.dir, LOG_FILE_NAME);
+    snprintf(oldPath, sizeof(oldPath), "%s.old", curPath);
+    remove(oldPath);  //先删除旧的日志文件
+    rename(curPath, oldPath);  //再将当前日志文件重命名为老的日志文件
+    gGizLog.fileSys = fopen(curPath, "a+");  //新建文件存储新日志
+    if (gGizLog.fileSys) {
+        gGizLog.latestCreatSysLogTimestamp = time(NULL);
+        fprintf(gGizLog.fileSys, "%s\n", printSysInfo(__FILENAME__, __LINE__, __FUNCTION__));
+        fflush(gGizLog.fileSys);
+    }
+}
+
+static void logRenameBiz(void)
+{
+    struct stat statBuf;
+    char curPath[LOG_MAX_PATH_LEN] = { 0 };
+    char oldPath[LOG_MAX_PATH_LEN] = { 0 };
+    
+    //处理业务日志文件
+    if (gGizLog.fileBiz) fclose(gGizLog.fileBiz);
+    snprintf(curPath, sizeof(curPath), "%s%s.biz", gGizLog.dir, LOG_FILE_NAME);
+    snprintf(oldPath, sizeof(oldPath), "%s.old", curPath);
+    //非空业务日志文件才需要重命名待上传
+    stat(curPath, &statBuf);
+    if (statBuf.st_size > 0) {
+        remove(oldPath);  //先删除旧的日志文件
+        rename(curPath, oldPath);  //再将当前日志文件重命名为老的日志文件
+    }
+    gGizLog.fileBiz = fopen(curPath, "a+");  //新建文件存储新日志
+    if (gGizLog.fileBiz) {
+        gGizLog.latestCreatBizLogTimestamp = time(NULL);
+    }
+}
+
+static void renameOldToUploaded(const char *oldPath)
+{
+    char uploadPath[LOG_MAX_PATH_LEN] = { 0 };
+    
+    snprintf(uploadPath, sizeof(uploadPath), "%s.uploaded", oldPath);
+    remove(uploadPath);  //先删除旧的.old.uploaded文件
+    rename(oldPath, uploadPath);  //再将.old文件重命名为.old.uploaded文件
+}
+
+static void mergeOldToUploadedBizLog(const char *oldPath)
+{
+    int oldFileSize = 0;
+    FILE *uploadFile = NULL;
+    char *oldFileContent = NULL;
+    struct stat fileStat = { 0 };
+    char uploadPath[LOG_MAX_PATH_LEN] = { 0 };
+    
+    //读取刚上传的旧文件内容
+    oldFileContent = getFileContentByPath(oldPath);
+    remove(oldPath); //读取完内容后可删除
+    if (oldFileContent) {
+        oldFileSize = (int)strlen(oldFileContent);
+    } else {
+        return;
+    }
+    
+    //判断已上传文件大小是否超标并将其打开
+    snprintf(uploadPath, sizeof(uploadPath), "%s.uploaded", oldPath);
+    if (!stat(uploadPath, &fileStat)) {
+        
+        if (fileStat.st_size >= LOG_MAX_UPLOADED_FILE_SIZE) {
+            remove(uploadPath);
+        }
+    }
+    uploadFile = fopen(uploadPath, "a+");
+    
+    if (uploadFile) {
+        //将刚上传文件内容追加到已上传文件中去
+        fwrite(oldFileContent, 1, oldFileSize, uploadFile);
+        fflush(uploadFile);
+        fclose(uploadFile);
+    }
+    
+    free(oldFileContent);
+}
+
+static void mergeUnuploadOldAndNewBizLog(const char *oldPath)
+{
+    int oldFileSize = 0;
+    char *oldFileContent = NULL;
+    
+    //读取待重传的旧文件内容
+    oldFileContent = getFileContentByPath(oldPath);
+    if (oldFileContent) {
+        oldFileSize = (int)strlen(oldFileContent);
+    } else {
+        return;
+    }
+    
+    pthread_mutex_lock(&gMutexGizLog);
+    //将旧文件内容插入新文件头
+    if (gGizLog.fileBiz) {
+        fseek(gGizLog.fileBiz, 0L, SEEK_SET); //偏移到文件头
+        fwrite(oldFileContent, 1, oldFileSize, gGizLog.fileBiz);
+        fflush(gGizLog.fileBiz);
+        fseek(gGizLog.fileBiz, 0L, SEEK_END); //偏移到文件尾
+    }
+    pthread_mutex_unlock(&gMutexGizLog);
+    
+    free(oldFileContent);
+}
+
+static void *threadUpload(void *argv)
+{
+    char oldPath[LOG_MAX_PATH_LEN] = { 0 };
+    
+    signal(SIGPIPE, SIG_IGN);
+    pthread_detach(pthread_self());
+    
+    //需要上传则一直上传日志
+    while (1) {
+        //APPID非空方能上传
+        if (gGizLog.appID[0]) {
+            if (!gUploadedTheInitLog ||
+                (gGizLog.latestCreatSysLogTimestamp && gGizLog.uploadSystemLog &&
+                 time(NULL) - gGizLog.latestCreatSysLogTimestamp > LOG_MAX_RENAME_SYS_TIME)) {
+                    pthread_mutex_lock(&gMutexGizLog);
+                    logRenameSys();
+                    pthread_mutex_unlock(&gMutexGizLog);
+                }
+            if (!gUploadedTheInitLog ||
+                (gGizLog.latestCreatBizLogTimestamp && gGizLog.uploadBusinessLog &&
+                 time(NULL) - gGizLog.latestCreatBizLogTimestamp > LOG_MAX_RENAME_BIZ_TIME)) {
+                    pthread_mutex_lock(&gMutexGizLog);
+                    logRenameBiz();
+                    pthread_mutex_unlock(&gMutexGizLog);
+                }
+            gUploadedTheInitLog = 1;
+            
+            if (gGizLog.uploadBusinessLog) {
+                snprintf(oldPath, sizeof(oldPath), "%s%s.biz.old", gGizLog.dir, LOG_FILE_NAME);
+                if (listenFileForUploadByPath(oldPath)) {
+                    mergeOldToUploadedBizLog(oldPath);
+                } else {
+                    mergeUnuploadOldAndNewBizLog(oldPath);
+                    remove(oldPath);
+                }
+            }
+            
+            if (gGizLog.uploadSystemLog) {
+                snprintf(oldPath, sizeof(oldPath), "%s%s.sys.old", gGizLog.dir, LOG_FILE_NAME);
+                if (listenFileForUploadByPath(oldPath)) {
+                    renameOldToUploaded(oldPath);
+                }
+            }
+        }
+        
+        sleep(1);
+    }
+    
+    return NULL;
+}
+
 /**
  * @brief 日志初始化.
  * @param[in] sysInfoJson- 系统信息(Json字符串，例:{"phone_id":"AE27466D-9C8F-4184-A6A3-2A0CDEDAA4FD","os":"iOS","os_ver":"9.2","app_version":"1.5.1","phone_model":"iPhone 6 (A1549/A1586)"}).
  * @param[in] logDir- 存储日志目录的路径(推荐采用程序私有目录,例:/var/mobile/Containers/Data/Application/1D7A5CD8-70D2-4B46-A76A-8B9BE5CBC88C/Documents").
  * @param[in] printLevel- 日志打印到屏幕的级别(0:不打印屏幕,1:打印error+busi,2:打印error+debug+busi).
- * @return 返回日志初始化结果,0:成功,1:sysInfoJson非法,2:logDir指定错误(目录为空、不存在或无法创建文件等),3:printLevel非法.
+ * @return 返回日志初始化结果,0:成功,1:sysInfoJson非法,2:logDir指定错误(目录为空、不存在或无法创建文件等),3:printLevel非法,4:创建日志上传线程失败.
  *
  */
 int GizLogInit(const char *sysInfoJson, const char *logDir, int printLevel)
@@ -714,18 +1092,25 @@ int GizLogInit(const char *sysInfoJson, const char *logDir, int printLevel)
         if (!gInitedGizLogMutex) {
             gInitedGizLogMutex = 1;
             pthread_mutex_init(&gMutexGizLog, NULL);
+            
+            if (createThread(threadUpload, NULL)) {
+                iRet = 4;
+            }
         }
-        if (logDir[strlen(logDir) - 1] != '/') {
-            snprintf(addFolderLogDir, sizeof(addFolderLogDir), "%s/GizLogFolder/", logDir);
-        } else {
-            snprintf(addFolderLogDir, sizeof(addFolderLogDir), "%sGizLogFolder/", logDir);
+        
+        if (0 == iRet) {
+            if (logDir[strlen(logDir) - 1] != '/') {
+                snprintf(addFolderLogDir, sizeof(addFolderLogDir), "%s/GizLog/", logDir);
+            } else {
+                snprintf(addFolderLogDir, sizeof(addFolderLogDir), "%sGizLog/", logDir);
+            }
+            mkdirs(addFolderLogDir);
+            if (access(addFolderLogDir, 0)) iRet = 2;
         }
-        if (access(addFolderLogDir, 0)) mkdir(addFolderLogDir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-        if (access(addFolderLogDir, 0)) iRet = 2;
     }
     
     if (0 == iRet) {
-        mutexLock();
+        pthread_mutex_lock(&gMutexGizLog);
         
         if (gGizLog.fileBiz) {
             fclose(gGizLog.fileBiz);  //重新设置日志参数统一先关闭已打开的业务日志文件
@@ -744,16 +1129,16 @@ int GizLogInit(const char *sysInfoJson, const char *logDir, int printLevel)
         
         snprintf(curPath, sizeof(curPath), "%s%s.biz", addFolderLogDir, LOG_FILE_NAME);
         //a：以写的方式打开业务日志文件，如果业务日志文件不存在则创建，如果存在则将新内容追加到文件末端
-        gGizLog.fileBiz = fopen(curPath, "a");
+        gGizLog.fileBiz = fopen(curPath, "a+");
         if (NULL == gGizLog.fileBiz) {
             //创建业务日志文件失败尝试使用上次的路径
             if (gGizLog.dir[0]) {
                 snprintf(curPath, sizeof(curPath), "%s%s.biz", gGizLog.dir, LOG_FILE_NAME);
-                gGizLog.fileBiz = fopen(curPath, "a");
+                gGizLog.fileBiz = fopen(curPath, "a+");
                 if (gGizLog.fileBiz) {
                     //a：以写的方式打开系统日志文件，如果系统日志文件不存在则创建，如果存在则将新内容追加到文件末端
                     snprintf(curPath, sizeof(curPath), "%s%s.sys", addFolderLogDir, LOG_FILE_NAME);
-                    gGizLog.fileSys = fopen(curPath, "a");
+                    gGizLog.fileSys = fopen(curPath, "a+");
                     gGizLog.latestCreatSysLogTimestamp = time(NULL);
                     
                     gGizLog.sysInfoJson = (char *)malloc(strlen(sysInfoJson) + 1);
@@ -770,7 +1155,7 @@ int GizLogInit(const char *sysInfoJson, const char *logDir, int printLevel)
         } else {
             //a：以写的方式打开系统日志文件，如果系统日志文件不存在则创建，如果存在则将新内容追加到文件末端
             snprintf(curPath, sizeof(curPath), "%s%s.sys", addFolderLogDir, LOG_FILE_NAME);
-            gGizLog.fileSys = fopen(curPath, "a");
+            gGizLog.fileSys = fopen(curPath, "a+");
             gGizLog.latestCreatSysLogTimestamp = time(NULL);
             
             gGizLog.sysInfoJson = (char *)malloc(strlen(sysInfoJson) + 1);
@@ -783,81 +1168,13 @@ int GizLogInit(const char *sysInfoJson, const char *logDir, int printLevel)
             strncpy(gGizLog.dir, addFolderLogDir, sizeof(gGizLog.dir) - 1);
         }
         
-        mutexUnlock();
-        
-        //记录系统信息
-        if (0 == iRet) {
-            snprintf(gSysInfoLogBuf, sizeof(gSysInfoLogBuf), "[SYS][DEBUG][%s][%s:%d %s][GizLog Version:%s, sysInfoJson:%s]",
-                     GizTimeStr(), __FILENAME__, __LINE__, __FUNCTION__, gGizLogVersion, gGizLog.sysInfoJson);
-            GIZ_LOG_DEBUG("GizLog Version:%s, sysInfoJson:%s", gGizLogVersion, gGizLog.sysInfoJson);
-        }
+        pthread_mutex_unlock(&gMutexGizLog);
     }
+    
+    GIZ_LOG_DEBUG("log init with <sysInfoJson:%s,logDir:%s,printLevel:%d> return %d",
+                           sysInfoJson, logDir, printLevel, iRet);;
     
     return iRet;
-}
-
-static void listenFileForUploadByPath(const char *path)
-{
-    FILE *file = NULL;
-    int answerLen = 0;
-    int httpBodyLen = 0;
-    int responseCode = 0;
-    char *answer = NULL;
-    char *httpBody = NULL;
-    char *fileContent = NULL;
-    struct stat fileStat = { 0 };
-    char httpHeadCustom[LOG_SEND_BUF_LENGTH] = { 0 };
-    
-    if (!stat(path, &fileStat)) {
-        file = fopen(path, "r");
-        if (file) {
-            fileContent = (char *)malloc((size_t)fileStat.st_size + 1);
-            if (fileContent) {
-                fread(fileContent, 1, (size_t)fileStat.st_size, file);
-                fileContent[fileStat.st_size] = 0;
-            } else {
-                GIZ_LOG_ERROR("malloc %d bytes space filed, errno %d: %s",
-                              fileStat.st_size + 1, errno, strerror(errno));
-            }
-            
-            fclose(file);
-        }
-    }
-    
-    if (fileContent) {
-        snprintf(httpHeadCustom, sizeof(httpHeadCustom),
-                 "X-Gizwits-Application-Id: %s\r\n"
-                 "X-Gizwits-User-token: %s\r\n"
-                 "Content-Type: multipart/form-data; boundary=%s\r\n",
-                 gGizLog.appID, gGizLog.token, LOG_HTTP_BOUNDARY);
-        httpBodyLen = (int)strlen(fileContent) + 1024; //填充boundary部分新增1K足够
-        httpBody = (char *)malloc(httpBodyLen);
-        if (httpBody) {
-            snprintf(httpBody, httpBodyLen, "--%s\r\n"
-                     "Content-Disposition: form-data; name=\"logfile\"; filename=\"GizLogFile.old\"\r\n"
-                     "Content-Type: application/octet-stream\r\n\r\n"
-                     "%s"
-                     "\r\n"
-                     "--%s--\r\n",
-                     LOG_HTTP_BOUNDARY, fileContent, LOG_HTTP_BOUNDARY);
-            
-            answer = httpPost(gGizLog.domain, gGizLog.port, LOG_HTTP_TIMEOUT,
-                              "/app/logging", httpHeadCustom, httpBody, &answerLen, &responseCode);
-            //打印结果
-            GIZ_LOG_DEBUG("Upload Log HTTP responseCode:%d, body:%s", responseCode, answer);
-            
-            if (LOG_HTTP_STATUS_OK == responseCode) {
-                remove(path);
-            }
-            if (answer) free(answer);
-            free(httpBody);
-        } else {
-            GIZ_LOG_ERROR("malloc %d bytes space filed, errno %d: %s",
-                          httpBodyLen, errno, strerror(errno));
-        }
-        
-        free(fileContent);
-    }
 }
 
 static void *threadProvision(void *argv)
@@ -867,23 +1184,21 @@ static void *threadProvision(void *argv)
     char *pEnd = NULL;
     char *pStart = NULL;
     char *answer = NULL;
-    time_t createThreadTimestamp = time(NULL);
-    char oldPath[LOG_MAX_PATH_LEN] = { 0 };
+    char replacedChar = 0;
     char httpHeadCustom[LOG_SEND_BUF_LENGTH] = { 0 };
     
     signal(SIGPIPE, SIG_IGN);
     pthread_detach(pthread_self());
-    
-    gGizLog.latestCreatThreadTimestamp = createThreadTimestamp;
     
     //Provision
     snprintf(httpHeadCustom, sizeof(httpHeadCustom),
              "Content-Type: application/json\r\n"
              "X-Gizwits-Application-Id: %s\r\n"
              "X-Gizwits-User-token: %s\r\n", gGizLog.appID, gGizLog.token);
-    answer = httpPost(gGizLog.domain, gGizLog.port, LOG_HTTP_TIMEOUT,
-                      "/app/provision", httpHeadCustom, gGizLog.sysInfoJson, &answerLen, &responseCode);
-    GIZ_LOG_DEBUG("Provision sysInfoJson: %s", gGizLog.sysInfoJson);
+    answer = httpsPost(gGizLog.domain, gGizLog.sslPort, LOG_HTTP_TIMEOUT,
+                       "/app/provision", httpHeadCustom, gGizLog.sysInfoJson, &answerLen, &responseCode);
+    //打印结果
+    GIZ_LOG_DEBUG("Provision HTTPS responseCode:%d, body:%s", responseCode, answer);
     
     if (answer && LOG_HTTP_STATUS_OK == responseCode) {
         GIZ_LOG_BIZ("provision_resp", "GIZ_LOG_SUCCESS", "provision %s response %s",
@@ -895,9 +1210,10 @@ static void *threadProvision(void *argv)
             pEnd = strchr(pStart, ',');
             if (!pEnd) pEnd = strchr(pStart, '}');
             if (pEnd) {
+                replacedChar = pEnd[0];
                 pEnd[0] = '\0';
                 gGizLog.uploadSystemLog = atoi(pStart + strlen("\"sys_log\":"));
-                pEnd[0] = ',';
+                pEnd[0] = replacedChar;
             }
         }
         
@@ -907,9 +1223,10 @@ static void *threadProvision(void *argv)
             pEnd = strchr(pStart, ',');
             if (!pEnd) pEnd = strchr(pStart, '}');
             if (pEnd) {
+                replacedChar = pEnd[0];
                 pEnd[0] = '\0';
                 gGizLog.uploadBusinessLog = atoi(pStart + strlen("\"biz_log\":"));
-                pEnd[0] = ',';
+                pEnd[0] = replacedChar;
             }
         }
     } else {
@@ -921,139 +1238,64 @@ static void *threadProvision(void *argv)
     //gGizLog.uploadSystemLog = 1;
     //gGizLog.uploadBusinessLog = 1;
     
-    //打印结果
-    GIZ_LOG_DEBUG("Provision HTTP responseCode:%d, body:%s", responseCode, answer);
-    
     //释放资源
     if (answer) free(answer);
-    
-    //需要上传则一直上传日志
-    while (1) {
-        snprintf(oldPath, sizeof(oldPath), "%s%s.gagent.old", gGizLog.dir, LOG_FILE_NAME);
-        listenFileForUploadByPath(oldPath);
-        
-        if (gGizLog.uploadBusinessLog) {
-            snprintf(oldPath, sizeof(oldPath), "%s%s.biz.old", gGizLog.dir, LOG_FILE_NAME);
-            listenFileForUploadByPath(oldPath);
-        }
-        
-        if (gGizLog.uploadSystemLog) {
-            snprintf(oldPath, sizeof(oldPath), "%s%s.sys.old", gGizLog.dir, LOG_FILE_NAME);
-            listenFileForUploadByPath(oldPath);
-        }
-        
-        sleep(1);
-        
-        if (createThreadTimestamp != gGizLog.latestCreatThreadTimestamp) {
-            GIZ_LOG_DEBUG("again calll GizLogProvision, create this thread at %d, create the latest thread at %d",
-                          createThreadTimestamp, gGizLog.latestCreatThreadTimestamp);
-            break;
-        }
-    }
     
     return NULL;
 }
 
 /**
  * @brief 日志上传检测,如要上传则新建线程上传日志.
- * @param[in] domain- 日志待上传的服务器域名地址.
- * @param[in] port- 日志待上传的服务器端口.
+ * @param[in] openAPIDomain OpenAPI服务器域名.
+ * @param[in] openAPISSLPort OpenAPI服务器SSL端口.
  * @param[in] appID- 指定应用标识地址.
  * @param[in] uid- 指定用户标识码地址.
  * @param[in] token- 指定远程用户令牌地址.
  * @return 日志上传检测结果,0:成功,1:失败.
  *
  */
-int GizLogProvision(const char *domain, int port, const char *appID, const char *uid, const char *token)
+int GizLogProvision(const char *openAPIDomain, int openAPISSLPort,
+                    const char *appID, const char *uid, const char *token)
 {
-    int iRet = 0;
-    const char *errStr = "GIZ_LOG_MEMORY_MALLOC_FAILED";
-    const char *createThreadErrStr = "GIZ_LOG_THREAD_CREATE_FAILED";
+    int iRet = 1;
     
-    if (!domain || !domain[0] || port <= 0 || !appID || !appID[0] || !uid || !uid[0] || !token || !token[0]) {
-        GIZ_LOG_BIZ("provision_req", "GIZ_LOG_PARAM_FORM_INVALID",
-                    "provision request failed, domain %s, port %d, appID %s, uid %s, token %s",
-                    domain, port, appID, uid, token);
+    if (!gInitedGizLogMutex) {
+        GIZ_LOG_ERROR("please call init API first!!!");
         return iRet;
     }
     
-    gGizLog.domain = (char *)malloc(strlen(domain) + 1);
-    if (gGizLog.domain) {
-        strcpy(gGizLog.domain, domain);
-    } else {
-        iRet = 1;
+    if (!openAPIDomain || !openAPIDomain[0] || openAPISSLPort <= 0 ||
+        !appID || !appID[0] || !uid || !uid[0] || !token || !token[0]) {
+        GIZ_LOG_ERROR("provision request failed, openAPIDomain %s, openAPISSLPort %d, appID %s, uid %s, token %s",
+                      openAPIDomain, openAPISSLPort, appID, uid, token);
+        return iRet;
     }
     
-    gGizLog.appID = (char *)malloc(strlen(appID) + 1);
-    if (gGizLog.appID) {
-        strcpy(gGizLog.appID, appID);
-    } else {
-        iRet = 1;
+    gGizLog.sslPort = openAPISSLPort;
+    strncpy(gGizLog.uid, uid, sizeof(gGizLog.uid) - 1);
+    strncpy(gGizLog.appID, appID, sizeof(gGizLog.appID) - 1);
+    strncpy(gGizLog.token, token, sizeof(gGizLog.token) - 1);
+    strncpy(gGizLog.domain, openAPIDomain, sizeof(gGizLog.domain) - 1);
+    
+    //启动线程
+    if (createThread(threadProvision, NULL)) {
+        GIZ_LOG_ERROR("createThread threadProvision failed errno %d: %s",
+                      errno, strerror(errno));
+        return iRet;
     }
     
-    gGizLog.uid = (char *)malloc(strlen(uid) + 1);
-    if (gGizLog.uid) {
-        strcpy(gGizLog.uid, uid);
-    } else {
-        iRet = 1;
-    }
-    
-    gGizLog.token = (char *)malloc(strlen(token) + 1);
-    if (gGizLog.token) {
-        strcpy(gGizLog.token, token);
-    } else {
-        iRet = 1;
-    }
-    
-    gGizLog.port = port;
-    
-    if (!iRet) {
-        //启动线程
-        if (createThread(threadProvision, NULL)) {
-            GIZ_LOG_ERROR("createThread threadProvision failed errno %d: %s",
-                          errno, strerror(errno));
-            errStr = createThreadErrStr;
-        }
-    }
-    
-    if (iRet) {
-        if (gGizLog.domain) {
-            free(gGizLog.domain);
-            gGizLog.domain = NULL;
-        }
-        if (gGizLog.appID) {
-            free(gGizLog.appID);
-            gGizLog.appID = NULL;
-        }
-        if (gGizLog.uid) {
-            free(gGizLog.uid);
-            gGizLog.uid = NULL;
-        }
-        if (gGizLog.token) {
-            free(gGizLog.token);
-            gGizLog.token = NULL;
-        }
-    }
-    
-    if (iRet) {
-        GIZ_LOG_BIZ("provision_req", errStr, "provision request");
-    } else {
-        GIZ_LOG_BIZ("provision_req", "GIZ_LOG_SUCCESS", "provision request");
-    }
-    
-    return iRet;
+    return 0;
 }
 
 static void logCheckSys(void)
 {
     char curPath[LOG_MAX_PATH_LEN] = { 0 };
-    char oldPath[LOG_MAX_PATH_LEN] = { 0 };
     struct stat statBuf;
     
     snprintf(curPath, sizeof(curPath), "%s%s.sys", gGizLog.dir, LOG_FILE_NAME);
     if (!gGizLog.fileSys) {
         gGizLog.latestCreatSysLogTimestamp = time(NULL);
-        gGizLog.fileSys = fopen(curPath, "a");  //上次fopen打开失败则再次尝试打开
+        gGizLog.fileSys = fopen(curPath, "a+");  //上次fopen打开失败则再次尝试打开
         if (gGizLog.fileSys) {
             fprintf(gGizLog.fileSys, "%s\n", gSysInfoLogBuf);
             fflush(gGizLog.fileSys);
@@ -1061,30 +1303,8 @@ static void logCheckSys(void)
     }
     stat(curPath, &statBuf);
     //如果检测到当前日志文件大于上限或者已存在的时间超过最大重命名时间，将当前文件重命名为老文件，再新建一个文件存储新日志
-    if (statBuf.st_size > LOG_MAX_SYS_FILE_SIZE ||
-        (gGizLog.latestCreatSysLogTimestamp && time(NULL) - gGizLog.latestCreatSysLogTimestamp > LOG_MAX_RENAME_SYS_TIME)) {
-        //处理系统日志文件
-        if (gGizLog.fileSys) fclose(gGizLog.fileSys);
-        snprintf(oldPath, sizeof(oldPath), "%s.old", curPath);
-        remove(oldPath);  //先删除旧的日志文件
-        rename(curPath, oldPath);  //再将当前日志文件重命名为老的日志文件
-        gGizLog.fileSys = fopen(curPath, "a");  //新建文件存储新新日志
-        if (gGizLog.fileSys) {
-            gGizLog.latestCreatSysLogTimestamp = time(NULL);
-            fprintf(gGizLog.fileSys, "%s\n", gSysInfoLogBuf);
-            fflush(gGizLog.fileSys);
-        }
-        
-        //处理业务日志文件(由于系统日志数量远大于业务日志数量,故业务日志处理时机以系统日志的为准)
-        if (gGizLog.fileBiz) fclose(gGizLog.fileBiz);
-        snprintf(curPath, sizeof(curPath), "%s%s.biz", gGizLog.dir, LOG_FILE_NAME);
-        snprintf(oldPath, sizeof(oldPath), "%s.old", curPath);
-        remove(oldPath);  //先删除旧的日志文件
-        rename(curPath, oldPath);  //再将当前日志文件重命名为老的日志文件
-        gGizLog.fileBiz = fopen(curPath, "a");  //新建文件存储新新日志
-        if (gGizLog.fileBiz) {
-            gGizLog.latestCreatSysLogTimestamp = time(NULL);
-        }
+    if (statBuf.st_size > LOG_MAX_SYS_FILE_SIZE) {
+        logRenameSys();
     }
 }
 
@@ -1117,7 +1337,7 @@ void GizPrintBiz(const char *businessCode, const char *result, const char *forma
         memcpy(pNewLine + 2, tmpBuf + (pNewLine - buf) + 1, pEnd - pNewLine - 1);
     }
     
-    mutexLock();
+    pthread_mutex_lock(&gMutexGizLog);
     
     //屏幕输出
     if (gGizLog.printLevel >= 1) {
@@ -1138,7 +1358,7 @@ void GizPrintBiz(const char *businessCode, const char *result, const char *forma
         fflush(gGizLog.fileBiz);
     }
     
-    mutexUnlock();
+    pthread_mutex_unlock(&gMutexGizLog);
 }
 
 void GizPrintError(const char *format, ...)
@@ -1166,7 +1386,7 @@ void GizPrintError(const char *format, ...)
         memcpy(pNewLine + 2, tmpBuf + (pNewLine - buf) + 1, pEnd - pNewLine - 1);
     }
     
-    mutexLock();
+    pthread_mutex_lock(&gMutexGizLog);
     
     //屏幕输出
     if (gGizLog.printLevel >= 1) {
@@ -1188,7 +1408,7 @@ void GizPrintError(const char *format, ...)
         fflush(gGizLog.fileSys);
     }
     
-    mutexUnlock();
+    pthread_mutex_unlock(&gMutexGizLog);
 }
 
 void GizPrintDebug(const char *format, ...)
@@ -1216,7 +1436,7 @@ void GizPrintDebug(const char *format, ...)
         memcpy(pNewLine + 2, tmpBuf + (pNewLine - buf) + 1, pEnd - pNewLine - 1);
     }
     
-    mutexLock();
+    pthread_mutex_lock(&gMutexGizLog);
     
     //屏幕输出
     if (gGizLog.printLevel >= 2) {
@@ -1238,7 +1458,7 @@ void GizPrintDebug(const char *format, ...)
         fflush(gGizLog.fileSys);
     }
     
-    mutexUnlock();
+    pthread_mutex_unlock(&gMutexGizLog);
 }
 
 /**
@@ -1250,28 +1470,53 @@ void GizPrintDebug(const char *format, ...)
  */
 void GizPrintBizFromUp(const char *content)
 {
-    mutexLock();
+    int iLen = 0;
+    char *pEnd = NULL;
+    char *pNewLine = NULL;
+    char tmpBuf[LOG_MAX_LEN + 1] = { 0 };
+    
+    if (!content) {
+        GIZ_LOG_ERROR("content from upper layer is null");
+        return;
+    }
+    
+    //遇到换行符的情况下将换行符后的内容当做详细日志单独打印(不用[]包)
+    iLen = (int)strlen(content);
+    if (iLen <= 0 || iLen >= sizeof(tmpBuf)) {
+        GIZ_LOG_ERROR("the length(%d) of content from upper layer is unsupported", iLen);
+        return;
+    }
+    strcpy(tmpBuf, content);
+    pNewLine = strchr(content, '\n');
+    if (pNewLine) {
+        pEnd = strchr(pNewLine, ']');
+        tmpBuf[pNewLine - content] = ']';
+        tmpBuf[pNewLine - content + 1] = '\n';
+        memcpy(tmpBuf + (pNewLine - content) + 2, pNewLine + 1, pEnd - pNewLine - 1);
+    }
+    
+    pthread_mutex_lock(&gMutexGizLog);
     
     //屏幕输出
     if (gGizLog.printLevel >= 1) {
 #ifdef __ANDROID__
-        __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "%s", content);
+        __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "%s", tmpBuf);
 #else
 #ifdef TARGET_OS_IPHONE
-        NSLog(@"%@", [[NSString alloc] initWithUTF8String:content]);
+        NSLog(@"%@", [[NSString alloc] initWithUTF8String:tmpBuf]);
 #else
-        fprintf(stdout, "%s\n", content);
+        fprintf(stdout, "%s\n", tmpBuf);
 #endif
 #endif
     }
     
     //保存文件
     if (gGizLog.fileBiz) {
-        fprintf(gGizLog.fileBiz, "%s\n", content);
+        fprintf(gGizLog.fileBiz, "%s\n", tmpBuf);
         fflush(gGizLog.fileBiz);
     }
     
-    mutexUnlock();
+    pthread_mutex_unlock(&gMutexGizLog);
 }
 
 /**
@@ -1283,17 +1528,42 @@ void GizPrintBizFromUp(const char *content)
  */
 void GizPrintErrorFromUp(const char *content)
 {
-    mutexLock();
+    int iLen = 0;
+    char *pEnd = NULL;
+    char *pNewLine = NULL;
+    char tmpBuf[LOG_MAX_LEN + 1] = { 0 };
+    
+    if (!content) {
+        GIZ_LOG_ERROR("content from upper layer is null");
+        return;
+    }
+    
+    //遇到换行符的情况下将换行符后的内容当做详细日志单独打印(不用[]包)
+    iLen = (int)strlen(content);
+    if (iLen <= 0 || iLen >= sizeof(tmpBuf)) {
+        GIZ_LOG_ERROR("the length(%d) of content from upper layer is unsupported", iLen);
+        return;
+    }
+    strcpy(tmpBuf, content);
+    pNewLine = strchr(content, '\n');
+    if (pNewLine) {
+        pEnd = strchr(pNewLine, ']');
+        tmpBuf[pNewLine - content] = ']';
+        tmpBuf[pNewLine - content + 1] = '\n';
+        memcpy(tmpBuf + (pNewLine - content) + 2, pNewLine + 1, pEnd - pNewLine - 1);
+    }
+    
+    pthread_mutex_lock(&gMutexGizLog);
     
     //屏幕输出
     if (gGizLog.printLevel >= 1) {
 #ifdef __ANDROID__
-        __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "%s", content);
+        __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "%s", tmpBuf);
 #else
 #ifdef TARGET_OS_IPHONE
-        NSLog(@"%@", [[NSString alloc] initWithUTF8String:content]);
+        NSLog(@"%@", [[NSString alloc] initWithUTF8String:tmpBuf]);
 #else
-        fprintf(stderr, "%s\n", content);
+        fprintf(stderr, "%s\n", tmpBuf);
 #endif
 #endif
     }
@@ -1301,11 +1571,11 @@ void GizPrintErrorFromUp(const char *content)
     logCheckSys();  //如果日志大小超出上限则删除原文件并重现创建文件
     //保存文件
     if (gGizLog.fileSys) {
-        fprintf(gGizLog.fileSys, "%s\n", content);
+        fprintf(gGizLog.fileSys, "%s\n", tmpBuf);
         fflush(gGizLog.fileSys);
     }
     
-    mutexUnlock();
+    pthread_mutex_unlock(&gMutexGizLog);
 }
 
 /**
@@ -1317,17 +1587,42 @@ void GizPrintErrorFromUp(const char *content)
  */
 void GizPrintDebugFromUp(const char *content)
 {
-    mutexLock();
+    int iLen = 0;
+    char *pEnd = NULL;
+    char *pNewLine = NULL;
+    char tmpBuf[LOG_MAX_LEN + 1] = { 0 };
+    
+    if (!content) {
+        GIZ_LOG_ERROR("content from upper layer is null");
+        return;
+    }
+    
+    //遇到换行符的情况下将换行符后的内容当做详细日志单独打印(不用[]包)
+    iLen = (int)strlen(content);
+    if (iLen <= 0 || iLen >= sizeof(tmpBuf)) {
+        GIZ_LOG_ERROR("the length(%d) of content from upper layer is unsupported", iLen);
+        return;
+    }
+    strcpy(tmpBuf, content);
+    pNewLine = strchr(content, '\n');
+    if (pNewLine) {
+        pEnd = strchr(pNewLine, ']');
+        tmpBuf[pNewLine - content] = ']';
+        tmpBuf[pNewLine - content + 1] = '\n';
+        memcpy(tmpBuf + (pNewLine - content) + 2, pNewLine + 1, pEnd - pNewLine - 1);
+    }
+    
+    pthread_mutex_lock(&gMutexGizLog);
     
     //屏幕输出
     if (gGizLog.printLevel >= 2) {
 #ifdef __ANDROID__
-        __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "%s", content);
+        __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "%s", tmpBuf);
 #else
 #ifdef TARGET_OS_IPHONE
-        NSLog(@"%@", [[NSString alloc] initWithUTF8String:content]);
+        NSLog(@"%@", [[NSString alloc] initWithUTF8String:tmpBuf]);
 #else
-        fprintf(stdout, "%s\n", content);
+        fprintf(stdout, "%s\n", tmpBuf);
 #endif
 #endif
     }
@@ -1335,11 +1630,11 @@ void GizPrintDebugFromUp(const char *content)
     logCheckSys();  //如果日志大小超出上限则删除原文件并重现创建文件
     //保存文件
     if (gGizLog.fileSys) {
-        fprintf(gGizLog.fileSys, "%s\n", content);
+        fprintf(gGizLog.fileSys, "%s\n", tmpBuf);
         fflush(gGizLog.fileSys);
     }
     
-    mutexUnlock();
+    pthread_mutex_unlock(&gMutexGizLog);
 }
 
 char *GizTimeStr(void)

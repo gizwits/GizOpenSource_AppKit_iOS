@@ -12,6 +12,10 @@
 #import "GosCommon.h"
 #import "GosConfigModuleSelection.h"
 
+#if USE_UMENG
+#import <UMMobClick/MobClick.h>
+#endif
+
 @interface GosConfigStart () <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -118,6 +122,10 @@
 }
 
 - (IBAction)selectModule:(id)sender {
+#if USE_UMENG
+    [MobClick event:@"login_btn_select_the_type_of_module"];
+#endif
+    
     GosConfigModuleSelection *configModuleSelection = [[GosConfigModuleSelection alloc] init];
 //    configModuleSelection.currentSelectionIndex = self.currentSelectionIndex;
     [self.navigationController pushViewController:configModuleSelection animated:YES];

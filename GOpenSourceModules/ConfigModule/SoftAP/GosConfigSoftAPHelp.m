@@ -10,6 +10,10 @@
 #import "GosSoftAPDetection.h"
 #import "GosCommon.h"
 
+#if USE_UMENG
+#import <UMMobClick/MobClick.h>
+#endif
+
 @interface GosConfigSoftAPHelp ()
 
 @property (weak, nonatomic) IBOutlet UIButton *btnNext;
@@ -25,6 +29,9 @@
     [self.btnNext setTitleColor:[GosCommon sharedInstance].buttonTextColor forState:UIControlStateNormal];
     [self.btnNext.layer setCornerRadius:19.0];
     self.imgSoftap.gifPath = [[NSBundle mainBundle] pathForResource:@"04-softap" ofType:@"gif"];
+#if USE_UMENG
+    [MobClick event:@"configuration_softap_btn_cant_find_the_softap"];
+#endif
 }
 
 - (void)viewWillAppear:(BOOL)animated {

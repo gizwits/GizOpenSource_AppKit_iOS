@@ -10,12 +10,13 @@
  *   Change Logs:
  * Date          Author      Notes
  * 2015-11-26    Trevor      the first version
+ * 2016-09-06    Trevor      Support IPv6 and Fix some bugs
  */
 #ifndef __GizLog_h__
 #define __GizLog_h__
 
 #ifdef __cplusplus
-//extern "C" {
+extern "C" {
 #endif
 
 #include <stdio.h>
@@ -27,12 +28,19 @@
 #endif
 
 #define LOG_MAX_RENAME_SYS_TIME     (10 * 60)
-#define LOG_MAX_SYS_FILE_SIZE       (100 * 1024)
+#define LOG_MAX_RENAME_BIZ_TIME     (10 * 60)
+#define LOG_MAX_SYS_FILE_SIZE       (1000 * 1024) //云端最大接收字节数是1048359,故预留24K富余空间
+#define LOG_MAX_BIZ_FILE_SIZE       (1000 * 1024) //云端最大接收字节数是1048359,故预留24K富余空间
+#define LOG_MAX_UPLOADED_FILE_SIZE  (10 * 1024 * 1024)
 #define LOG_MAX_PATH_LEN            (256)
 #define LOG_MAX_LEN                 (10 * 1024)
 #define LOG_COLUMN_PER_LINE         (16)
 #define LOG_FILE_NAME               "GizLogFile"
 
+#define LOG_DOMAIN_BUF_LEN          (128)
+#define LOG_APPID_BUF_LEN           (32)
+#define LOG_UID_BUF_LEN             (32)
+#define LOG_TOKEN_BUF_LEN           (32)
 #define LOG_HTTP_TIMEOUT            (5)
 #define LOG_IP_BUF_LENGTH           (16)
 #define LOG_READ_BUF_LENGTH         (4096)
@@ -76,19 +84,20 @@
  */
 typedef struct _GizLog_t {
     int printLevel; //日志打印到屏幕的级别(0:不打印屏幕,1:打印error+busi,2:打印error+debug+busi,默认2)
-    int port; //日志服务器端口
+    int sslPort; //日志服务器SSL端口
     int uploadSystemLog; //是否上传系统日志
     int uploadBusinessLog; //是否上传业务日志
-    time_t latestCreatThreadTimestamp; //最新创建线程的时间戳
     time_t latestCreatSysLogTimestamp; //最新创建系统日志文件的时间戳
+    time_t latestCreatBizLogTimestamp; //最新创建业务日志文件的时间戳
     char dir[LOG_MAX_PATH_LEN + 1]; //日志文件存储目录
     char *sysInfoJson; //系统信息(Json字符串，例:{"phone_id":"AE27466D-9C8F-4184-A6A3-2A0CDEDAA4FD","os":"iOS","os_ver":"9.2","app_version":"1.5.1","phone_model":"iPhone 6 (A1549/A1586)"}).
-    char *domain; //日志服务器域名
-    char *appID; //应用标识
-    char *uid; //用户标识
-    char *token; //用户令牌
+    char domain[LOG_DOMAIN_BUF_LEN + 1]; //日志服务器域名
+    char appID[LOG_APPID_BUF_LEN + 1]; //应用标识
+    char uid[LOG_UID_BUF_LEN + 1]; //用户标识
+    char token[LOG_TOKEN_BUF_LEN + 1]; //用户令牌
     FILE *fileBiz; //业务日志文件句柄
     FILE *fileSys; //系统日志文件句柄
+    char lastSystemLogFileHead[LOG_MAX_LEN + 1]; //上一次检查的系统日志文件头(做上传逻辑用,当前old文件头与该字段不同时才上传,上传成功后方才更新该字段,old文件保留)
 } GizLog_t;
 
 /**
@@ -103,15 +112,16 @@ int GizLogInit(const char *sysInfoJson, const char *logDir, int printLevel);
 
 /**
  * @brief 日志上传检测,如要上传则新建线程上传日志.
- * @param[in] domain- 日志待上传的服务器域名地址.
- * @param[in] port- 日志待上传的服务器端口.
+ * @param[in] openAPIDomain OpenAPI服务器域名.
+ * @param[in] openAPISSLPort OpenAPI服务器SSL端口.
  * @param[in] appID- 指定应用标识地址.
  * @param[in] uid- 指定用户标识码地址.
  * @param[in] token- 指定远程用户令牌地址.
  * @return 日志上传检测结果,0:成功,1:失败.
  *
  */
-int GizLogProvision(const char *domain, int port, const char *appID, const char *uid, const char *token);
+int GizLogProvision(const char *openAPIDomain, int openAPISSLPort,
+                    const char *appID, const char *uid, const char *token);
 
 /**
  * @brief 打印来至上层的业务日志.
@@ -148,6 +158,6 @@ void GizPrintError(const char *format, ...);
 void GizPrintDebug(const char *format, ...);
 
 #ifdef __cplusplus
-//}
+}
 #endif
 #endif

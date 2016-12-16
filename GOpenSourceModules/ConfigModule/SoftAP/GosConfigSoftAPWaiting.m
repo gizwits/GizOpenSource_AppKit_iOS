@@ -37,7 +37,7 @@
     self.progressView.tintColor = [GosCommon sharedInstance].configProgressViewColor;
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 60.0, 20.0)];
     [label setTextAlignment:NSTextAlignmentCenter];
-    label.userInteractionEnabled = NO; // Allows tap to pass through to the progress view.
+    self.view.userInteractionEnabled = NO; // Allows tap to pass through to the progress view.
     self.progressView.centralView = label;
     self.progressView.progressChangedBlock = ^(UAProgressView *progressView, CGFloat progress) {
         [(UILabel *)progressView.centralView setText:[NSString stringWithFormat:@"%2.0f%%", progress * 100]];

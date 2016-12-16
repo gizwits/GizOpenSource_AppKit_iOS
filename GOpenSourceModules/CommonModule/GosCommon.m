@@ -274,10 +274,23 @@ static NSString *makeEncryptKey(Class class, NSString *ssid) {
 //    }
 }
 
+- (void)tempSaveUser:(NSString *)username password:(NSString *)password clearUserDefaults:(BOOL)clearUserDefaults {
+    if (username && password) {
+        if (clearUserDefaults) {
+            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"username"];
+            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"password"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }
+        _tmpUser = username;
+        _tmpPass = password;
+    }
+}
+
 - (void)saveUserDefaults:(NSString *)username password:(NSString *)password uid:(NSString *)uid token:(NSString *)token {
     if (username && password) {
         [[NSUserDefaults standardUserDefaults] setObject:username forKey:@"username"];
         [[NSUserDefaults standardUserDefaults] setObject:password forKey:@"password"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
         _tmpUser = username;
         _tmpPass = password;
     }
@@ -285,7 +298,6 @@ static NSString *makeEncryptKey(Class class, NSString *ssid) {
 //    if (token) [[NSUserDefaults standardUserDefaults] setObject:token forKey:@"token"];
     if (uid) self.uid = uid;
     if (token) self.token = token;
-    [[NSUserDefaults standardUserDefaults] synchronize];
 //    self.isLogin = YES;
 }
 
@@ -294,11 +306,11 @@ static NSString *makeEncryptKey(Class class, NSString *ssid) {
     _tmpPass = [[NSUserDefaults standardUserDefaults] valueForKey:@"password"];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"username"];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"password"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
     self.uid = @"";
     self.token = @"";
 //    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"uid"];
 //    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"token"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
 //    self.isLogin = NO;
 }
 
@@ -886,7 +898,7 @@ static NSString *makeEncryptKey(Class class, NSString *ssid) {
     @try {
         if (nil == info) {
             [GizWifiSDK startWithAppID:APP_ID specialProductKeys:nil cloudServiceInfo:@{@"openAPIInfo": DEFAULT_API_DOMAIN,
-                                                                                        @"siteInfo": DEFAULT_SITE_DOMAIN}];
+                                                                                        @"siteInfo": DEFAULT_SITE_DOMAIN} autoSetDeviceDomain:NO];
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"appInfo"];
         } else {
             NSString *appid = info[@"APPID"];
@@ -898,7 +910,7 @@ static NSString *makeEncryptKey(Class class, NSString *ssid) {
             [mInfo removeObjectForKey:@"APPID"];
             [mInfo removeObjectForKey:@"APPSECRET"];
             
-            [GizWifiSDK startWithAppID:appid specialProductKeys:nil cloudServiceInfo:mInfo];
+            [GizWifiSDK startWithAppID:appid specialProductKeys:nil cloudServiceInfo:mInfo autoSetDeviceDomain:NO];
             [[NSUserDefaults standardUserDefaults] setValue:info forKey:@"appInfo"];
         }
         [[NSUserDefaults standardUserDefaults] synchronize];
@@ -928,11 +940,13 @@ static NSString *makeEncryptKey(Class class, NSString *ssid) {
 
 id GetControllerWithClass(Class class, UITableView *tableView, NSString *reuseIndentifer) {
     if ([class isSubclassOfClass:[UITableViewCell class]]) {
-        UINib *nib = [UINib nibWithNibName:NSStringFromClass(class) bundle:nil];
-        if(nib) {
+        id cell = [tableView dequeueReusableCellWithIdentifier:reuseIndentifer];
+        if (nil == cell) {
+            UINib *nib = [UINib nibWithNibName:NSStringFromClass(class) bundle:nil];
             [tableView registerNib:nib forCellReuseIdentifier:reuseIndentifer];
             return [tableView dequeueReusableCellWithIdentifier:reuseIndentifer];
         }
+        return cell;
     }
     return nil;
 }
