@@ -25,8 +25,9 @@
 
 @implementation AppDelegate
 
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    AppLogInit();
+    
     [GosCommon sharedInstance].controlHandler = ^(GizWifiDevice *device, UIViewController *deviceListController) {
         GosDeviceController *devCtrl = [[GosDeviceController alloc] initWithDevice:device];
         [deviceListController.navigationController pushViewController:devCtrl animated:YES];
@@ -61,7 +62,7 @@
         // 初始化 GizWifiSDK
         [GizWifiSDK sharedInstance].delegate = self;
         if ([GosCommon sharedInstance].cloudDomainDict.count > 0) {
-            [GizWifiSDK startWithAppID:APP_ID specialProductKeys:nil cloudServiceInfo:[GosCommon sharedInstance].cloudDomainDict];
+            [GizWifiSDK startWithAppID:APP_ID specialProductKeys:nil cloudServiceInfo:[GosCommon sharedInstance].cloudDomainDict autoSetDeviceDomain:NO];
         } else {
             //设置服务器
             GosCommon *common = [GosCommon sharedInstance];
@@ -75,19 +76,20 @@
     [[UINavigationBar appearance] setTintColor:[GosCommon sharedInstance].navigationBarTextColor];
     [[UINavigationBar appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName:[GosCommon sharedInstance].navigationBarTextColor}];
     
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        //550毫秒后，认为是超时，启动超时如果没有任何的页面加载过，则自动加载页面
+        usleep(550000);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self loadMainPage];
+        });
+    });
+    
     return YES;
 }
 
-- (void)wifiSDK:(GizWifiSDK *)wifiSDK didNotifyEvent:(GizEventType)eventType eventSource:(id)eventSource eventID:(GizWifiErrorCode)eventID eventMessage:(NSString*)eventMessage {
-    GIZ_LOG_DEBUG("eventID: %zi, eventMessage: %s", eventID, eventMessage.description);
-    
-    if (eventType == GizEventSDK && eventID == GIZ_SDK_START_SUCCESS) {
-        //清理代理
-        [GizWifiSDK sharedInstance].delegate = nil;
-        
-        // [GosCommon shareInstance].sdk是否启动
-        [GizWifiSDK setLogLevel:GizLogPrintAll];
-        
+- (void)loadMainPage {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"GosUser" bundle:nil];
         //导航设置代理
         UINavigationController *newViewController = [storyboard instantiateInitialViewController];
@@ -99,11 +101,25 @@
         [UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
         newViewController.view.alpha = 1;
         [UIView commitAnimations];
+    });
+}
+
+- (void)wifiSDK:(GizWifiSDK *)wifiSDK didNotifyEvent:(GizEventType)eventType eventSource:(id)eventSource eventID:(GizWifiErrorCode)eventID eventMessage:(NSString*)eventMessage {
+    GIZ_LOG_DEBUG("eventID: %zi, eventMessage: %s", eventID, eventMessage.description);
+    
+    if (eventType == GizEventSDK && eventID == GIZ_SDK_START_SUCCESS) {
+        //清理代理
+        [GizWifiSDK sharedInstance].delegate = nil;
+        
+        // [GosCommon shareInstance].sdk是否启动
+        [GizWifiSDK setLogLevel:GizLogPrintAll];
+        [self loadMainPage];
     } else {
         if (eventID != GIZ_SDK_EXEC_DAEMON_FAILED) {
             //清理代理，弹出提示
             [GizWifiSDK sharedInstance].delegate = nil;
             [[GosCommon sharedInstance] showAlert:[[GosCommon sharedInstance] checkErrorCode:eventID] disappear:YES];
+            [self loadMainPage];
         }
     }
 }

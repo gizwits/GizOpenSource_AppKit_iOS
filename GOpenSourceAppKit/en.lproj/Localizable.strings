@@ -158,7 +158,6 @@
 "tip" = "tip";
 "please input cellphone" = "please input cellphone";
 "please input password" = "please input password";
-"The password must be at least six characters" = "The password must be at least six characters";
 "OK" = "OK";
 "Login failed" = "Login failed";
 "Login successful" = "Login successful";
@@ -182,9 +181,6 @@
 "Scan QR code" = "Scan QR code";
 "Add Device" = "Add Device";
 "Add" = "Add ";
-"Setting" = "Setting";
-"Logout" = "Logout";
-"Login" = "Login";
 "Logout?" = "Logout?";
 "Login Cancel" = "Login Cancel";
 

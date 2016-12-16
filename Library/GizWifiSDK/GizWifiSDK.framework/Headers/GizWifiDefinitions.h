@@ -381,6 +381,43 @@ typedef NS_ENUM(NSInteger, GizWifiErrorCode) {
     GIZ_SDK_START_SUCCESS = 8316,
     
     /*
+     当前固件是最新版本，不需要升级
+     */
+    GIZ_SDK_DEVICE_FIRMWARE_IS_LATEST = 8350,
+    /*
+     固件下载成功
+     */
+    GIZ_SDK_DEVICE_FIRMWARE_DOWNLOAD_OK = 8351,
+    /*
+     固件下载失败
+     */
+    GIZ_SDK_DEVICE_FIRMWARE_DOWNLOAD_FAILED = 8352,
+    /*
+     设备忙，固件正在升级
+     */
+    GIZ_SDK_DEVICE_BUSY_IN_UPGRADE = 8353,
+    /*
+     固件推送失败
+     */
+    GIZ_SDK_DEVICE_FIRMWARE_PUSH_FAILED = 8354,
+    /*
+     固件版本过低
+     */
+    GIZ_SDK_DEVICE_FIRMWARE_VERSION_TOO_LOW = 8355,
+    /*
+     固件校验失败
+     */
+    GIZ_SDK_DEVICE_FIRMWARE_CHECK_FAILED = 8356,
+    /*
+     固件升级失败
+     */
+    GIZ_SDK_DEVICE_UPGRADE_FAILED = 8357,
+    /*
+     固件升级成功
+     */
+    GIZ_SDK_DEVICE_UPGRADE_SUCCESS = 8358,
+    
+    /*
      mac already registered!
      */
     GIZ_OPENAPI_MAC_ALREADY_REGISTERED = 9001,

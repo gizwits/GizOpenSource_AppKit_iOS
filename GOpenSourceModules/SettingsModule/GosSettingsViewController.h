@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface GosSettingsViewController : UIViewController
+@interface GosSettingsViewController : UITableViewController
 
 @end

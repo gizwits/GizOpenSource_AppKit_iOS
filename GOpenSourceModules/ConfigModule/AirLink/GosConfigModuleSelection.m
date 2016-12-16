@@ -45,7 +45,8 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 11;
+    GosCommon *common = [GosCommon sharedInstance];
+    return MIN(common.configModuleValueArray.count, common.configModuleTextArray.count);
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {

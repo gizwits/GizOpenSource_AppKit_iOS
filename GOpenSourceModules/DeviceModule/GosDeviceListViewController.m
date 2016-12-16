@@ -21,6 +21,10 @@
 
 #import <TargetConditionals.h>
 
+#if USE_UMENG
+#import <UMMobClick/MobClick.h>
+#endif
+
 @interface GosDeviceListViewController () <UIActionSheetDelegate, GizWifiSDKDelegate, GizWifiDeviceDelegate, UITableViewDelegate, UITableViewDataSource>
 
 @end
@@ -57,7 +61,6 @@
                     dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
                         if ([GosCommon sharedInstance].currentLoginStatus == GizLoginNone) {
                             [GosAnonymousLogin loginAnonymous:loginHandler];
-                            [[GizWifiSDK sharedInstance] userLoginAnonymous];
                         }
                     });
                 }
@@ -80,18 +83,15 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [GizWifiSDK sharedInstance].delegate = self;
-    if (self.needRefresh) {
-        [self refreshBtnPressed:nil];
-        self.needRefresh = NO;
-    }
-    else {
-        [self refreshTableView];
-    }
+    [self refreshTableView];
 }
 
 - (IBAction)refreshBtnPressed:(id)sender {
-    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    [self getBoundDevice];
+    MBProgressHUD *hud = [MBProgressHUD HUDForView:self.view];
+    if (hud.alpha == 0) {
+        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        [self getBoundDevice];
+    }
 }
 
 - (void)getBoundDevice {
@@ -107,6 +107,10 @@
 }
 
 - (IBAction)actionSheet:(id)sender {
+#if USE_UMENG
+    [MobClick event:@"setting_btn_more"];
+#endif
+
     UIActionSheet *actionSheet = nil;
     if ([GosCommon sharedInstance].currentLoginStatus == GizLoginUser) {
         actionSheet = [[UIActionSheet alloc]
@@ -114,7 +118,7 @@
                                       delegate:self
                                       cancelButtonTitle:NSLocalizedString(@"Cancel", nil)
                                       destructiveButtonTitle:nil
-                                      otherButtonTitles:NSLocalizedString(@"Scan QR code", nil), NSLocalizedString(@"Add Device", nil), NSLocalizedString(@"Setting", nil), NSLocalizedString(@"Logout", nil), nil];
+                                      otherButtonTitles:NSLocalizedString(@"Scan QR code", nil), NSLocalizedString(@"Add Device", nil), NSLocalizedString(@"Personal Center", nil), nil];
     }
     else {
         actionSheet = [[UIActionSheet alloc]
@@ -122,7 +126,7 @@
                        delegate:self
                        cancelButtonTitle:NSLocalizedString(@"Cancel", nil)
                        destructiveButtonTitle:nil
-                       otherButtonTitles:NSLocalizedString(@"Scan QR code", nil), NSLocalizedString(@"Add Device", nil), NSLocalizedString(@"Setting", nil), NSLocalizedString(@"Login", nil), nil];
+                       otherButtonTitles:NSLocalizedString(@"Scan QR code", nil), NSLocalizedString(@"Add Device", nil), NSLocalizedString(@"Personal Center", nil), nil];
     }
     
     actionSheet.actionSheetStyle = UIBarStyleBlackTranslucent;
@@ -137,13 +141,20 @@
 //        offset = -1;
 //    }
     if (buttonIndex == offset) {
+#if USE_UMENG
+        [MobClick event:@"more_actionsheet_scan_qr_code"];
+#endif
         [self intoQRCodeVC];
     }else if (buttonIndex == offset+1) {
+#if USE_UMENG
+        [MobClick event:@"more_actionsheet_add_device"];
+#endif
         [self toAirLink:nil];
     }else if(buttonIndex == offset+2) {
+#if USE_UMENG
+        [MobClick event:@"more_actionsheet_setting"];
+#endif
         [self toSettings];
-    }else if(buttonIndex == offset+3) {
-        [self onUserLogout];
     }
 }
 
@@ -155,24 +166,6 @@
                           cancelButtonTitle:NSLocalizedString(@"OK", nil)
                           otherButtonTitles: nil];
     [alert show];
-}
-
-- (void)onUserLogout {
-    if ([GosCommon sharedInstance].currentLoginStatus == GizLoginUser) {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"tip", nil) message:NSLocalizedString(@"Logout?", nil) delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel", nil) otherButtonTitles:NSLocalizedString(@"OK", nil), nil];
-        [alertView show];
-    }
-    else {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [GosPushManager unbindToGDMS:YES];
-            self.deviceListArray  = @[@[],@[],@[]];
-            [[GosCommon sharedInstance] removeUserDefaults];
-            if ([GosCommon sharedInstance].anonymousLoginOn) {
-                [GosAnonymousLogin logout];
-            }
-            [self.navigationController popToViewController:self.parent animated:YES];
-        });
-    }
 }
 
 - (void)refreshTableView {
@@ -201,17 +194,6 @@
     }
     self.deviceListArray = @[deviceListBind, deviceListUnBind, deviceListOffLine];
     [self.deviceListTableView reloadData];
-}
-
-#pragma mark - alert view
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    if (1 == buttonIndex) {
-        [GosPushManager unbindToGDMS:YES];
-        self.deviceListArray  = @[@[],@[],@[]];
-        [[GosCommon sharedInstance] removeUserDefaults];
-        [GosCommon sharedInstance].currentLoginStatus = GizLoginNone;
-        [self.navigationController popToViewController:self.parent animated:YES];
-    }
 }
 
 #pragma mark - table view
@@ -305,7 +287,7 @@
 
 - (void)customCell:(GosDeviceListCell *)cell device:(GizWifiDevice *)dev {
     // 添加左边的图片
-    UIGraphicsBeginImageContext(CGSizeMake(60, 60));
+    UIGraphicsBeginImageContext(CGSizeMake(48, 48));
     UIImage *blankImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
@@ -489,7 +471,9 @@
 - (void)device:(GizWifiDevice *)device didSetSubscribe:(NSError *)result isSubscribed:(BOOL)isSubscribed {
     [MBProgressHUD hideHUDForView:self.view animated:YES];
     if (result.code == GIZ_SDK_SUCCESS && isSubscribed == YES) {
-        [GosCommon sharedInstance].controlHandler(device, self);
+        if (self.navigationController.viewControllers.lastObject == self) {
+            [GosCommon sharedInstance].controlHandler(device, self);
+        }
     }
     else {
         device.delegate = nil;
@@ -498,6 +482,7 @@
 
 #pragma mark - QRCode
 - (void)intoQRCodeVC {
+#if (!TARGET_OS_SIMULATOR)
     NSString *mediaType = AVMediaTypeVideo;
     AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:mediaType];
     NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
@@ -563,6 +548,9 @@
         }
     } completion:^(BOOL finished) {
     }];
+#else
+    NSLog(@"warning: Scan QR code could not be supported by iPhone Simulator.");
+#endif
 }
 
 - (BOOL)canOpenSystemSettingView {

@@ -18,6 +18,4 @@
 @property (nonatomic, weak) IBOutlet UIButton *addDeviceImageBtn;
 @property (nonatomic, weak) IBOutlet UIButton *addDeviceLabelBtn;
 
-@property (nonatomic, assign) BOOL needRefresh;
-
 @end

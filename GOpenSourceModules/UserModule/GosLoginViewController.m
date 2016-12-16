@@ -19,6 +19,10 @@
 #import "GosPushManager.h"
 #import "GosAnonymousLogin.h"
 
+#if USE_UMENG
+#import <UMMobClick/MobClick.h>
+#endif
+
 #define APPDELEGATE ((AppDelegate *)[UIApplication sharedApplication].delegate)
 
 @interface GosLoginViewController () <GizWifiSDKDelegate, TencentSessionDelegate, WXApiDelegate>
@@ -189,6 +193,7 @@
                 NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
                 NSString *accessToken = [dic objectForKey:@"access_token"];
                 NSString *openId = [dic objectForKey:@"openid"];
+                [GosCommon sharedInstance].isThirdAccount = YES;
                 [[GizWifiSDK sharedInstance] userLoginWithThirdAccount:GizThirdWeChat uid:openId token:accessToken];
                 
             }
@@ -197,6 +202,9 @@
 }
 
 - (IBAction)loginSkipBtnPressed:(id)sender {
+#if USE_UMENG
+    [MobClick event:@"login_btn_skip"];
+#endif
     [self toDeviceListWithoutLogin:YES];
 }
 
@@ -275,10 +283,14 @@
     }
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     [[GosCommon sharedInstance] saveUserDefaults:username password:password uid:nil token:nil];
+    [GosCommon sharedInstance].isThirdAccount = NO;
     [[GizWifiSDK sharedInstance] userLogin:username password:password];
 }
 
 - (IBAction)userLoginBtnPressed:(id)sender {
+#if USE_UMENG
+    [MobClick event:@"login_btn_login"];
+#endif
     if ([GosCommon sharedInstance].anonymousLoginOn) {
         [GosAnonymousLogin cleanup];
     }
@@ -303,7 +315,6 @@
         UINavigationController *navCtrl = [[UIStoryboard storyboardWithName:@"GosDevice" bundle:nil] instantiateInitialViewController];
         GosDeviceListViewController *devListCtrl = navCtrl.viewControllers.firstObject;
         devListCtrl.parent = self;
-        devListCtrl.needRefresh = YES;
         [GosCommon sharedInstance].currentLoginStatus = GizLoginUser;
         [GosPushManager unbindToGDMS:NO];
         [GosPushManager bindToGDMS];
@@ -334,6 +345,7 @@
     if (self.tencentOAuth.accessToken && 0 != [self.tencentOAuth.accessToken length])
     {
         [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        [GosCommon sharedInstance].isThirdAccount = YES;
         [[GizWifiSDK sharedInstance] userLoginWithThirdAccount:GizThirdQQ uid:self.tencentOAuth.openId token:self.tencentOAuth.accessToken];
     }
     else
@@ -411,7 +423,6 @@
         UINavigationController *navCtrl = [[UIStoryboard storyboardWithName:@"GosDevice" bundle:nil] instantiateInitialViewController];
         GosDeviceListViewController *devListCtrl = navCtrl.viewControllers.firstObject;
         devListCtrl.parent = self;
-        devListCtrl.needRefresh = YES;
         [self.navigationController pushViewController:devListCtrl animated:animated];
     });
 }
