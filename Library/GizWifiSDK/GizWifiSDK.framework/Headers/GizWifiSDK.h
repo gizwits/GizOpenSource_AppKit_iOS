@@ -16,7 +16,6 @@
 #import <GizWifiSDK/GizWifiBinary.h>
 #import <GizWifiSDK/GizSchedulerInfo.h>
 #import <GizWifiSDK/GizDeviceOTA.h>
-#import <GizWifiSDK/GizDeviceScheduler.h>
 
 @class GizWifiSDK;
 
@@ -785,18 +784,10 @@
    specialDevices:(NSArray *)specialDevices;
 
 /*
- 切换服务器
- @param cloudServiceInfo 服务器信息。格式： {
- "openAPIDomain": xxx,
- "openAPIPort": xxx,
- "siteDomain": xxx,
- "sitePort": xxx,
- "pushDomain": xxx.
- "pushPort": xxx
- }
- @see 对应的回调接口：[GizWifiSDKDelegate wifiSDK:didGetCurrentCloudService:cloudServiceInfo:]
+ 切换服务器（已废弃）
+ @see 替代接口：[GizWifiSDK startWithAppID:specialProductKeys:cloudServiceInfo:autoSetDeviceDomain:]
  */
-+ (void)setCloudService:(NSDictionary *)cloudServiceInfo;
++ (void)setCloudService:(NSDictionary *)cloudServiceInfo DEPRECATED_ATTRIBUTE;
 
 /*
  @deprecated 此接口已废弃，不再提供支持。替代接口：[setCloudService:]
