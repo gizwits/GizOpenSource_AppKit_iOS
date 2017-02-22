@@ -40,8 +40,8 @@ typedef NS_ENUM(NSInteger, GizLoginStatus) {
 
 
 typedef void (^GosRecordPageBlock)(UIViewController *viewController);
-typedef void (^GosSettingPageBlock)(UINavigationController *viewController);
-typedef void (^GosControlBlock)(GizWifiDevice *device, UIViewController *deviceListController);
+typedef void (^GosSettingPageBlock)(UIViewController *viewController);
+typedef void (^GosControlBlock)(GizWifiDevice *device, UIViewController *viewController);
 typedef void (^WXApiOnRespBlock)(BaseResp *resp);
 
 @interface GosCommon : NSObject
@@ -71,6 +71,8 @@ typedef void (^WXApiOnRespBlock)(BaseResp *resp);
 @property (strong) GosSettingPageBlock settingPageHandler; //自定义设置页面
 @property (strong) WXApiOnRespBlock WXApiOnRespHandler;
 
+@property (strong) NSArray *sharingMessageList; //分享消息列表
+
 @property (nonatomic, strong) NSArray *configModuleValueArray;
 @property (nonatomic, strong) NSArray *configModuleTextArray;
 @property (assign) GizWifiGAgentType airlinkConfigType;
@@ -92,6 +94,7 @@ typedef void (^WXApiOnRespBlock)(BaseResp *resp);
 @property (nonatomic, assign, readonly) BOOL qqOn;
 @property (nonatomic, assign, readonly) BOOL wechatOn;
 @property (nonatomic, assign, readonly) BOOL anonymousLoginOn;
+@property (nonatomic, assign, readonly) BOOL devlistTabOn;
 
 @property (nonatomic, strong, readonly) NSMutableDictionary *cloudDomainDict;
 
@@ -144,6 +147,12 @@ typedef void (^WXApiOnRespBlock)(BaseResp *resp);
 - (void)onSucceed:(GizWifiDevice *)device;
 - (void)showAlertCancelConfig:(id)delegate;
 - (void)cancelAlertViewDismiss;
+
+/**
+ 格式：xxxx-xx-xxTxx:xx:xxZ
+ */
++ (NSDate *)serviceDateFromString:(NSString *)dateStr;
++ (NSString *)localDateStringFromDate:(NSDate *)date;
 
 @end
 
@@ -215,59 +224,73 @@ static inline NSString *getCurrentDeviceModel() {
     NSString *platform = [NSString stringWithCString:machine encoding:NSASCIIStringEncoding];
     free(machine);
     
-    if ([platform isEqualToString:@"iPhone1,1"]) return @"iPhone 2G (A1203)";
-    if ([platform isEqualToString:@"iPhone1,2"]) return @"iPhone 3G (A1241/A1324)";
-    if ([platform isEqualToString:@"iPhone2,1"]) return @"iPhone 3GS (A1303/A1325)";
-    if ([platform isEqualToString:@"iPhone3,1"]) return @"iPhone 4 (A1332)";
-    if ([platform isEqualToString:@"iPhone3,2"]) return @"iPhone 4 (A1332)";
-    if ([platform isEqualToString:@"iPhone3,3"]) return @"iPhone 4 (A1349)";
-    if ([platform isEqualToString:@"iPhone4,1"]) return @"iPhone 4S (A1387/A1431)";
-    if ([platform isEqualToString:@"iPhone5,1"]) return @"iPhone 5 (A1428)";
-    if ([platform isEqualToString:@"iPhone5,2"]) return @"iPhone 5 (A1429/A1442)";
-    if ([platform isEqualToString:@"iPhone5,3"]) return @"iPhone 5c (A1456/A1532)";
-    if ([platform isEqualToString:@"iPhone5,4"]) return @"iPhone 5c (A1507/A1516/A1526/A1529)";
-    if ([platform isEqualToString:@"iPhone6,1"]) return @"iPhone 5s (A1453/A1533)";
-    if ([platform isEqualToString:@"iPhone6,2"]) return @"iPhone 5s (A1457/A1518/A1528/A1530)";
-    if ([platform isEqualToString:@"iPhone7,1"]) return @"iPhone 6 Plus (A1522/A1524)";
-    if ([platform isEqualToString:@"iPhone7,2"]) return @"iPhone 6 (A1549/A1586)";
+    NSDictionary *models = @{@"iPhone4,1": @"iPhone 4S",
+                             @"iPhone5,1": @"iPhone 5 (GSM/LTE)",
+                             @"iPhone5,2": @"iPhone 5 (CDMA/LTE)",
+                             @"iPhone5,3": @"iPhone 5c (GSM/LTE)",
+                             @"iPhone5,4": @"iPhone 5c (CDMA/LTE)",
+                             @"iPhone6,1": @"iPhone 5s (GSM/LTE)",
+                             @"iPhone6,2": @"iPhone 5s (CDMA/LTE)",
+                             @"iPhone7,1": @"iPhone 6 Plus",
+                             @"iPhone7,2": @"iPhone 6",
+                             @"iPhone8,1": @"iPhone 6s",
+                             @"iPhone8,2": @"iPhone 6s Plus",
+                             @"iPhone8,4": @"iPhone SE",
+                             @"iPhone9,1": @"iPhone 7 (CDMA+GSM/LTE)",
+                             @"iPhone9,2": @"iPhone 7 Plus (CDMA+GSM/LTE)",
+                             @"iPhone9,3": @"iPhone 7 (GSM/LTE)",
+                             @"iPhone9,4": @"iPhone 7 Plus (GSM/LTE)",
+
+                             @"iPod5,1": @"iPod Touch 5",
+                             @"iPod7,1": @"iPod touch 6",
+                             
+                             @"iPad2,1": @"iPad 2 (Wi‑Fi)",
+                             @"iPad2,2": @"iPad 2 (GSM)",
+                             @"iPad2,3": @"iPad 2 (CDMA)",
+                             @"iPad2,4": @"iPad 2 (Wi‑Fi, A5R)",
+                             @"iPad2,5": @"iPad mini (Wi‑Fi)",
+                             @"iPad2,6": @"iPad mini (GSM/LTE)",
+                             @"iPad2,7": @"iPad mini (CDMA/LTE)",
+                             
+                             @"iPad3,1": @"iPad 3 (Wi‑Fi)",
+                             @"iPad3,2": @"iPad 3 (GSM/LTE)",
+                             @"iPad3,3": @"iPad 3 (CDMA/LTE)",
+                             @"iPad3,4": @"iPad 4 (Wi‑Fi)",
+                             @"iPad3,5": @"iPad 4 (GSM/LTE)",
+                             @"iPad3,6": @"iPad 4 (CDMA/LTE)",
+                             
+                             @"iPad4,1": @"iPad Air (Wi‑Fi)",
+                             @"iPad4,2": @"iPad Air (LTE)",
+                             @"iPad4,3": @"iPad Air (China)",
+                             @"iPad4,4": @"iPad Mini 2 (Wi‑Fi)",
+                             @"iPad4,5": @"iPad Mini 2 (LTE)",
+                             @"iPad4,6": @"iPad Mini 2 (China)",
+                             @"iPad4,7": @"iPad Mini 3 (Wi‑Fi)",
+                             @"iPad4,8": @"iPad Mini 3 (LTE)",
+                             @"iPad4,9": @"iPad Mini 3 (China)",
+                             
+                             @"iPad5,1": @"iPad mini 4 (Wi-Fi)",
+                             @"iPad5,2": @"iPad mini 4 (LTE)",
+                             @"iPad5,3": @"iPad Air 2 (Wi‑Fi)",
+                             @"iPad5,4": @"iPad Air 2 (LTE)",
+
+                             @"iPad6,3": @"iPad Pro (9.7 inch) (Wi-Fi)",
+                             @"iPad6,4": @"iPad Pro (9.7 inch) (LTE)",
+                             @"iPad6,7": @"iPad Pro (12.9 inch) (Wi-Fi)",
+                             @"iPad6,8": @"iPad Pro (12.9 inch) (LTE)",
+                             };
     
-    if ([platform isEqualToString:@"iPod1,1"])   return @"iPod Touch 1G (A1213)";
-    if ([platform isEqualToString:@"iPod2,1"])   return @"iPod Touch 2G (A1288)";
-    if ([platform isEqualToString:@"iPod3,1"])   return @"iPod Touch 3G (A1318)";
-    if ([platform isEqualToString:@"iPod4,1"])   return @"iPod Touch 4G (A1367)";
-    if ([platform isEqualToString:@"iPod5,1"])   return @"iPod Touch 5G (A1421/A1509)";
+    NSString *newPlatform = models[platform];
+    if (newPlatform.length > 0) {
+        return newPlatform;
+    }
     
-    if ([platform isEqualToString:@"iPad1,1"])   return @"iPad 1G (A1219/A1337)";
-    
-    if ([platform isEqualToString:@"iPad2,1"])   return @"iPad 2 (A1395)";
-    if ([platform isEqualToString:@"iPad2,2"])   return @"iPad 2 (A1396)";
-    if ([platform isEqualToString:@"iPad2,3"])   return @"iPad 2 (A1397)";
-    if ([platform isEqualToString:@"iPad2,4"])   return @"iPad 2 (A1395+New Chip)";
-    if ([platform isEqualToString:@"iPad2,5"])   return @"iPad Mini 1G (A1432)";
-    if ([platform isEqualToString:@"iPad2,6"])   return @"iPad Mini 1G (A1454)";
-    if ([platform isEqualToString:@"iPad2,7"])   return @"iPad Mini 1G (A1455)";
-    
-    if ([platform isEqualToString:@"iPad3,1"])   return @"iPad 3 (A1416)";
-    if ([platform isEqualToString:@"iPad3,2"])   return @"iPad 3 (A1403)";
-    if ([platform isEqualToString:@"iPad3,3"])   return @"iPad 3 (A1430)";
-    if ([platform isEqualToString:@"iPad3,4"])   return @"iPad 4 (A1458)";
-    if ([platform isEqualToString:@"iPad3,5"])   return @"iPad 4 (A1459)";
-    if ([platform isEqualToString:@"iPad3,6"])   return @"iPad 4 (A1460)";
-    
-    if ([platform isEqualToString:@"iPad4,1"])   return @"iPad Air (A1474)";
-    if ([platform isEqualToString:@"iPad4,2"])   return @"iPad Air (A1475)";
-    if ([platform isEqualToString:@"iPad4,3"])   return @"iPad Air (A1476)";
-    if ([platform isEqualToString:@"iPad4,4"])   return @"iPad Mini 2G (A1489)";
-    if ([platform isEqualToString:@"iPad4,5"])   return @"iPad Mini 2G (A1490)";
-    if ([platform isEqualToString:@"iPad4,6"])   return @"iPad Mini 2G (A1491)";
-    
-    if ([platform isEqualToString:@"i386"])      return @"iPhone Simulator";
-    if ([platform isEqualToString:@"x86_64"])    return @"iPhone Simulator";
+    if ([platform isEqualToString:@"i386"] ||
+        [platform isEqualToString:@"x86_64"])    return @"iPhone Simulator";
     return platform;
 }
 
-static inline bool AppLogInit() {
-    int logLevel = 2;
+static inline bool AppLogInit(int logLevel) {
     NSURL *documentsDictoryURL = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
     [[NSFileManager defaultManager] createDirectoryAtPath:documentsDictoryURL.path withIntermediateDirectories:YES attributes:nil error:nil];
     
@@ -284,4 +307,12 @@ static inline bool AppLogInit() {
         GIZ_LOG_ERROR("failed, errorCode: %i", ret);
     }
     return (ret == 0);
+}
+
+static inline void showHUDAddedTo(UIView *view, BOOL animated) {
+    NSCAssert(view, @"view could not be nil");
+    MBProgressHUD *hud = [MBProgressHUD HUDForView:view];
+    if (!animated || hud.alpha == 0) {
+        [MBProgressHUD showHUDAddedTo:view animated:animated];
+    }
 }

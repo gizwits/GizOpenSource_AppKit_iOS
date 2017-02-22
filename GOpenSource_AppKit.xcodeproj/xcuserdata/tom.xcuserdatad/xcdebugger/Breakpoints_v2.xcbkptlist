@@ -25,13 +25,45 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Library/QRcode/QRCodeController.m"
-            timestampString = "501155679.898792"
+            filePath = "GOpenSourceModules/SettingsModule/Tabs/PersonalCenter/Sharing/GosSharingList.m"
+            timestampString = "504001132.410756"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "41"
-            endingLineNumber = "41"
-            landmarkName = "-instanceDevice"
+            startingLineNumber = "123"
+            endingLineNumber = "123"
+            landmarkName = "-didGetDeviceSharingInfos:deviceID:deviceSharingInfos:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "GOpenSourceModules/SettingsModule/Tabs/PersonalCenter/Sharing/GosSharingManagerViewController.m"
+            timestampString = "505972161.576237"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "308"
+            endingLineNumber = "308"
+            landmarkName = "-tableView:editActionsForRowAtIndexPath:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "GOpenSourceModules/SettingsModule/Tabs/PersonalCenter/Sharing/GosSharingManagerViewController.m"
+            timestampString = "505881668.114919"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "299"
+            endingLineNumber = "299"
+            landmarkName = "-tableView:editActionsForRowAtIndexPath:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

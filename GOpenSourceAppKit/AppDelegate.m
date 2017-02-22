@@ -26,11 +26,17 @@
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    AppLogInit();
+    AppLogInit(2);
     
     [GosCommon sharedInstance].controlHandler = ^(GizWifiDevice *device, UIViewController *deviceListController) {
+        UINavigationController *navigationController = nil;
+        if (deviceListController.tabBarController) { //注意导航和标签控制器嵌套的关系
+            navigationController = deviceListController.tabBarController.navigationController;
+        } else {
+            navigationController = deviceListController.navigationController;
+        }
         GosDeviceController *devCtrl = [[GosDeviceController alloc] initWithDevice:device];
-        [deviceListController.navigationController pushViewController:devCtrl animated:YES];
+        [navigationController pushViewController:devCtrl animated:YES];
     };
     
     if ([APP_ID isEqualToString:@"your_app_id"] || APP_ID.length == 0 || [APP_SECRET isEqualToString:@"your_app_secret"] || APP_SECRET.length == 0) {
@@ -61,8 +67,9 @@
         }
         // 初始化 GizWifiSDK
         [GizWifiSDK sharedInstance].delegate = self;
+        [GizWifiSDK setLogLevel:GizLogPrintAll];
         if ([GosCommon sharedInstance].cloudDomainDict.count > 0) {
-            [GizWifiSDK startWithAppID:APP_ID specialProductKeys:nil cloudServiceInfo:[GosCommon sharedInstance].cloudDomainDict autoSetDeviceDomain:NO];
+            [GizWifiSDK startWithAppID:APP_ID appSecret:APP_SECRET specialProductKeys:nil cloudServiceInfo:[GosCommon sharedInstance].cloudDomainDict autoSetDeviceDomain:NO];
         } else {
             //设置服务器
             GosCommon *common = [GosCommon sharedInstance];
@@ -112,7 +119,7 @@
         [GizWifiSDK sharedInstance].delegate = nil;
         
         // [GosCommon shareInstance].sdk是否启动
-        [GizWifiSDK setLogLevel:GizLogPrintAll];
+        [GizWifiSDK disableLAN:YES];
         [self loadMainPage];
     } else {
         if (eventID != GIZ_SDK_EXEC_DAEMON_FAILED) {

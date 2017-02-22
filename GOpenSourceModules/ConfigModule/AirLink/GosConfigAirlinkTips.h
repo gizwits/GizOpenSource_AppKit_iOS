@@ -10,4 +10,6 @@
 
 @interface GosConfigAirlinkTips : UIViewController
 
+@property (strong) NSString *selectedModuleName;
+
 @end

@@ -131,7 +131,7 @@
         return;
     }
     else {
-        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        showHUDAddedTo(self.view, YES);
         [[GizWifiSDK sharedInstance] requestSendPhoneSMSCode:APP_SECRET phone:self.phoneCell.textInput.text];
     }
 }
@@ -149,7 +149,7 @@
         [common showAlert:NSLocalizedString(@"please input password", nil) disappear:YES];
         return;
     }
-    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    showHUDAddedTo(self.view, YES);
     [[GizWifiSDK sharedInstance] registerUser:self.phoneCell.textInput.text password:self.passwordCell.textPassword.text verifyCode:self.verfiyCell.textInput.text accountType:GizUserPhone];
 }
 

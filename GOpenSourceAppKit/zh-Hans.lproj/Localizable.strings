@@ -46,8 +46,9 @@
 "GIZ_SDK_DEVICE_LOGIN_VERIFY_FAILED" = "设备登录验证失败";
 "GIZ_SDK_INTERNET_NOT_REACHABLE" = "手机外网无法访问";
 
+"GIZ_SDK_HTTP_SERVER_NOT_SUPPORT_API" = "云服务不支持此API";
 "GIZ_SDK_HTTP_ANSWER_FORMAT_ERROR" = "HTTP应答格式错误";
-"GIZ_SDK_HTTP_ANSWER_PARAM_ERROR" = "HTTP应答数据错误";
+"GIZ_SDK_HTTP_ANSWER_PARAM_ERROR" = "HTTP应答参数错误";
 "GIZ_SDK_HTTP_SERVER_NO_ANSWER" = "HTTP服务端无应答";
 "GIZ_SDK_HTTP_REQUEST_FAILED" = "HTTP请求失败";
 
@@ -181,7 +182,6 @@
 "Scan QR code" = "扫码绑定设备";
 "Add Device" = "添加设备";
 "Add" = "添加";
-"Personal Center" = "个人中心";
 
 "User Account" = "用户账号";
 "Edit password" = "修改密码";
@@ -272,3 +272,69 @@
 
 "Only enterprise developers can apply this feature which is not supported by the current version." = "推送功能仅限于企业开发者使用，目前版本暂不支持推送";
 "haven't WeChat Application" = "未检测到微信，请安装后重试";
+
+"Release to refresh" = "松开刷新";
+"Pull down to refresh" = "下拉刷新";
+"Loading" = "正在获取";
+
+"Messages" = "消息中心";
+"Personal Center" = "个人中心";
+
+"Device Sharing" = "设备共享";
+"No message" = "没有消息";
+
+"Device" = "设备";
+"have no bound users" = "没有已绑用户";
+"have not been shared" = "还未被分享";
+
+"Waiting for accept" = "等待接受";
+"Accepted" = "已接受";
+"Refused" = "已拒绝";
+"Cancelled" = "已取消";
+"Timeout" = "请求超时";
+
+"User account can not be empty" = "用户账号不能为空";
+
+"Normal User" = "普通用户";
+"Phone User" = "手机用户";
+"Email User" = "邮箱用户";
+"Other User" = "其他用户";
+
+"Edit" = "编辑";
+
+"Cancel Sharing" = "取消分享";
+
+"You have no device" = "您没有可被分享的设备";
+"You have no invited message" = "您没有受邀信息";
+
+"Your request is failed" = "请求失败";
+
+"Send successfully" = "发送成功";
+"Send failed" = "发送失败";
+
+"Scan QRCode to bind" = "扫码绑定设备";
+
+"Sorry unable to get sharing info. Please check your internet connection" = "很抱歉，由于网络原因无法获取邀请信息";
+"Sorry unable to get sharing info. Please check your QR code" = "很抱歉，无法获取到邀请信息，可能二维码信息有误";
+"Tips: The device sharing have been expired" = "提示：本次设备共享邀请已过期";
+
+"QR code has been expired" = "二维码已经失效";
+"Sorry unable sharing device, please check your internet connection" = "对不起，由于网络原因无法发出共享邀请";
+"Failed to sharing device" = "共享邀请失败";
+
+"Re-sharing" = "重新分享";
+"Delete" = "删除";
+"No" = "不了";
+
+"Rename The Sharing Alias" = "修改共享信息别名";
+
+"sharing_device_info_format" = "共享%@，与小伙伴一起使用。";
+"sharing_to_format" = "%@已分享给:";
+"sharing_bind_users_format" = "%@已绑用户:";
+
+"cancel_sharing_format" = "确定删除%@的使用权限吗？";
+
+"qrcode_sharing_format" = "%@向你共享%@，你接受并绑定设备吗？";
+"qrcode_sharing_tip_format" = "提示：本次设备共享邀请于%@分钟后失效";
+"qrcode_sharing_status_format" = "二维码将于%@分钟后失效";
+"invited_content_format" = "%@向您共享设备";

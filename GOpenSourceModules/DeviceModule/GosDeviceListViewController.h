@@ -11,11 +11,7 @@
 
 @interface GosDeviceListViewController : UIViewController <GosConfigStartDelegate>
 
-@property (nonatomic, strong) IBOutlet UITableView *deviceListTableView;
 @property (nonatomic, strong) UIViewController *parent;
 @property (nonatomic, strong) NSArray *deviceListArray;
-
-@property (nonatomic, weak) IBOutlet UIButton *addDeviceImageBtn;
-@property (nonatomic, weak) IBOutlet UIButton *addDeviceLabelBtn;
 
 @end

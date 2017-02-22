@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="GPN-x3-OxC">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="GPN-x3-OxC">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -16,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
-                        <segue destination="1aQ-H0-RTz" kind="relationship" relationship="rootViewController" id="qQE-Zw-uyW"/>
+                        <segue destination="DRE-oO-9NA" kind="relationship" relationship="rootViewController" id="NQ9-N2-kQV"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2XV-3Z-LJ4" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -24,84 +27,80 @@
             <point key="canvasLocation" x="-404" y="322"/>
         </scene>
         <!--我的设备-->
-        <scene sceneID="3Yt-4y-aXG">
+        <scene sceneID="P7s-gE-3hf">
             <objects>
-                <viewController id="1aQ-H0-RTz" customClass="GosDeviceListViewController" sceneMemberID="viewController">
+                <viewController id="DRE-oO-9NA" customClass="GosDeviceListViewController" sceneMemberID="viewController">
                     <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="Qqh-eu-H7z"/>
-                        <viewControllerLayoutGuide type="bottom" id="1bv-JN-mNy"/>
+                        <viewControllerLayoutGuide type="top" id="upC-4b-xxO"/>
+                        <viewControllerLayoutGuide type="bottom" id="P8D-ea-bR9"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="l1g-Xe-McI">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                    <view key="view" contentMode="scaleToFill" id="tx5-pk-hiU">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="dgv-1j-SMt">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
-                                    <outlet property="dataSource" destination="1aQ-H0-RTz" id="WCM-pq-ZHp"/>
-                                    <outlet property="delegate" destination="1aQ-H0-RTz" id="WIr-BY-X6E"/>
+                                    <outlet property="dataSource" destination="DRE-oO-9NA" id="d0d-6N-4hV"/>
+                                    <outlet property="delegate" destination="DRE-oO-9NA" id="4DK-Bg-HJn"/>
                                 </connections>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tzp-eJ-eiN">
+                                <rect key="frame" x="128" y="187.5" width="119" height="86"/>
                                 <state key="normal" image="08-icon-add.png"/>
                                 <connections>
-                                    <action selector="toAirLink:" destination="1aQ-H0-RTz" eventType="touchUpInside" id="ZFd-ui-Qzr"/>
+                                    <action selector="toAirLink:" destination="DRE-oO-9NA" eventType="touchUpInside" id="Dgz-S3-4Bi"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ge6-cj-r94">
+                                <rect key="frame" x="66" y="313.5" width="243" height="40"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="BHv-CA-5Rg"/>
+                                    <constraint firstAttribute="height" constant="40" id="VtF-rY-543"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <state key="normal" title="暂无设备，请添加">
                                     <color key="titleColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                                 <connections>
-                                    <action selector="toAirLink:" destination="1aQ-H0-RTz" eventType="touchUpInside" id="Vus-Lk-g9d"/>
+                                    <action selector="toAirLink:" destination="DRE-oO-9NA" eventType="touchUpInside" id="18T-Dt-434"/>
                                 </connections>
                             </button>
                         </subviews>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="dgv-1j-SMt" secondAttribute="trailing" id="24q-ee-dIJ"/>
-                            <constraint firstItem="Ge6-cj-r94" firstAttribute="leading" secondItem="l1g-Xe-McI" secondAttribute="leadingMargin" constant="50" id="4fU-Vb-5I6"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="Ge6-cj-r94" secondAttribute="trailing" constant="50" id="Awd-6A-DMO"/>
-                            <constraint firstItem="1bv-JN-mNy" firstAttribute="top" secondItem="dgv-1j-SMt" secondAttribute="bottom" id="YVI-w2-God"/>
-                            <constraint firstItem="Ge6-cj-r94" firstAttribute="top" secondItem="tzp-eJ-eiN" secondAttribute="bottom" constant="40" id="YYh-IK-SPs"/>
-                            <constraint firstItem="dgv-1j-SMt" firstAttribute="top" secondItem="Qqh-eu-H7z" secondAttribute="bottom" id="aJS-QT-cCY"/>
-                            <constraint firstItem="Ge6-cj-r94" firstAttribute="centerY" secondItem="l1g-Xe-McI" secondAttribute="centerY" id="bkL-Gv-cb7"/>
-                            <constraint firstItem="tzp-eJ-eiN" firstAttribute="centerX" secondItem="l1g-Xe-McI" secondAttribute="centerX" id="jfs-pt-uJ9"/>
-                            <constraint firstItem="dgv-1j-SMt" firstAttribute="leading" secondItem="l1g-Xe-McI" secondAttribute="leading" id="lOU-wZ-L5d"/>
+                            <constraint firstItem="Ge6-cj-r94" firstAttribute="top" secondItem="tzp-eJ-eiN" secondAttribute="bottom" constant="40" id="Oob-Dz-35W"/>
+                            <constraint firstItem="Ge6-cj-r94" firstAttribute="leading" secondItem="tx5-pk-hiU" secondAttribute="leadingMargin" constant="50" id="S3g-1q-2SY"/>
+                            <constraint firstItem="tzp-eJ-eiN" firstAttribute="centerX" secondItem="tx5-pk-hiU" secondAttribute="centerX" id="Uge-Ws-0or"/>
+                            <constraint firstItem="dgv-1j-SMt" firstAttribute="top" secondItem="tx5-pk-hiU" secondAttribute="top" id="XsT-7H-Tgn"/>
+                            <constraint firstItem="dgv-1j-SMt" firstAttribute="leading" secondItem="tx5-pk-hiU" secondAttribute="leading" id="bA1-y4-d3p"/>
+                            <constraint firstItem="Ge6-cj-r94" firstAttribute="centerY" secondItem="tx5-pk-hiU" secondAttribute="centerY" id="bbV-5K-dr3"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="Ge6-cj-r94" secondAttribute="trailing" constant="50" id="eLY-Zc-cCm"/>
+                            <constraint firstItem="P8D-ea-bR9" firstAttribute="top" secondItem="dgv-1j-SMt" secondAttribute="bottom" id="gB9-03-c5l"/>
+                            <constraint firstAttribute="trailing" secondItem="dgv-1j-SMt" secondAttribute="trailing" id="sce-Qi-JAb"/>
+                            <constraint firstItem="Ge6-cj-r94" firstAttribute="centerX" secondItem="tx5-pk-hiU" secondAttribute="centerX" id="ww7-Ck-eME"/>
                         </constraints>
                     </view>
-                    <toolbarItems/>
                     <navigationItem key="navigationItem" title="我的设备" id="dLD-Q7-c39">
-                        <barButtonItem key="leftBarButtonItem" image="nav_btn_update" id="30B-nD-0Of">
-                            <connections>
-                                <action selector="refreshBtnPressed:" destination="1aQ-H0-RTz" id="KaP-eP-EZ7"/>
-                            </connections>
-                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" image="more" id="chy-rk-J3i">
                             <connections>
-                                <action selector="actionSheet:" destination="1aQ-H0-RTz" id="ZQS-5b-UTy"/>
+                                <action selector="actionSheet:" destination="DRE-oO-9NA" id="2fe-FN-gXY"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
-                        <outlet property="addDeviceImageBtn" destination="tzp-eJ-eiN" id="ym7-JR-693"/>
-                        <outlet property="addDeviceLabelBtn" destination="Ge6-cj-r94" id="ei7-gW-Qlp"/>
-                        <outlet property="deviceListTableView" destination="dgv-1j-SMt" id="8Ec-9t-Td4"/>
+                        <outlet property="addDeviceImageBtn" destination="tzp-eJ-eiN" id="2Uz-iO-2ss"/>
+                        <outlet property="addDeviceLabelBtn" destination="Ge6-cj-r94" id="CrI-Zq-OEI"/>
+                        <outlet property="deviceListTableView" destination="dgv-1j-SMt" id="cqS-cg-7Pg"/>
                     </connections>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="UZv-d0-Dbp" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="uu0-Ci-WjN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="264" y="322"/>
+            <point key="canvasLocation" x="366" y="322"/>
         </scene>
     </scenes>
     <resources>
         <image name="08-icon-add.png" width="119" height="86"/>
         <image name="more" width="119" height="86"/>
-        <image name="nav_btn_update" width="119" height="86"/>
     </resources>
 </document>

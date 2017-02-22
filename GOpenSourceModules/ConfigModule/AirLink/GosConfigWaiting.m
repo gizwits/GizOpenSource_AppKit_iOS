@@ -11,7 +11,7 @@
 #import "GosCommon.h"
 #import "UAProgressView.h"
 
-#import "GosConfigSoftAPStart.h"
+#import "GosConfigStart.h"
 
 //#import "GizSDKInstance.h"
 
@@ -63,7 +63,7 @@
         GIZ_LOG_BIZ("airlink_config_start", "success", "start airlink config, current ssid: %s, config ssid: %s", GetCurrentSSID().UTF8String, dataCommon.ssid.UTF8String);
         
         [GizWifiSDK sharedInstance].delegate = self;
-        
+        [GizWifiSDK disableLAN:NO]; //配置之前需启用小循环，否则上电广播无法收到
         [[GizWifiSDK sharedInstance] setDeviceOnboarding:dataCommon.ssid key:key configMode:GizWifiAirLink softAPSSIDPrefix:nil timeout:CONFIG_TIMEOUT wifiGAgentType:@[@([GosCommon sharedInstance].airlinkConfigType)]];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onWillEnterForeground) name:UIApplicationWillEnterForegroundNotification object:nil];
@@ -84,6 +84,7 @@
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [GizWifiSDK sharedInstance].delegate = nil;
+    [GizWifiSDK disableLAN:YES];
     [self.timer invalidate];
     
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
@@ -154,27 +155,7 @@
 }
 
 - (void)onPushToSoftapFailed {
-    
-//    UINavigationController *nav = [[UIStoryboard storyboardWithName:@"GizSoftAP" bundle:nil] instantiateInitialViewController];
-//    GizConfigSoftAPStart *GizConfigSoftAPStartVC = nav.viewControllers.firstObject;
-//    GizConfigSoftAPStartVC.delegate = self;
-//    [self.navigationController pushViewController:GizConfigSoftAPStartVC animated:YES];
-    
-    
-    UIStoryboard *softapFlow =[UIStoryboard storyboardWithName:@"GosSoftAP" bundle:nil];
-    UINavigationController *navCtrl = [softapFlow instantiateInitialViewController];
-    
-    UIViewController *softapStartCtrl = navCtrl.viewControllers.firstObject;
-    
-    NSMutableArray *viewControllers = [self.navigationController.viewControllers mutableCopy];
-    
-    @try {
-        [viewControllers addObjectsFromArray:@[softapStartCtrl]];
-        [self.navigationController setViewControllers:viewControllers];
-    }
-    @catch (NSException *exception) {
-        GIZ_LOG_ERROR("cause exception: %s", exception.description.UTF8String);
-    }
+    [GosConfigStart pushToSoftAP:self.navigationController];
 }
 
 - (IBAction)onCancel:(id)sender {

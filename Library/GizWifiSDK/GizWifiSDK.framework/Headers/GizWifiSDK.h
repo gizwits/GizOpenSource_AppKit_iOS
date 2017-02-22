@@ -14,8 +14,15 @@
 #import <GizWifiSDK/GizWifiSSID.h>
 #import <GizWifiSDK/GizUserInfo.h>
 #import <GizWifiSDK/GizWifiBinary.h>
-#import <GizWifiSDK/GizSchedulerInfo.h>
 #import <GizWifiSDK/GizDeviceOTA.h>
+#import <GizWifiSDK/GizDeviceScheduler.h>
+#import <GizWifiSDK/GizDeviceSchedulerCenter.h>
+#import <GizWifiSDK/GizDeviceSharing.h>
+#import <GizWifiSDK/GizDeviceGroupCenter.h>
+#import <GizWifiSDK/GizDeviceGroup.h>
+#import <GizWifiSDK/GizDeviceSceneCenter.h>
+#import <GizWifiSDK/GizDeviceSceneItem.h>
+#import <GizWifiSDK/GizDeviceScene.h>
 
 @class GizWifiSDK;
 
@@ -247,7 +254,7 @@
  @see 触发函数：[GizWifiSDK getGroups:specialProductKeys:]
  @see GizWifiErrorCode
  */
-- (void)wifiSDK:(GizWifiSDK *)wifiSDK didGetGroups:(NSError *)result groupList:(NSArray *)groupList;
+- (void)wifiSDK:(GizWifiSDK *)wifiSDK didGetGroups:(NSError *)result groupList:(NSArray *)groupList DEPRECATED_ATTRIBUTE;
 
 /*
  @deprecated 此接口已废弃，不再提供支持。请使用替代接口：[GizWifiSDKDelegate wifiSDK:didGetGroups:groupList:]
@@ -315,41 +322,11 @@
  */
 - (void)wifiSDK:(GizWifiSDK *)wifiSDK didDisableLAN:(NSError *)result;
 
-/*
- 创建定时任务的回调接口
- @param wifiSDK 为回调的 GizWifiSDK 单例
- @param result 详细见 GizWifiErrorCode 枚举定义。GIZ_SDK_SUCCESS 表示成功，其他为失败。失败时，sid为 nil
- @param sid 已创建好的定时任务 sid
- @see 触发函数：[GizWifiSDK createScheduler:schedulerInfo:]
- */
-- (void)wifiSDK:(GizWifiSDK *)wifiSDK didCreateScheduler:(NSError *)result sid:(NSString *)sid;
 
-/*
- 获取定时任务列表的回调接口
- @param result 详细见 GizWifiErrorCode 枚举定义。GIZ_SDK_SUCCESS 表示成功，其他为失败。失败时，sid为 nil
- @see 触发函数：[GizWifiSDK deleteScheduler:sid:]
- */
-- (void)wifiSDK:(GizWifiSDK *)wifiSDK didDeleteScheduler:(NSError *)result;
-
-/*
- 删除定时任务的回调接口
- @param result 详细见 GizWifiErrorCode 枚举定义。GIZ_SDK_SUCCESS 表示成功，其他为失败。失败时，sid为 nil
- @param scheduleTaskList 获取到的定时任务列表，为GizSchedulerInfo类对象数组
- @see 触发函数：[GizWifiSDK getSchedulers:]
- */
-- (void)wifiSDK:(GizWifiSDK *)wifiSDK didGetSchedulers:(NSError *)result scheduleTaskList:(NSArray *)scheduleTaskList;
-
-/*
- 查询定时任务执行状态的回调接口
- @param result 详细见 GizWifiErrorCode 枚举定义。GIZ_SDK_SUCCESS 表示成功，其他为失败。失败时，sid为 nil
- @param sid 获取到执行状态的定时任务id
- @param datetime 定时任务的执行时间
- @param status 定时任务的执行状态
- @param statusDetail 执行状态的详细信息，以字典类型表示，<key, value>为：
- <did, true|false>
- @see 触发函数：[GizWifiSDK getSchedulerStatus:sid:]
- */
-- (void)wifiSDK:(GizWifiSDK *)wifiSDK didGetSchedulerStatus:(NSError *)result sid:(NSString *)sid datetime:(NSString *)datetime status:(GizScheduleStatus)status statusDetail:(NSDictionary *)statusDetail;
+- (void)wifiSDK:(GizWifiSDK *)wifiSDK didCreateScheduler:(NSError *)result sid:(NSString *)sid DEPRECATED_ATTRIBUTE;
+- (void)wifiSDK:(GizWifiSDK *)wifiSDK didDeleteScheduler:(NSError *)result DEPRECATED_ATTRIBUTE;
+- (void)wifiSDK:(GizWifiSDK *)wifiSDK didGetSchedulers:(NSError *)result scheduleTaskList:(NSArray *)scheduleTaskList DEPRECATED_ATTRIBUTE;
+- (void)wifiSDK:(GizWifiSDK *)wifiSDK didGetSchedulerStatus:(NSError *)result sid:(NSString *)sid datetime:(NSString *)datetime status:(GizScheduleStatus)status statusDetail:(NSDictionary *)statusDetail DEPRECATED_ATTRIBUTE;
 
 /*
  获取可以设置域名的设备列表的回调接口
@@ -390,45 +367,27 @@
  */
 + (instancetype)sharedInstance;
 
-/*
- 初始化 SDK。该接口执行后，其他接口功能才能正常执行。如果已经设置了 delegate，SDK 会 立即通过 didDiscovered 上报发现的设备。如果 App 要做域名切换和设备的 productKey 过滤，建议在 SDK 初始化时就指定好要切换的域 名和产品 productKey。如果需要设置设备连接的云服务域名，可以在该接口调用时开启自动设置功能。这时 SDK 会让所 有支持域名设置的设备都与 App 连接到同一个云服务域名上。但该接口默认是不开启此功能的。
- @param appID 在机智云开发者中心 dev.gizwits.com 中，每个注册的设备在 对应的“应用配置”中，都能够查到对应的 appID。
- 此参数无默认值，开发者必须传入正确的 appID
- */
 + (void)startWithAppID:(NSString *)appID DEPRECATED_ATTRIBUTE;
-
-/*
- 初始化 SDK。该接口执行后，其他接口功能才能正常执行。如果已经设置了 delegate，SDK 会 立即通过 didDiscovered 上报发现的设备。如果 App 要做域名切换和设备的 productKey 过滤，建议在 SDK 初始化时就指定好要切换的域 名和产品 productKey。如果需要设置设备连接的云服务域名，可以在该接口调用时开启自动设置功能。这时 SDK 会让所 有支持域名设置的设备都与 App 连接到同一个云服务域名上。但该接口默认是不开启此功能的。
- @param appID 在机智云开发者中心 dev.gizwits.com 中，每个注册的设备在 对应的“应用配置”中，都能够查到对应的 appID。此参数无默认值，开发者必须传入正确的 appID
- @param specialProductKeys 要过滤的设备产品类型 productKey 列表，为 NSString 数组。 此参数默认值为 nil，此时 SDK 返回所有设备。若希望 SDK 只返回 过滤后的设备，则参数应指定为需要的设备产品类型 productKey
- @param cloudServiceInfo 要切换的服务器域名信息。此参数默认值为 nil，此时 SDK 将根据用户手机的地理位置信息为 App 设置机智云统一部署的云服务域名。若 App 希望使用独立部署的私有云服务域名，需按照以下字典 {key: value}格式传值:
-    {
-        "openAPIInfo": "xxx", // NSString类型，api服务域名
-        "siteInfo": "xxx" // NSString类型，site服务域名
-        "pushInfo": "xxx" // NSString类型，推送服务域名
-    }
-    其中，openAPIInfo 和 siteInfo 必须传值，pushInfo 可选。
-    可以不指定端口号，SDK 会使用默认的服务端口。此时形如: api.gizwits.com
-    指定端口号时，需同时指定 Http 和 Https 端口。此时形如: xxx.gizwits.com:81&8443
- */
 + (void)startWithAppID:(NSString *)appID specialProductKeys:(NSArray *)specialProductKeys cloudServiceInfo:(NSDictionary *)cloudSeviceInfo DEPRECATED_ATTRIBUTE;
++ (void)startWithAppID:(NSString *)appID specialProductKeys:(NSArray *)specialProductKeys cloudServiceInfo:(NSDictionary *)cloudSeviceInfo autoSetDeviceDomain:(BOOL)autoSetDeviceDomain DEPRECATED_ATTRIBUTE;
 
 /*
  初始化 SDK。该接口执行后，其他接口功能才能正常执行。如果已经设置了 delegate，SDK 会 立即通过 didDiscovered 上报发现的设备。如果 App 要做域名切换和设备的 productKey 过滤，建议在 SDK 初始化时就指定好要切换的域 名和产品 productKey。如果需要设置设备连接的云服务域名，可以在该接口调用时开启自动设置功能。这时 SDK 会让所 有支持域名设置的设备都与 App 连接到同一个云服务域名上。但该接口默认是不开启此功能的。
  @param appID 在机智云开发者中心 dev.gizwits.com 中，每个注册的设备在 对应的“应用配置”中，都能够查到对应的 appID。此参数无默认值，开发者必须传入正确的 appID
+ @param appSecret 在机智云开发者中心 dev.gizwits.com 的“应用配置”中，可以看到与App ID对应的App Secret。此参数无默认值，开发者必须传入正确的appSecret
  @param specialProductKeys 要过滤的设备产品类型 productKey 列表，为 NSString 数组。 此参数默认值为 nil，此时 SDK 返回所有设备。若希望 SDK 只返回 过滤后的设备，则参数应指定为需要的设备产品类型 productKey
  @param cloudServiceInfo 要切换的服务器域名信息。此参数默认值为 nil，此时 SDK 将根据用户手机的地理位置信息为 App 设置机智云统一部署的云服务域名。若 App 希望使用独立部署的私有云服务域名，需按照以下字典 {key: value}格式传值:
-    {
-        "openAPIInfo": "xxx", // NSString类型，api服务域名
-        "siteInfo": "xxx" // NSString类型，site服务域名
-        "pushInfo": "xxx" // NSString类型，推送服务域名
-    }
-    其中，openAPIInfo 和 siteInfo 必须传值，pushInfo 可选。
-    可以不指定端口号，SDK 会使用默认的服务端口。此时形如: api.gizwits.com
-    指定端口号时，需同时指定 Http 和 Https 端口。此时形如: xxx.gizwits.com:81&8443
+ {
+ "openAPIInfo": "xxx", // NSString类型，api服务域名
+ "siteInfo": "xxx" // NSString类型，site服务域名
+ "pushInfo": "xxx" // NSString类型，推送服务域名
+ }
+ 其中，openAPIInfo 和 siteInfo 必须传值，pushInfo 可选。
+ 可以不指定端口号，SDK 会使用默认的服务端口。此时形如: api.gizwits.com
+ 指定端口号时，需同时指定 Http 和 Https 端口。此时形如: xxx.gizwits.com:81&8443
  @prarm autoSetDeviceDomain 是否要开启设备域名的自动设置功能。此参数默认值为 NO，即不开 启自动设置。参数值传 YES，则开启设备域名的自动设置功能。如果开启了设备 域名的自动设置，小循环设备将被连接到 App 当前使用的云服务域 名上
  */
-+ (void)startWithAppID:(NSString *)appID specialProductKeys:(NSArray *)specialProductKeys cloudServiceInfo:(NSDictionary *)cloudSeviceInfo autoSetDeviceDomain:(BOOL)autoSetDeviceDomain;
++ (void)startWithAppID:(NSString *)appID appSecret:(NSString *)appSecret specialProductKeys:(NSArray *)specialProductKeys cloudServiceInfo:(NSDictionary *)cloudSeviceInfo autoSetDeviceDomain:(BOOL)autoSetDeviceDomain;
 
 /*
  获取 SDK 版本号
@@ -735,53 +694,10 @@
  */
 - (void)transAnonymousUserToPhoneUser:(NSString *)token phone:(NSString *)phone password:(NSString *)password code:(NSString *)code DEPRECATED_ATTRIBUTE;
 
-/*
- 获取分组列表
- @param uid 用户登录或注册时得到的 uid
- @param token 用户登录或注册时得到的 token
- @param specialProductKeys 待筛选的组类型标识，NSString数组。不指定则不筛选
- @see 对应的回调接口：[GizWifiSDKDelegate wifiSDK:didGetGroups:groupList:]
- */
-- (void)getGroups:(NSString *)uid token:(NSString *)token specialProductKeys:(NSArray *)specialProductKeys;
-
-/*
- 添加分组。添加分组时，必须指定组类型，组类型应该是一个有效的设备产品类型标识。默认分配的组名称为“Default”，组设备亦可以在创建组之后再添加。但如果添加的组设备是SDK无法识别的，也无法被添加到分组中
- @param uid 用户登录或注册时得到的 uid
- @param token 用户登录或注册时得到的 token
- @param productKey 指定组类型标识
- @param groupName 指定组名称
- @param specialDevices 指定加入组内的设备（成员为字典，依赖键值 sdid（子设备标识码）、did（父设备标识码），暂不加入设备则传空）
- @see 对应的回调接口：[GizWifiSDKDelegate wifiSDK:didGetGroups:groupList:]
- */
-- (void)addGroup:(NSString *)uid
-           token:(NSString *)token
-      productKey:(NSString *)productKey
-       groupName:(NSString *)groupName
-  specialDevices:(NSArray *)specialDevices;
-
-/*
- 删除设备分组
- @param uid 用户登录或注册时得到的 uid
- @param token 用户登录或注册时得到的 token
- @param gid 待删除的组id
- @see 对应的回调接口：[GizWifiSDKDelegate wifiSDK:didGetGroups:groupList:]
- */
-- (void)removeGroup:(NSString *)uid token:(NSString *)token gid:(NSString *)gid;
-
-/*
- 编辑分组，可以修改组名称和组设备。但如果要编辑的组设备，与组类型不匹配时，或是SDK无法识别的，设备是不能更新到分组里的
- @param uid 用户登录或注册时得到的 uid
- @param token 用户登录或注册时得到的 token
- @param gid 编辑组时需要指定组id
- @param groupName 待修改的组名称
- @param specialDevices 要编辑的组内设备。字典数组，依赖键值 sdid（子设备标识码）、did（父设备标识码）。不指定设备则传 null
- @see 对应的回调接口：[GizWifiSDKDelegate wifiSDK:didGetGroups:groupList:]
- */
-- (void)editGroup:(NSString *)uid
-            token:(NSString *)token
-              gid:(NSString *)gid
-        groupName:(NSString *)groupName
-   specialDevices:(NSArray *)specialDevices;
+- (void)getGroups:(NSString *)uid token:(NSString *)token specialProductKeys:(NSArray *)specialProductKeys DEPRECATED_ATTRIBUTE;
+- (void)addGroup:(NSString *)uid token:(NSString *)token productKey:(NSString *)productKey groupName:(NSString *)groupName specialDevices:(NSArray *)specialDevices DEPRECATED_ATTRIBUTE;
+- (void)removeGroup:(NSString *)uid token:(NSString *)token gid:(NSString *)gid DEPRECATED_ATTRIBUTE;
+- (void)editGroup:(NSString *)uid token:(NSString *)token gid:(NSString *)gid groupName:(NSString *)groupName specialDevices:(NSArray *)specialDevices DEPRECATED_ATTRIBUTE;
 
 /*
  切换服务器（已废弃）
@@ -825,39 +741,9 @@
  */
 + (void)disableLAN:(BOOL)disabled;
 
-/*
- 创建定时任务。用户登录、绑定设备后才能创建定时任务
- @param token 用户登录或注册时得到的token
- @param schedulerInfo 要创建的定时任务内容
- @see 对应的回调接口：[GizWifiSDKDelegate wifiSDK:didCreateScheduler:sid:]
- @note 替代的定时任务接口将在2.05.05版本中发布
- */
-- (void)createScheduler:(NSString *)token schedulerInfo:(GizSchedulerInfo *)schedulerInfo DEPRECATED_ATTRIBUTE;
-
-/*
- 获取定时任务列表。用户登录后才能获取
- @param token 用户登录或注册时得到的token
- @see 对应的回调接口：[GizWifiSDKDelegate wifiSDK:didGetSchedulers:scheduleTaskList:]
- @note 替代的定时任务接口将在2.05.05版本中发布
- */
+- (void)createScheduler:(NSString *)token schedulerInfo:(GizDeviceScheduler *)schedulerInfo DEPRECATED_ATTRIBUTE;
 - (void)getSchedulers:(NSString *)token DEPRECATED_ATTRIBUTE;
-
-/*
- 删除定时任务。用户登录后才能删除
- @param token 用户登录或注册时得到的token
- @param sid 待删除的定时任务id
- @see 对应的回调接口：[GizWifiSDKDelegate wifiSDK:didDeleteScheduler:]
- @note 替代的定时任务接口将在2.05.05版本中发布
- */
 - (void)deleteScheduler:(NSString *)token sid:(NSString *)sid DEPRECATED_ATTRIBUTE;
-
-/*
- 获取指定sid的定时任务执行状态
- @param token 用户登录或注册时得到的token
- @param sid 待删除的定时任务id
- @see 对应的回调接口：[GizWifiSDKDelegate wifiSDK:didGetSchedulerStatus:sid:datetime:status:statusDetail:]
- @note 替代的定时任务接口将在2.05.05版本中发布
- */
 - (void)getSchedulerStatus:(NSString *)token sid:(NSString *)sid DEPRECATED_ATTRIBUTE;
 
 @property (strong, nonatomic, readonly) NSString *domain;

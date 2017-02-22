@@ -22,5 +22,7 @@
 
 @property (assign, nonatomic) id <GosConfigStartDelegate>delegate;
 
++ (void)pushToSoftAP:(UINavigationController *)navCtrl;
+
 @end
 

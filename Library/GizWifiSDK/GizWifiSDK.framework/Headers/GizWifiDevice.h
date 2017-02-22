@@ -18,6 +18,7 @@ extern NSString *XPGWifiDeviceHardwareFirmwareVerKey DEPRECATED_ATTRIBUTE;
 extern NSString *XPGWifiDeviceHardwareProductKey DEPRECATED_ATTRIBUTE;
 
 @class GizWifiDevice;
+@class GizWifiCentralControlDevice;
 
 /*
  GizWifiDeviceDelegate 是 GizWifiDevice 类的委托协议，为 APP 开发者处理设备登录、设备控制、设备在线状态提供委托函数
@@ -138,92 +139,78 @@ extern NSString *XPGWifiDeviceHardwareProductKey DEPRECATED_ATTRIBUTE;
  使用委托获取对应事件。GizWifiDevice 对应的回调接口在 GizWifiDeviceDelegate 定义。需要用到哪个接口，回调即可
  */
 @property (weak, nonatomic) id <GizWifiDeviceDelegate>delegate;
-
 /*
  NSString类型。设备的物理地址，如果是 VIRTUAL:SITE，则是虚拟设备
  */
 @property (strong, nonatomic, readonly) NSString *macAddress;
-
 /*
  NSString类型。设备云端身份标识 DID
  */
 @property (strong, nonatomic, readonly) NSString *did;
-
 /*
  NSString类型。设备的ip 地址，大循环设备的ip地址为云端服务器域名
  */
 @property (strong, nonatomic, readonly) NSString *ipAddress;
-
 /*
  NSString类型。设备的产品类型识别码
  */
 @property (strong, nonatomic, readonly) NSString *productKey;
-
 /*
  NSString类型。设备的产品名称
  */
 @property (strong, nonatomic, readonly) NSString *productName;
-
 /*
  @deprecated 此变量已废弃，不再提供支持。
  */
 @property (strong, nonatomic, readonly) NSString *passcode DEPRECATED_ATTRIBUTE;
-
 /*
  NSString类型。设备的备注信息，设备绑定后可以修改，默认为空
  */
 @property (strong, nonatomic, readonly) NSString *remark;
-
 /*
  NSString类型。设备的别名，设备绑定后可以修改，默认为空
  */
 @property (strong, nonatomic, readonly) NSString *alias;
-
+/**
+ GizDeviceSharingUserRole类型。表示绑定设备的用户具有的权限
+ */
+@property (assign, nonatomic, readonly) GizDeviceSharingUserRole sharingRole;
 /*
  BOOL类型。设备是否为小循环
  */
 @property (assign, nonatomic, readonly) BOOL isLAN;
-
 /*
  BOOL类型。设备是否已绑定
  */
 @property (assign, nonatomic, readonly) BOOL isBind;
-
 /*
  BOOL类型。判断设备是否已在云端注销
  */
 @property (assign, nonatomic, readonly) BOOL isDisabled;
-
 /*
  GizWifiDeviceType类型。设备分类，是中控设备还是普通设备
  */
 @property (assign, nonatomic, readonly) GizWifiDeviceType productType;
-
 /*
  @deprecated 此变量已废弃，不再提供支持。替代变量为 productType
  */
 @property (assign, nonatomic, readonly) XPGWifiDeviceType type DEPRECATED_ATTRIBUTE;
-
 /*
  @deprecated 此变量已废弃，不再提供支持。替代变量为 netStatus
  */
 @property (assign, nonatomic, readonly) BOOL isOnline DEPRECATED_ATTRIBUTE;
-
 /*
  @deprecated 此变量已废弃，不再提供支持。替代变量为 netStatus
  */
 @property (assign, nonatomic, readonly) BOOL isConnected DEPRECATED_ATTRIBUTE;
-
 /*
  GizWifiDeviceNetStatus类型。设备的网络状态
  */
 @property (assign, nonatomic, readonly) GizWifiDeviceNetStatus netStatus;
-
 /*
  BOOL类型。设备是否已订阅
  */
 @property (assign, nonatomic, readonly) BOOL isSubscribed;
-
 /*
  BOOL类型。设备是否定义了产品数据点
  */
@@ -233,16 +220,19 @@ extern NSString *XPGWifiDeviceHardwareProductKey DEPRECATED_ATTRIBUTE;
  @deprecated 此接口已废弃，不再提供支持。替代变量为 isBind
  */
 - (BOOL)isBind:(NSString *)uid DEPRECATED_ATTRIBUTE;
+- (void)setSubscribe:(BOOL)subscribed DEPRECATED_ATTRIBUTE;
+- (void)getDeviceStatus DEPRECATED_ATTRIBUTE;
 
 /*
  设备订阅或解除订阅。订阅了设备，表示使用者关心这个设备的消息推送。解除订阅，表示使用者不关心这个设备的消息推送。订阅设备后，SDK将自动登录和自动绑定设备。解除订阅后，设备连接将自动断开，但不会自动解绑。一般来说，设备订阅都会成功的，SDK会记住设备是否被订阅了
  
+ @param productSecret 设备的产品秘钥。在机智云开发者中心 dev.gizwits.com 的“产品信息”中，可以看到与Product Key对应的Product Secret。此参数无默认值，开发者必须传入正确的productSecret
  @param subscribed 订阅或解除订阅。YES表示订阅，NO表示解除订阅
  @note 中控子设备不支持订阅、解除订阅
  
  @see 对应回调接口：[GizWifiDeviceDelegate device:didSetSubscribe:]
  */
-- (void)setSubscribe:(BOOL)subscribed;
+- (void)setSubscribe:(NSString *)productSecret subscribed:(BOOL)subscribed;
 
 /*
  获取硬件信息
@@ -251,10 +241,12 @@ extern NSString *XPGWifiDeviceHardwareProductKey DEPRECATED_ATTRIBUTE;
 - (void)getHardwareInfo;
 
 /*
- 获取设备状态。已订阅的设备变为可控状态后才能获取到状态
+ 获取设备状态。已订阅的设备变为可控状态后才能获取到状态。如果设备是变长数据点类型，则可查询指定的数据点状态
+ @param attrs 要查询状态的数据点名称，为NSString类型数组。此参数默认值为nil。SDK默认返回设备的所有数据点状态。
+    若要查询某些数据点的状态，参数应指定为要查询的数据点数组
  @see 对应的回调接口：[GizWifiDeviceDelegate device:didReceiveData:data:withSN:]
  */
-- (void)getDeviceStatus;
+- (void)getDeviceStatus:(NSArray *)attrs;
 
 /*
  退出产测模式。不订阅设备就可以调用此接口，设备进入产测模式后会响应
@@ -276,6 +268,7 @@ extern NSString *XPGWifiDeviceHardwareProductKey DEPRECATED_ATTRIBUTE;
  @see 对应的回调接口：[GizWifiDeviceDelegate device:didReceiveData:data:withSN:]
  */
 - (void)write:(NSDictionary *)data withSN:(int)sn;
+//- (void)write:(GizWifiCentralControlDevice *)centralControlDevice data:(NSDictionary *)data withSN:(int)sn;
 
 /*
  @deprecated 此接口已废弃，不再提供支持。替代接口：[write:key:withSN:]、[getDeviceStatus]

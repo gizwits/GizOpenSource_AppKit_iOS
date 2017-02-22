@@ -12,6 +12,7 @@
 /*
  GizWifiSubDevice 类为 APP 开发者提供中控子设备的操作函数
  */
+NS_CLASS_DEPRECATED_IOS(1_0, 2_0, "GizWifiSubDevice is deprecated.")
 @interface GizWifiSubDevice : GizWifiDevice
 
 /*
