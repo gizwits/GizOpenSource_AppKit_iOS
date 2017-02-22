@@ -11,9 +11,11 @@
 #import <GizWifiSDK/GizWifiSDK.h>
 #import <AVFoundation/AVFoundation.h>
 #import "QRCodeController.h"
+#import "SSPullToRefresh.h"
 #import "AppDelegate.h"
 #import "GosSettingsViewController.h"
 #import "GosDeviceListCell.h"
+#import "GosDeviceAcceptSharingInfo.h"
 
 #import "GosPushManager.h"
 #import "GosAnonymousLogin.h"
@@ -25,21 +27,38 @@
 #import <UMMobClick/MobClick.h>
 #endif
 
-@interface GosDeviceListViewController () <UIActionSheetDelegate, GizWifiSDKDelegate, GizWifiDeviceDelegate, UITableViewDelegate, UITableViewDataSource>
+@interface GosDeviceListViewController () <UIActionSheetDelegate, GizWifiSDKDelegate, GizWifiDeviceDelegate, UITableViewDelegate, UITableViewDataSource, SSPullToRefreshViewDelegate, GizDeviceSharingDelegate>
+
+@property (nonatomic, strong) IBOutlet UITableView *deviceListTableView;
+
+@property (nonatomic, weak) IBOutlet UIButton *addDeviceImageBtn;
+@property (nonatomic, weak) IBOutlet UIButton *addDeviceLabelBtn;
+
+@property (strong, nonatomic) GizWifiDevice *lastSubscribedDevice;
+@property (strong, nonatomic) SSPullToRefreshView *pullToRefreshView;
+
+@property (strong, nonatomic) NSString *lastSharingCode;
 
 @end
 
 @implementation GosDeviceListViewController
 
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    if (self.pullToRefreshView == nil) {
+        self.pullToRefreshView = [[SSPullToRefreshView alloc] initWithScrollView:self.deviceListTableView delegate:self];//下拉刷新
+    } else {
+        [self.pullToRefreshView setDefaultContentInset:UIEdgeInsetsMake(64, 0, 0, 0)];
+    }
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.automaticallyAdjustsScrollViewInsets = false;
-    [self.navigationController.navigationBar setHidden:NO];
+    
+    self.navigationItem.hidesBackButton = YES;
+    
     self.deviceListArray = @[@[],@[],@[]];
-//    if (![GizCommon sharedInstance].isLogin) {
-//        self.navigationItem.leftBarButtonItem = nil;
-//        self.navigationItem.hidesBackButton = YES;
-//    }
+    
     if ([GosCommon sharedInstance].anonymousLoginOn) {
         GosAnonymousLoginStatus lastLoginStatus = [GosAnonymousLogin lastLoginStatus];
         if ([GosCommon sharedInstance].currentLoginStatus == GizLoginNone || lastLoginStatus == GosAnonymousLoginStatusLogout) {
@@ -82,15 +101,22 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    self.lastSubscribedDevice = nil;
     [GizWifiSDK sharedInstance].delegate = self;
+    [GizDeviceSharing setDelegate:self];
+    [GizWifiSDK disableLAN:NO];
     [self refreshTableView];
+    
+    if (self.tabBarController) {
+        self.tabBarController.navigationItem.title = self.navigationItem.title;
+        self.tabBarController.navigationItem.rightBarButtonItems = self.navigationItem.rightBarButtonItems;
+    }
 }
 
-- (IBAction)refreshBtnPressed:(id)sender {
-    MBProgressHUD *hud = [MBProgressHUD HUDForView:self.view];
-    if (hud.alpha == 0) {
-        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        [self getBoundDevice];
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    if (!self.lastSubscribedDevice.isLAN) { //只有大循环控制才可以禁用小循环设备
+        [GizWifiSDK disableLAN:YES];
     }
 }
 
@@ -112,21 +138,40 @@
 #endif
 
     UIActionSheet *actionSheet = nil;
-    if ([GosCommon sharedInstance].currentLoginStatus == GizLoginUser) {
-        actionSheet = [[UIActionSheet alloc]
-                                      initWithTitle:nil
-                                      delegate:self
-                                      cancelButtonTitle:NSLocalizedString(@"Cancel", nil)
-                                      destructiveButtonTitle:nil
-                                      otherButtonTitles:NSLocalizedString(@"Scan QR code", nil), NSLocalizedString(@"Add Device", nil), NSLocalizedString(@"Personal Center", nil), nil];
-    }
-    else {
-        actionSheet = [[UIActionSheet alloc]
-                       initWithTitle:nil
-                       delegate:self
-                       cancelButtonTitle:NSLocalizedString(@"Cancel", nil)
-                       destructiveButtonTitle:nil
-                       otherButtonTitles:NSLocalizedString(@"Scan QR code", nil), NSLocalizedString(@"Add Device", nil), NSLocalizedString(@"Personal Center", nil), nil];
+    if (self.tabBarController) {
+        if ([GosCommon sharedInstance].currentLoginStatus == GizLoginUser) {
+            actionSheet = [[UIActionSheet alloc]
+                           initWithTitle:nil
+                           delegate:self
+                           cancelButtonTitle:NSLocalizedString(@"Cancel", nil)
+                           destructiveButtonTitle:nil
+                           otherButtonTitles:NSLocalizedString(@"Scan QR code", nil), NSLocalizedString(@"Add Device", nil), nil];
+        }
+        else {
+            actionSheet = [[UIActionSheet alloc]
+                           initWithTitle:nil
+                           delegate:self
+                           cancelButtonTitle:NSLocalizedString(@"Cancel", nil)
+                           destructiveButtonTitle:nil
+                           otherButtonTitles:NSLocalizedString(@"Scan QR code", nil), NSLocalizedString(@"Add Device", nil), nil];
+        }
+    } else {
+        if ([GosCommon sharedInstance].currentLoginStatus == GizLoginUser) {
+            actionSheet = [[UIActionSheet alloc]
+                           initWithTitle:nil
+                           delegate:self
+                           cancelButtonTitle:NSLocalizedString(@"Cancel", nil)
+                           destructiveButtonTitle:nil
+                           otherButtonTitles:NSLocalizedString(@"Scan QR code", nil), NSLocalizedString(@"Add Device", nil), NSLocalizedString(@"Personal Center", nil), nil];
+        }
+        else {
+            actionSheet = [[UIActionSheet alloc]
+                           initWithTitle:nil
+                           delegate:self
+                           cancelButtonTitle:NSLocalizedString(@"Cancel", nil)
+                           destructiveButtonTitle:nil
+                           otherButtonTitles:NSLocalizedString(@"Scan QR code", nil), NSLocalizedString(@"Add Device", nil), NSLocalizedString(@"Personal Center", nil), nil];
+        }
     }
     
     actionSheet.actionSheetStyle = UIBarStyleBlackTranslucent;
@@ -154,7 +199,9 @@
 #if USE_UMENG
         [MobClick event:@"more_actionsheet_setting"];
 #endif
-        [self toSettings];
+        if (nil == self.tabBarController) { //取消按钮不做响应
+            [self toSettings];
+        }
     }
 }
 
@@ -190,7 +237,7 @@
                 [deviceListUnBind addObject:dev];
             }
         }
-        else [deviceListOffLine addObject:dev];
+        else if (dev.isBind) [deviceListOffLine addObject:dev];
     }
     self.deviceListArray = @[deviceListBind, deviceListUnBind, deviceListOffLine];
     [self.deviceListTableView reloadData];
@@ -336,7 +383,7 @@
         if (dev.netStatus == GizDeviceOnline || dev.netStatus == GizDeviceControlled) {
             [MBProgressHUD showHUDAddedTo:self.view animated:YES];
             dev.delegate = self;
-            [dev setSubscribe:YES];
+            [dev setSubscribe:nil subscribed:YES];
         }
     }
 }
@@ -380,6 +427,39 @@
     return [deviceArray objectAtIndex:indexPath.row];
 }
 
+- (void)safePushViewController:(UIViewController *)viewController {
+    UINavigationController *navController = nil;
+    BOOL isValidPush = NO;
+    if (self.tabBarController) {
+        navController = self.tabBarController.navigationController;
+        if (navController.viewControllers.lastObject == self.tabBarController) {
+            isValidPush = YES;
+        }
+    } else {
+        navController = self.navigationController;
+        if (navController.viewControllers.lastObject == self) {
+            isValidPush = YES;
+        }
+    }
+    
+    if (isValidPush) {
+        [navController pushViewController:viewController animated:YES];
+    }
+}
+
+- (void)safePopToViewController:(UIViewController *)viewController {
+    BOOL isValidPop = NO;
+    UINavigationController *navController = viewController.navigationController;
+    NSInteger index = [navController.viewControllers indexOfObject:viewController];
+    if (index >= 0 && index != navController.viewControllers.count) {
+        isValidPop = YES;
+    }
+    
+    if (isValidPop) {
+        [navController popToViewController:viewController animated:YES];
+    }
+}
+
 - (IBAction)toAirLink:(id)sender {
 #if (!TARGET_IPHONE_SIMULATOR)
     if (GetCurrentSSID().length > 0) {
@@ -387,7 +467,7 @@
         UINavigationController *nav = [[UIStoryboard storyboardWithName:@"GosAirLink" bundle:nil] instantiateInitialViewController];
         GosConfigStart *configStartVC = nav.viewControllers.firstObject;
         configStartVC.delegate = self;
-        [self.navigationController pushViewController:configStartVC animated:YES];
+        [self safePushViewController:configStartVC];
 #if (!TARGET_IPHONE_SIMULATOR)
     } else {
         [self showAlert:NSLocalizedString(@"Please switch to Wifi environment", nil)];
@@ -398,22 +478,20 @@
 - (void)toSettings {
     GosCommon *dataCommon = [GosCommon sharedInstance];
     if (dataCommon.settingPageHandler) {
-        dataCommon.settingPageHandler(self.navigationController);
+        dataCommon.settingPageHandler(self);
     } else {
         UINavigationController *nav = [[UIStoryboard storyboardWithName:@"GosSettings" bundle:nil] instantiateInitialViewController];
         GosSettingsViewController *settingsVC = nav.viewControllers.firstObject;
-        [self.navigationController pushViewController:settingsVC animated:YES];
+        [self safePushViewController:settingsVC];
     }
 }
 
 #pragma mark - Back to root
 - (void)gosConfigDidFinished {
-    [self onPopToSelf:YES];
-}
-
-- (void)onPopToSelf:(BOOL)animated {
-    if (self.navigationController.viewControllers.lastObject != self) {
-        [self.navigationController popToViewController:self animated:YES];
+    if (self.tabBarController) {
+        [self safePopToViewController:self.tabBarController];
+    } else {
+        [self safePopToViewController:self];
     }
 }
 
@@ -437,7 +515,14 @@
 
 - (void)wifiSDK:(GizWifiSDK *)wifiSDK didDiscovered:(NSError *)result deviceList:(NSArray *)deviceList {
     [MBProgressHUD hideHUDForView:self.view animated:YES];
-    [self refreshTableView];
+
+    if (self.pullToRefreshView.state == SSPullToRefreshViewStateLoading) {
+        [self.pullToRefreshView finishLoadingAnimated:YES completion:^{
+            [self refreshTableView];
+        }];
+    } else {
+        [self refreshTableView];
+    }
 }
 
 - (void)wifiSDK:(GizWifiSDK *)wifiSDK didBindDevice:(NSError *)result did:(NSString *)did {
@@ -471,7 +556,9 @@
 - (void)device:(GizWifiDevice *)device didSetSubscribe:(NSError *)result isSubscribed:(BOOL)isSubscribed {
     [MBProgressHUD hideHUDForView:self.view animated:YES];
     if (result.code == GIZ_SDK_SUCCESS && isSubscribed == YES) {
-        if (self.navigationController.viewControllers.lastObject == self) {
+        self.lastSubscribedDevice = device;
+        UIViewController *lastCtrl = self.navigationController.viewControllers.lastObject;
+        if (lastCtrl == self || lastCtrl == self.tabBarController) {
             [GosCommon sharedInstance].controlHandler(device, self);
         }
     }
@@ -490,8 +577,7 @@
     if(authStatus == AVAuthorizationStatusDenied){
         if (IS_VAILABLE_IOS8) {
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Camera access restricted", nil) message:[NSString stringWithFormat:@"%@ %@ %@", NSLocalizedString(@"Allow camera prepend", nil), app_Name, NSLocalizedString(@"Allow camera append", nil)] preferredStyle:UIAlertControllerStyleAlert];
-            [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-            }]];
+            [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleCancel handler:nil]];
             [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Go to Setting", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 if ([self canOpenSystemSettingView]) {
                     [self systemSettingView];
@@ -514,28 +600,30 @@
         }
     }];
     [qrcodeVC setDidReceiveBlock:^(NSString *result) {
-        NSDictionary *dict = [self getScanResult:result];
-        if(dict != nil)
-        {
-            NSString *did = [dict valueForKey:@"did"];
-            NSString *passcode = [dict valueForKey:@"passcode"];
-            NSString *productkey = [dict valueForKey:@"product_key"];
-            
-            //这里，要通过did，passcode，productkey获取一个设备
-            if(did.length > 0 && passcode.length > 0 && productkey > 0)
-            {
-                NSString *uid = [GosCommon sharedInstance].uid;
-                NSString *token = [GosCommon sharedInstance].token;
-                [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-                [[GizWifiSDK sharedInstance] bindDeviceWithUid:uid token:token did:did passCode:passcode remark:nil];
-            }
-            else {
-                [self showAlert:NSLocalizedString(@"Unknown QR Code", nil)];
-            }
-        }
-        else {
+        if ([result rangeOfString:@"type=share&code="].location == 0) { //共享二维码特征
+            self.lastSharingCode = [result substringFromIndex:16];
             [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-            [[GizWifiSDK sharedInstance] bindDeviceByQRCode:[GosCommon sharedInstance].uid token:[GosCommon sharedInstance].token QRContent:result];
+            [GizDeviceSharing checkDeviceSharingInfoByQRCode:[GosCommon sharedInstance].token QRCode:self.lastSharingCode];
+        } else {
+            NSDictionary *dict = [self getScanResult:result];
+            if (dict != nil) {
+                NSString *did = [dict valueForKey:@"did"];
+                NSString *passcode = [dict valueForKey:@"passcode"];
+                NSString *productkey = [dict valueForKey:@"product_key"];
+                
+                //这里，要通过did，passcode，productkey获取一个设备
+                if (did.length > 0 && passcode.length > 0 && productkey > 0) {
+                    NSString *uid = [GosCommon sharedInstance].uid;
+                    NSString *token = [GosCommon sharedInstance].token;
+                    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+                    [[GizWifiSDK sharedInstance] bindDeviceWithUid:uid token:token did:did passCode:passcode remark:nil];
+                } else {
+                    [self showAlert:NSLocalizedString(@"Unknown QR Code", nil)];
+                }
+            } else {
+                [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+                [[GizWifiSDK sharedInstance] bindDeviceByQRCode:[GosCommon sharedInstance].uid token:[GosCommon sharedInstance].token QRContent:result];
+            }
         }
     }];
     AppDelegate *del = (AppDelegate *)[UIApplication sharedApplication].delegate;
@@ -593,6 +681,37 @@
         [mdict setValue:value forKeyPath:key];
     }
     return mdict;
+}
+
+- (void)pullToRefreshViewDidStartLoading:(SSPullToRefreshView *)view {
+    [self getBoundDevice];
+}
+
+- (void)didCheckDeviceSharingInfoByQRCode:(NSError *)result userName:(NSString *)userName productName:(NSString *)productName deviceAlias:(NSString *)deviceAlias expiredAt:(NSString *)expiredAt {
+    [MBProgressHUD hideHUDForView:self.view animated:YES];
+    if (result.code == GIZ_SDK_SUCCESS) {
+        NSString *deviceInfo = deviceAlias;//设备名称
+        NSString *qrcode = self.lastSharingCode;//二维码
+        NSDate *expiredDate = nil;
+        if (deviceInfo.length == 0) {
+            deviceInfo = productName;
+        }
+        if (expiredAt.length > 0) {
+            expiredDate = [GosCommon serviceDateFromString:expiredAt];//计算剩余分钟数
+        }
+        GosDeviceAcceptSharingInfo *acceptCtrl = [[GosDeviceAcceptSharingInfo alloc] initWithUser:userName deviceInfo:deviceInfo qrcode:qrcode expiredDate:expiredDate];
+        [self safePushViewController:acceptCtrl];
+    } else {
+        NSString *message = nil;
+        if (result.code == 9088) {
+            message = NSLocalizedString(@"Sorry unable to get sharing info. Please check your internet connection", nil);
+        } else {
+            message = NSLocalizedString(@"Sorry unable to get sharing info. Please check your QR code", nil);
+        }
+        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"tip", nil)
+                                    message:message delegate:nil
+                          cancelButtonTitle:NSLocalizedString(@"OK", nil) otherButtonTitles:nil] show];
+    }
 }
 
 @end

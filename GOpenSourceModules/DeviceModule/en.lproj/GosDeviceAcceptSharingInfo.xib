@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="GosDeviceAcceptSharingInfo">
+            <connections>
+                <outlet property="btnCancel" destination="v9c-z6-jeK" id="b8c-Nd-lLc"/>
+                <outlet property="btnOK" destination="li1-P6-7Ff" id="S04-pv-HfO"/>
+                <outlet property="textSharingInfo" destination="NmE-mO-kdL" id="uIx-c8-r23"/>
+                <outlet property="textSharingTips" destination="ZDO-7T-6PB" id="EwE-nM-QT1"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qvb-I3-VuN">
+                    <rect key="frame" x="0.0" y="44" width="375" height="295"/>
+                    <subviews>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_notice.png" translatesAutoresizingMaskIntoConstraints="NO" id="wrA-N3-Xhn">
+                            <rect key="frame" x="15" y="40" width="20" height="20"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="20" id="rLt-uN-J5T"/>
+                                <constraint firstAttribute="width" constant="20" id="ver-C9-CxD"/>
+                            </constraints>
+                        </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tips: The device sharing will be expired in xxxxxxxxxx minutes" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZDO-7T-6PB">
+                            <rect key="frame" x="8" y="241" width="359" height="40"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="40" id="9es-mo-DNh"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <color key="textColor" red="0.57661790582182493" green="0.57661790582182493" blue="0.57661790582182493" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="li1-P6-7Ff">
+                            <rect key="frame" x="16" y="117" width="343" height="44"/>
+                            <color key="backgroundColor" red="0.97647058819999999" green="0.86274509799999999" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="44" id="ggY-xI-97U"/>
+                            </constraints>
+                            <state key="normal" title="OK">
+                                <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </state>
+                            <connections>
+                                <action selector="onConfirm:" destination="-1" eventType="touchUpInside" id="dUf-v1-W1s"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="v9c-z6-jeK">
+                            <rect key="frame" x="16" y="176" width="343" height="44"/>
+                            <color key="backgroundColor" red="0.97647058819999999" green="0.86274509799999999" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="44" id="WxM-lF-r6c"/>
+                            </constraints>
+                            <state key="normal" title="Ignore">
+                                <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </state>
+                            <connections>
+                                <action selector="onCancel:" destination="-1" eventType="touchUpInside" id="RTV-1Q-VPf"/>
+                            </connections>
+                        </button>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User xxxxxxxxxxxxxxxxxxx shared the device xxxxxxxxxxxxxxx to you, are you sure to accept?" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NmE-mO-kdL">
+                            <rect key="frame" x="43" y="30" width="324" height="76"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="76" id="B0H-Ws-eOf"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstItem="v9c-z6-jeK" firstAttribute="leading" secondItem="qvb-I3-VuN" secondAttribute="leading" constant="16" id="5QP-Hc-ef9"/>
+                        <constraint firstItem="ZDO-7T-6PB" firstAttribute="top" secondItem="v9c-z6-jeK" secondAttribute="bottom" constant="21" id="78l-7f-wd8"/>
+                        <constraint firstAttribute="trailing" secondItem="v9c-z6-jeK" secondAttribute="trailing" constant="16" id="CZl-AA-wGr"/>
+                        <constraint firstAttribute="trailing" secondItem="li1-P6-7Ff" secondAttribute="trailing" constant="16" id="Ebb-fR-dYZ"/>
+                        <constraint firstAttribute="trailing" secondItem="ZDO-7T-6PB" secondAttribute="trailing" constant="8" id="Iot-EV-6gn"/>
+                        <constraint firstItem="wrA-N3-Xhn" firstAttribute="top" secondItem="qvb-I3-VuN" secondAttribute="top" constant="40" id="OPp-rK-gPx"/>
+                        <constraint firstItem="NmE-mO-kdL" firstAttribute="top" secondItem="qvb-I3-VuN" secondAttribute="top" constant="30" id="ZID-lL-64Y"/>
+                        <constraint firstItem="li1-P6-7Ff" firstAttribute="leading" secondItem="qvb-I3-VuN" secondAttribute="leading" constant="16" id="aQQ-2b-qSQ"/>
+                        <constraint firstItem="v9c-z6-jeK" firstAttribute="top" secondItem="li1-P6-7Ff" secondAttribute="bottom" constant="15" id="chL-jb-gl9"/>
+                        <constraint firstItem="NmE-mO-kdL" firstAttribute="leading" secondItem="wrA-N3-Xhn" secondAttribute="trailing" constant="8" id="dps-Bw-gPh"/>
+                        <constraint firstItem="wrA-N3-Xhn" firstAttribute="leading" secondItem="qvb-I3-VuN" secondAttribute="leading" constant="15" id="fq1-Ks-Wct"/>
+                        <constraint firstAttribute="height" constant="295" id="o1J-H9-9kB"/>
+                        <constraint firstItem="ZDO-7T-6PB" firstAttribute="leading" secondItem="qvb-I3-VuN" secondAttribute="leading" constant="8" id="wYe-mz-aIK"/>
+                        <constraint firstAttribute="trailing" secondItem="NmE-mO-kdL" secondAttribute="trailing" constant="8" id="xPa-d5-SOw"/>
+                        <constraint firstItem="li1-P6-7Ff" firstAttribute="top" secondItem="NmE-mO-kdL" secondAttribute="bottom" constant="11" id="xhl-6D-Lek"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" red="0.93849337100982666" green="0.93201714754104614" blue="0.95611780881881714" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="qvb-I3-VuN" secondAttribute="trailing" id="0BK-Sr-yVP"/>
+                <constraint firstItem="qvb-I3-VuN" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="44" id="Sox-vp-4Mt"/>
+                <constraint firstItem="qvb-I3-VuN" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="raS-hf-9Wf"/>
+            </constraints>
+            <point key="canvasLocation" x="41.5" y="120.5"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="icon_notice.png" width="22" height="22"/>
+    </resources>
+</document>

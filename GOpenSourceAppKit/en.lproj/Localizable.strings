@@ -46,8 +46,9 @@
 "GIZ_SDK_DEVICE_LOGIN_VERIFY_FAILED" = "Device login verified failed";
 "GIZ_SDK_INTERNET_NOT_REACHABLE" = "The internet is not reachable";
 
+"GIZ_SDK_HTTP_SERVER_NOT_SUPPORT_API" = "Cloud Service does not support the API";
 "GIZ_SDK_HTTP_ANSWER_FORMAT_ERROR" = "HTTP response data format is error";
-"GIZ_SDK_HTTP_ANSWER_PARAM_ERROR" = "HTTP response data is error";
+"GIZ_SDK_HTTP_ANSWER_PARAM_ERROR" = "HTTP response parameter error";
 "GIZ_SDK_HTTP_SERVER_NO_ANSWER" = "HTTP server can not response";
 "GIZ_SDK_HTTP_REQUEST_FAILED" = "HTTP request failed";
 
@@ -255,3 +256,18 @@
 "set successful" = "set successful";
 "set failed" = "set failed";
 "connection dropped" = "connection dropped";
+
+"No" = "Cancel";
+
+"Waiting for accept" = "Waiting";
+
+"sharing_device_info_format" = "Sharing %@, using with your friend together.";
+"sharing_to_format" = "%@ shared to:";
+"sharing_bind_users_format" = "%@ bound users:";
+
+"cancel_sharing_format" = "Are you sure to delete the device permission of user %@？";
+
+"qrcode_sharing_format" = "User %@ shared the device %@ to you, are you sure to accept?";
+"qrcode_sharing_tip_format" = "Tips: The device sharing will be expired in %@ minutes";
+"qrcode_sharing_status_format" = "QR code will be expired in %@ minutes";
+"invited_content_format" = "%@ shared to you";

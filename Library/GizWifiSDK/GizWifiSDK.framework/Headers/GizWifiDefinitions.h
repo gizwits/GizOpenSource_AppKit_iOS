@@ -126,6 +126,10 @@ typedef NS_ENUM(NSInteger, GizWifiErrorCode) {
     GIZ_SDK_LOG_LEVEL_INVALID = 8009,
     
     /*
+     批量设置设备域名信息时没有可用设备
+     */
+    GIZ_SDK_NO_AVAILABLE_DEVICE = 8020,
+    /*
      设备配置信息发送失败
      */
     GIZ_SDK_DEVICE_CONFIG_SEND_FAILED = 8021,
@@ -247,6 +251,10 @@ typedef NS_ENUM(NSInteger, GizWifiErrorCode) {
      */
     GIZ_SDK_INTERNET_NOT_REACHABLE = 8050,
     
+    /*
+     HTTP服务不支持此API
+     */
+    GIZ_SDK_HTTP_SERVER_NOT_SUPPORT_API = 8095,
     /*
      http应答格式错误
      */
@@ -598,6 +606,86 @@ typedef NS_ENUM(NSInteger, GizWifiErrorCode) {
      */
     GIZ_OPENAPI_DEPRECATED_API = 9045,
     /*
+     Register already in progress!
+     */
+    GIZ_OPENAPI_REGISTER_IS_BUSY = 9046,
+    /*
+     can not share device to self!
+     */
+    GIZ_OPENAPI_CANNOT_SHARE_TO_SELF = 9080,
+    /*
+     guest or normal user can not share device!
+     */
+    GIZ_OPENAPI_ONLY_OWNER_CAN_SHARE = 9081,
+    /*
+     guest user not found!
+     */
+    GIZ_OPENAPI_NOT_FOUND_GUEST = 9082,
+    /*
+     guest user alread bound!
+     */
+    GIZ_OPENAPI_GUEST_ALREADY_BOUND = 9083,
+    /*
+     sharing record not found!
+     */
+    GIZ_OPENAPI_NOT_FOUND_SHARING_INFO = 9084,
+    /*
+     message record not found!
+     */
+    GIZ_OPENAPI_NOT_FOUND_THE_MESSAGE = 9085,
+    /*
+     sharing alread created, waiting for the guest to accept!
+     */
+    GIZ_OPENAPI_SHARING_IS_WAITING_FOR_ACCEPT = 9087,
+    /*
+     sharing record expired!
+     */
+    GIZ_OPENAPI_SHARING_IS_EXPIRED = 9088,
+    /*
+     sharing record status is not unaccept!
+     */
+    GIZ_OPENAPI_SHARING_IS_COMPLETED = 9089,
+    /*
+     owner binding disabled!
+     */
+    GIZ_OPENAPI_INVALID_SHARING_BECAUSE_UNBINDING = 9090,
+    /*
+     owner exist, guest can not bind!
+     */
+    GIZ_OPENAPI_ONLY_OWNER_CAN_BIND = 9092,
+    /*
+     permission denied, you are not owner!
+     */
+    GIZ_OPENAPI_ONLY_OWNER_CAN_OPERATE = 9093,
+    /*
+     sharing already canceled!
+     */
+    GIZ_OPENAPI_SHARING_ALREADY_CANCELLED = 9094,
+    /*
+     can not unbind self!
+     */
+    GIZ_OPENAPI_OWNER_CANNOT_UNBIND_SELF = 9095,
+    /*
+     permission denied, you are not guest!
+     */
+    GIZ_OPENAPI_ONLY_GUEST_CAN_CHECK_QRCODE = 9096,
+    /*
+     message already deleted!
+     */
+    GIZ_OPENAPI_MESSAGE_ALREADY_DELETED = 9098,
+    /*
+     notify delele binding failed!
+     */
+    GIZ_OPENAPI_BINDING_NOTIFY_FAILED = 9099,
+    /*
+     permission denied, you are not owner or guest!
+     */
+    GIZ_OPENAPI_ONLY_SELF_CAN_MODIFY_ALIAS = 9100,
+    /*
+     permission denied, you are not the receiver!
+     */
+    GIZ_OPENAPI_ONLY_RECEIVER_CAN_MARK_MESSAGE = 9101,
+    /*
      reserved
      */
     GIZ_OPENAPI_RESERVED = 9999,
@@ -793,6 +881,10 @@ typedef NS_ENUM(NSInteger, GizUserAccountType) {
      电子邮箱用户
      */
     GizUserEmail = 2,
+    /*
+     其他用户类型（包括匿名用户）
+     */
+    GizUserOther = 3,
 };
 
 typedef NS_ENUM(NSInteger, XPGUserAccountType) {
@@ -998,7 +1090,7 @@ typedef NS_ENUM(NSInteger, GizScheduleRepeatRule) {
     /*
      仅失败重复
      */
-    GizScheduleRepeatFailed,
+    GizScheduleRepeatFailed = 1,
 };
 
 /*
@@ -1012,11 +1104,120 @@ typedef NS_ENUM(NSInteger, GizScheduleStatus) {
     /*
      失败
      */
-    GizScheduleFailed,
+    GizScheduleFailed = 1,
     /**
      无状态
      */
-    GizScheduleNotDone,
+    GizScheduleNotDone = 2,
+};
+
+/*
+ 分享类型
+ */
+typedef NS_ENUM(NSInteger, GizDeviceSharingType) {
+    /*
+     自己发出的分享邀请
+     */
+    GizDeviceSharingByMe = 0,
+    /*
+     分享给自己的邀请
+     */
+    GizDeviceSharingToMe = 1,
+};
+
+/*
+ 分享方式
+ */
+typedef NS_ENUM(NSInteger, GizDeviceSharingWay) {
+    /*
+     账号分享
+     */
+    GizDeviceSharingByNormal = 0,
+    /*
+     二维码分享
+     */
+    GizDeviceSharingByQRCode = 1,
+};
+
+/*
+ 分享状态
+ */
+typedef NS_ENUM(NSInteger, GizDeviceSharingStatus) {
+    /*
+     未接受
+     */
+    GizDeviceSharingNotAccepted = 0,
+    /*
+     已接受
+     */
+    GizDeviceSharingAccepted = 1,
+    /*
+     已拒绝
+     */
+    GizDeviceSharingRefused = 2,
+    /*
+     已取消
+     */
+    GizDeviceSharingCancelled = 3,
+};
+
+/*
+ 消息类型
+ */
+typedef NS_ENUM(NSInteger, GizMessageType) {
+    /*
+     系统消息
+     */
+    GizMessageSystem = 0,
+    /*
+     分享消息
+     */
+    GizMessageSharing = 1,
+};
+
+/*
+ 消息状态
+ */
+typedef NS_ENUM(NSInteger, GizMessageStatus) {
+    /*
+     未读消息
+     */
+    GizMessageUnread = 0,
+    /*
+     已读消息
+     */
+    GizMessageRead = 1,
+    /*
+     已删除消息
+     */
+    GizMessageDeleted = 2,
+};
+
+/*
+ */
+typedef NS_ENUM(NSInteger, GizDeviceSceneStatus) {
+    GizDeviceSceneDone = 0,
+    GizDeviceSceneStart = 1,
+    GizDeviceSceneCancel = 2,
+};
+
+typedef NS_ENUM(NSInteger, GizDeviceSharingUserRole) {
+    /*
+     普通绑定用户
+     */
+    GizDeviceSharingNormal = 0,
+    /*
+     潜在Owner用户
+     */
+    GizDeviceSharingSpecial = 1,
+    /*
+     Owner用户
+     */
+    GizDeviceSharingOwner = 2,
+    /*
+     Guest用户
+     */
+    GizDeviceSharingGuest = 3,
 };
 
 #endif

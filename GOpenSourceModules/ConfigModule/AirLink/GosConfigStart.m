@@ -24,11 +24,6 @@
 @property (strong, nonatomic) GosWifiPasswordCell *passwordCell;
 
 @property (assign, nonatomic) CGFloat top;
-@property (weak, nonatomic) IBOutlet UIButton *btnAutoJump;
-
-@property (weak, nonatomic) IBOutlet UIButton *selectModuleBtn;
-//@property (assign, nonatomic) NSInteger currentSelectionIndex;
-//@property (strong, nonatomic) NSString *currentSelectionText;
 
 @property (weak, nonatomic) IBOutlet UIButton *nextBtn;
 
@@ -72,9 +67,6 @@
 //    self.currentSelectionIndex = 0;
     self.tableView.scrollEnabled = NO;
     self.top = self.navigationController.navigationBar.translucent ? 0 : 64;
-    if ([GosCommon sharedInstance].moduleSelectOn) {
-        [self.selectModuleBtn setHidden:NO];
-    }
     
     self.nextBtn.backgroundColor = [GosCommon sharedInstance].buttonColor;
     [self.nextBtn setTitleColor:[GosCommon sharedInstance].buttonTextColor forState:UIControlStateNormal];
@@ -99,7 +91,6 @@
     NSString *str = [NSString stringWithFormat:@"%@: %@", NSLocalizedString(@"Select the type of module", nil), [[GosCommon sharedInstance].configModuleTextArray objectAtIndex:indexOfAirlinkType]];
     NSMutableAttributedString *moduleTitle = [[NSMutableAttributedString alloc] initWithString:str];
     [moduleTitle addAttribute:NSUnderlineStyleAttributeName value:@(NSUnderlineStyleSingle) range:NSMakeRange(0, str.length)];
-    [self.selectModuleBtn setAttributedTitle:moduleTitle forState:UIControlStateNormal];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -119,22 +110,6 @@
 
 - (void)setDelegate:(id<GosConfigStartDelegate>)delegate {
     [GosCommon sharedInstance].delegate = delegate;
-}
-
-- (IBAction)selectModule:(id)sender {
-#if USE_UMENG
-    [MobClick event:@"login_btn_select_the_type_of_module"];
-#endif
-    
-    GosConfigModuleSelection *configModuleSelection = [[GosConfigModuleSelection alloc] init];
-//    configModuleSelection.currentSelectionIndex = self.currentSelectionIndex;
-    [self.navigationController pushViewController:configModuleSelection animated:YES];
-//    [configModuleSelection returnConfigModule:^(NSString *text, NSInteger index) {
-//        NSLog(@" ======== %@, %@", text, @(index));
-//        self.currentSelectionIndex = index;
-//        self.currentSelectionText = text;
-//        [self.selectModuleBtn setTitle:[NSString stringWithFormat:@"%@: %@", NSLocalizedString(@"Select the type of module", nil), text] forState:UIControlStateNormal];
-//    }];
 }
 
 #pragma mark - table view
@@ -251,7 +226,13 @@
         dataCommon.ssid = @"";
     }
     [dataCommon saveSSID:dataCommon.ssid key:self.passwordCell.textPassword.text];
-    [self.btnAutoJump sendActionsForControlEvents:UIControlEventTouchUpInside];
+    
+    if (dataCommon.moduleSelectOn) {
+        [self performSegueWithIdentifier:@"toSelect" sender:nil];
+    } else {
+        UIViewController *tipsCtrl = [self.storyboard instantiateViewControllerWithIdentifier:@"tips"];
+        [self.navigationController pushViewController:tipsCtrl animated:YES];
+    }
 }
 
 - (IBAction)onNext:(id)sender {
@@ -269,6 +250,33 @@
 
 - (IBAction)onCancel:(id)sender {
     SHOW_ALERT_CANCEL_CONFIG(self);
+}
+
+- (IBAction)onSoftAP:(id)sender {
+    GosCommon *dataCommon = [GosCommon sharedInstance];
+    dataCommon.ssid = self.ssidCell.textSSID.text;
+    if (nil == dataCommon.ssid) {
+        dataCommon.ssid = @"";
+    }
+    [dataCommon saveSSID:dataCommon.ssid key:self.passwordCell.textPassword.text];
+    [GosConfigStart pushToSoftAP:self.navigationController];
+}
+
++ (void)pushToSoftAP:(UINavigationController *)navigationController {
+    UIStoryboard *softapFlow =[UIStoryboard storyboardWithName:@"GosSoftAP" bundle:nil];
+    UINavigationController *navCtrl = [softapFlow instantiateInitialViewController];
+    
+    UIViewController *softapStartCtrl = navCtrl.viewControllers.firstObject;
+    
+    NSMutableArray *viewControllers = [navigationController.viewControllers mutableCopy];
+    
+    @try {
+        [viewControllers addObjectsFromArray:@[softapStartCtrl]];
+        [navigationController setViewControllers:viewControllers animated:YES];
+    }
+    @catch (NSException *exception) {
+        GIZ_LOG_ERROR("cause exception: %s", exception.description.UTF8String);
+    }
 }
 
 @end

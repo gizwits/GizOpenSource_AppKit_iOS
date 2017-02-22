@@ -14,6 +14,10 @@
 
 #import "GosUserLogoutTableViewCell.h"
 
+#if USE_UMENG
+#import <UMMobClick/MobClick.h>
+#endif
+
 @interface GosUserManagerViewController () <UIAlertViewDelegate>
 
 @end
@@ -132,6 +136,10 @@
         default:
             break;
     }
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 60;
 }
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {

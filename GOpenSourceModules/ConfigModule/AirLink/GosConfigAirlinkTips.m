@@ -13,6 +13,7 @@
 
 @property (weak, nonatomic) IBOutlet UIButton *btnNext;
 @property (weak, nonatomic) IBOutlet UIImageView *imgAirlink;
+@property (weak, nonatomic) IBOutlet UILabel *labelTips;
 
 @end
 
@@ -24,6 +25,11 @@
     [self.btnNext setTitleColor:[GosCommon sharedInstance].buttonTextColor forState:UIControlStateNormal];
     [self.btnNext.layer setCornerRadius:19.0];
     self.imgAirlink.gifPath = [[NSBundle mainBundle] pathForResource:@"02-airlink" ofType:@"gif"];
+    if ([GosCommon sharedInstance].moduleSelectOn) {
+        self.labelTips.text = [self.labelTips.text stringByReplacingOccurrencesOfString:@"xx" withString:self.selectedModuleName];
+    } else {
+        self.labelTips.hidden = YES;
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {

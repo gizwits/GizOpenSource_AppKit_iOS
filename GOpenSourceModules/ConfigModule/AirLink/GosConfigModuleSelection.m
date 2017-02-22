@@ -1,77 +1,128 @@
 //
 //  GosConfigModuleSelection.m
-//  GOpenSourceAppKit
+//  GOpenSource_AppKit
 //
-//  Created by Zono on 16/6/2.
-//  Copyright © 2016年 Gizwits. All rights reserved.
+//  Created by Tom on 2017/2/6.
+//  Copyright © 2017年 Gizwits. All rights reserved.
 //
 
 #import "GosConfigModuleSelection.h"
 #import "GosCommon.h"
+#import "GosConfigAirlinkTips.h"
 
-@interface GosConfigModuleSelection () <UITableViewDelegate, UITableViewDataSource>
+@interface GosConfigModuleSelection () <UICollectionViewDelegate, UICollectionViewDataSource>
 
-@property (nonatomic, assign) NSInteger currentSelectionIndex;
-@property (nonatomic, strong) UITableView *selectionTableView;
+@property (strong, nonatomic) NSArray *list;
+@property (strong, nonatomic) NSArray *listText;
 
 @end
 
 @implementation GosConfigModuleSelection
 
+static NSString * const reuseIdentifier = @"Cell";
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.navigationItem.title = NSLocalizedString(@"Module type selection", nil);
-    self.selectionTableView = [[UITableView alloc] initWithFrame:self.view.frame style:UITableViewStyleGrouped];
-    self.selectionTableView.delegate = self;
-    self.selectionTableView.dataSource = self;
+    
+    // Uncomment the following line to preserve selection between presentations
+    // self.clearsSelectionOnViewWillAppear = NO;
+    
+    // Register cell classes
+    [self.collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:reuseIdentifier];
+    self.list = [GosCommon sharedInstance].configModuleValueArray;
+    self.listText = [GosCommon sharedInstance].configModuleTextArray;
+    
+    // Do any additional setup after loading the view.
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
 }
 
-//- (void)returnConfigModule:(ReturnConfigModule)block {
-//    self.ReturnConfigModuleBlock = block;
-//}
-
-- (void)viewWillAppear:(BOOL)animated {
-    self.currentSelectionIndex = [[GosCommon sharedInstance].configModuleValueArray indexOfObject:@([GosCommon sharedInstance].airlinkConfigType)];
+#pragma mark - Navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(NSString *)sender {
+    if ([segue.destinationViewController isMemberOfClass:[GosConfigAirlinkTips class]]) {
+        GosConfigAirlinkTips *tipsCtrl = (GosConfigAirlinkTips *)segue.destinationViewController;
+        tipsCtrl.selectedModuleName = sender;
+    }
 }
 
-#pragma mark - Table view data source
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
+- (IBAction)onBack:(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    GosCommon *common = [GosCommon sharedInstance];
-    return MIN(common.configModuleValueArray.count, common.configModuleTextArray.count);
+#pragma mark <UICollectionViewDataSource>
+
+- (UIView *)makeView:(NSString *)text image:(UIImage *)image isSelected:(BOOL)isSelected {
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 95, 110)];
+    UIView *backgroundView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 95, 100)];
+    if (isSelected) {
+        backgroundView.backgroundColor = [UIColor lightGrayColor];
+    } else {
+        backgroundView.backgroundColor = [UIColor whiteColor];
+    }
+    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 10, 85, 64)];//4:3 or other?
+    imageView.image = image;
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 80, 95, 20)];
+    label.textAlignment = NSTextAlignmentCenter;
+    label.font = [UIFont boldSystemFontOfSize:14];
+    label.text = text;
+    [view addSubview:backgroundView];
+    [view addSubview:imageView];
+    [view addSubview:label];
+    return view;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"configModuleSelectionCell"];
-    if(nil == cell)
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"configModuleSelectionCell"];
-    if(indexPath.row == self.currentSelectionIndex)
-        cell.accessoryType = UITableViewCellAccessoryCheckmark;
-    else
-        cell.accessoryType = UITableViewCellAccessoryNone;
-    cell.textLabel.text = [[GosCommon sharedInstance].configModuleTextArray objectAtIndex:indexPath.row];
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    return MIN(self.list.count, self.listText.count);
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseIdentifier forIndexPath:indexPath];
+    
+    // Configure the cell
+    NSString *text = self.listText[indexPath.row];
+    GizWifiGAgentType gagentType = [self.list[indexPath.row] integerValue];
+    UIImage *image = nil;
+    switch (gagentType) {
+        case GizGAgentESP:
+            image = [UIImage imageNamed:@"ESP.jpg"];
+            break;
+        case GizGAgentMXCHIP:
+            image = [UIImage imageNamed:@"MXCHIP.jpg"];
+            break;
+        case GizGAgentHF:
+            image = [UIImage imageNamed:@"HF.jpg"];
+            break;
+        case GizGAgentQCA:
+            image = [UIImage imageNamed:@"QCA.jpg"];
+            break;
+        case GizGAgentRTK:
+            image = [UIImage imageNamed:@"RTK.jpg"];
+            break;
+        case GizGAgentTI:
+            image = [UIImage imageNamed:@"TI.jpg"];
+            break;
+        case GizGAgentWM:
+            image = [UIImage imageNamed:@"WM.jpg"];
+            break;
+        default:
+            image = [UIImage imageNamed:@"default.png"];
+            break;
+    }
+
+    cell.backgroundView = [self makeView:text image:image isSelected:NO];
+    cell.selectedBackgroundView = [self makeView:text image:image isSelected:YES];
     
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    self.currentSelectionIndex = indexPath.row;
-    [GosCommon sharedInstance].airlinkConfigType = [[[GosCommon sharedInstance].configModuleValueArray objectAtIndex:self.currentSelectionIndex] integerValue];
-//    NSLog(@"[GosCommon sharedInstance].airlinkConfigType = %@", @([GosCommon sharedInstance].airlinkConfigType));
-//    if (self.ReturnConfigModuleBlock != nil) {
-//        self.ReturnConfigModuleBlock([[GosCommon sharedInstance].configModuleTextArray objectAtIndex:self.currentSelectionIndex], self.currentSelectionIndex);
-//    }
-    [self.navigationController popViewControllerAnimated:YES];
+#pragma mark UICollectionViewDelegate
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    [collectionView deselectItemAtIndexPath:indexPath animated:YES];
+    [GosCommon sharedInstance].airlinkConfigType = [self.list[indexPath.row] integerValue];
+    [self performSegueWithIdentifier:@"toTips" sender:self.listText[indexPath.row]];
 }
-
 
 @end

@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1A0805091D000B4800DF3FD6 /* GosConfigModuleSelection.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0805081D000B4800DF3FD6 /* GosConfigModuleSelection.m */; };
 		1A083C3B1D08112A0050B161 /* GosDeviceListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A083C391D08112A0050B161 /* GosDeviceListCell.m */; };
 		1A083C3C1D08112A0050B161 /* GosDeviceListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A083C3A1D08112A0050B161 /* GosDeviceListCell.xib */; };
 		1A083C441D111E5A0050B161 /* TencentOpenAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A083C421D111E5A0050B161 /* TencentOpenAPI.framework */; };
@@ -34,7 +33,6 @@
 		1A35CD4E1CE99B3C0073627C /* RadioButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A35CD341CE99B3C0073627C /* RadioButton.m */; };
 		1A35CD4F1CE99B3C0073627C /* UAProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A35CD371CE99B3C0073627C /* UAProgressView.m */; };
 		1A35CD501CE99B3C0073627C /* UIImageView+PlayGIF.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A35CD3A1CE99B3C0073627C /* UIImageView+PlayGIF.m */; };
-		1A35CD511CE99B3C0073627C /* YFGIFImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A35CD3C1CE99B3C0073627C /* YFGIFImageView.m */; };
 		1AAB22FA1D4741FE000F49E9 /* launch@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AAB22F81D4741FE000F49E9 /* launch@2x.png */; };
 		1AAB22FB1D4741FE000F49E9 /* launch@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AAB22F91D4741FE000F49E9 /* launch@3x.png */; };
 		1AAB22FD1D474438000F49E9 /* nav_btn_update@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AAB22FC1D474438000F49E9 /* nav_btn_update@2x.png */; };
@@ -104,10 +102,40 @@
 		1ADE60291D3F31DE00FC2BFE /* sms.png in Resources */ = {isa = PBXBuildFile; fileRef = 1ADE600F1D3F31DE00FC2BFE /* sms.png */; };
 		1ADE602A1D3F31DE00FC2BFE /* wechat.png in Resources */ = {isa = PBXBuildFile; fileRef = 1ADE60101D3F31DE00FC2BFE /* wechat.png */; };
 		1ADE602D1D3F349600FC2BFE /* UIConfig.json in Resources */ = {isa = PBXBuildFile; fileRef = 1ADE602C1D3F349600FC2BFE /* UIConfig.json */; };
+		E216A3951E497BDF0034095B /* ESP@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E216A38E1E497BDF0034095B /* ESP@2x.jpg */; };
+		E216A3961E497BDF0034095B /* HF@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E216A38F1E497BDF0034095B /* HF@2x.jpg */; };
+		E216A3971E497BDF0034095B /* MXCHIP@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E216A3901E497BDF0034095B /* MXCHIP@2x.jpg */; };
+		E216A3981E497BDF0034095B /* QCA@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E216A3911E497BDF0034095B /* QCA@2x.jpg */; };
+		E216A3991E497BDF0034095B /* RTK@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E216A3921E497BDF0034095B /* RTK@2x.jpg */; };
+		E216A39A1E497BDF0034095B /* TI@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E216A3931E497BDF0034095B /* TI@2x.jpg */; };
+		E216A39B1E497BDF0034095B /* WM@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E216A3941E497BDF0034095B /* WM@2x.jpg */; };
+		E216A39D1E497D5C0034095B /* default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E216A39C1E497D5C0034095B /* default@2x.png */; };
 		E21CCA081D9D1C650051C6D3 /* GizWifiSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A804A0F1D5ADE500014F7B1 /* GizWifiSDK.framework */; };
 		E21CCA091D9D1C650051C6D3 /* GizWifiSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A804A0F1D5ADE500014F7B1 /* GizWifiSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E22855691D94DE0D00F3B6A0 /* GosMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E22855681D94DE0D00F3B6A0 /* GosMain.storyboard */; };
+		E238C5551E4871F300FEE010 /* GosConfigModuleSelection.m in Sources */ = {isa = PBXBuildFile; fileRef = E238C5541E4871F300FEE010 /* GosConfigModuleSelection.m */; };
+		E23EAF691E0B6AEF00319388 /* GosSharingQRCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E23EAF681E0B6AEF00319388 /* GosSharingQRCodeViewController.m */; };
+		E23EAF6C1E0B6B1200319388 /* GosSharingAccountViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E23EAF6B1E0B6B1200319388 /* GosSharingAccountViewController.m */; };
+		E23EAF701E0BC11E00319388 /* GosSharingMessageTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E23EAF6F1E0BC11E00319388 /* GosSharingMessageTableViewController.m */; };
+		E245F05F1E0A296F00018A16 /* SSPullToRefreshDefaultContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = E245F05A1E0A296F00018A16 /* SSPullToRefreshDefaultContentView.m */; };
+		E245F0601E0A296F00018A16 /* SSPullToRefreshSimpleContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = E245F05C1E0A296F00018A16 /* SSPullToRefreshSimpleContentView.m */; };
+		E245F0611E0A296F00018A16 /* SSPullToRefreshView.m in Sources */ = {isa = PBXBuildFile; fileRef = E245F05E1E0A296F00018A16 /* SSPullToRefreshView.m */; };
+		E245F0671E0A32B200018A16 /* GosMessageCenterTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E245F0661E0A32B200018A16 /* GosMessageCenterTableViewController.m */; };
+		E245F06A1E0A32C900018A16 /* GosPersonalCenterTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E245F0691E0A32C900018A16 /* GosPersonalCenterTableViewController.m */; };
+		E245F0711E0A650B00018A16 /* GosSharingListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E245F0701E0A650B00018A16 /* GosSharingListViewController.m */; };
+		E245F0751E0A68C900018A16 /* GosSharingMessageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E245F0731E0A68C900018A16 /* GosSharingMessageCell.m */; };
+		E245F07A1E0A777F00018A16 /* GosSharingManagerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E245F0791E0A777F00018A16 /* GosSharingManagerViewController.m */; };
+		E245F07D1E0A7EF500018A16 /* GosAddSharingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E245F07C1E0A7EF500018A16 /* GosAddSharingViewController.m */; };
+		E254F2861E1DE5FD00C0F369 /* GosSharing.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E254F2881E1DE5FD00C0F369 /* GosSharing.storyboard */; };
+		E254F28F1E1DF47000C0F369 /* GosSharingMessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E254F2911E1DF47000C0F369 /* GosSharingMessageCell.xib */; };
+		E264B2E41E28844A007D6542 /* yellow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E264B2E31E28844A007D6542 /* yellow@2x.png */; };
+		E264B2E61E28865E007D6542 /* user@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E264B2E51E28865E007D6542 /* user@2x.png */; };
+		E264B2E81E288691007D6542 /* message@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E264B2E71E288691007D6542 /* message@2x.png */; };
+		E264B2EA1E288716007D6542 /* friends@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E264B2E91E288716007D6542 /* friends@2x.png */; };
+		E264B2EC1E28871F007D6542 /* scan@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E264B2EB1E28871F007D6542 /* scan@2x.png */; };
 		E26E42661DF80F7C005BF72D /* GosUserManager.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E26E42641DF80F7C005BF72D /* GosUserManager.storyboard */; };
+		E2767AB31E1E93FB00415736 /* GosDeviceAcceptSharingInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = E2767AB11E1E93FB00415736 /* GosDeviceAcceptSharingInfo.m */; };
+		E2767AB51E1E9CA300415736 /* GosDeviceAcceptSharingInfo.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2767AB71E1E9CA300415736 /* GosDeviceAcceptSharingInfo.xib */; };
 		E29D03251D8649FD0011588C /* GosAnonymousLogin.m in Sources */ = {isa = PBXBuildFile; fileRef = E29D03241D8649FD0011588C /* GosAnonymousLogin.m */; };
 		E2C46ABB1DDF0B9E00743859 /* GosUserChangeTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C46AB91DDF0B9E00743859 /* GosUserChangeTableViewCell.m */; };
 		E2C46ABD1DDF0C1800743859 /* GosUserChangeTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2C46ABF1DDF0C1800743859 /* GosUserChangeTableViewCell.xib */; };
@@ -122,6 +150,8 @@
 		E2ED6EE41DDEF23900297595 /* GosChangeUserPasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E2ED6EE31DDEF23900297595 /* GosChangeUserPasswordViewController.m */; };
 		E2ED6EE81DDEF6F100297595 /* GosUserLogoutTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2ED6EE61DDEF6F100297595 /* GosUserLogoutTableViewCell.m */; };
 		E2ED6EEA1DDEF74300297595 /* GosUserLogoutTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2ED6EEC1DDEF74300297595 /* GosUserLogoutTableViewCell.xib */; };
+		E2F5B2661E278FCD00E4CE53 /* circle-add@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E2F5B2651E278FCD00E4CE53 /* circle-add@2x.png */; };
+		E2F5B26D1E27921900E4CE53 /* grid@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E2F5B26A1E27921900E4CE53 /* grid@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -139,8 +169,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		1A0805071D000B4800DF3FD6 /* GosConfigModuleSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GosConfigModuleSelection.h; sourceTree = "<group>"; };
-		1A0805081D000B4800DF3FD6 /* GosConfigModuleSelection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GosConfigModuleSelection.m; sourceTree = "<group>"; };
 		1A083C381D08112A0050B161 /* GosDeviceListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GosDeviceListCell.h; sourceTree = "<group>"; };
 		1A083C391D08112A0050B161 /* GosDeviceListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GosDeviceListCell.m; sourceTree = "<group>"; };
 		1A083C3A1D08112A0050B161 /* GosDeviceListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GosDeviceListCell.xib; sourceTree = "<group>"; };
@@ -177,8 +205,6 @@
 		1A35CD371CE99B3C0073627C /* UAProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAProgressView.m; sourceTree = "<group>"; };
 		1A35CD391CE99B3C0073627C /* UIImageView+PlayGIF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+PlayGIF.h"; sourceTree = "<group>"; };
 		1A35CD3A1CE99B3C0073627C /* UIImageView+PlayGIF.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+PlayGIF.m"; sourceTree = "<group>"; };
-		1A35CD3B1CE99B3C0073627C /* YFGIFImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YFGIFImageView.h; sourceTree = "<group>"; };
-		1A35CD3C1CE99B3C0073627C /* YFGIFImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YFGIFImageView.m; sourceTree = "<group>"; };
 		1A38874B1CA11CB3001D4BAF /* GOpenSourceAppKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GOpenSourceAppKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A804A0F1D5ADE500014F7B1 /* GizWifiSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GizWifiSDK.framework; sourceTree = "<group>"; };
 		1AAB22F81D4741FE000F49E9 /* launch@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "launch@2x.png"; sourceTree = "<group>"; };
@@ -292,10 +318,57 @@
 		1ADE600F1D3F31DE00FC2BFE /* sms.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sms.png; sourceTree = "<group>"; };
 		1ADE60101D3F31DE00FC2BFE /* wechat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wechat.png; sourceTree = "<group>"; };
 		1ADE602C1D3F349600FC2BFE /* UIConfig.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UIConfig.json; sourceTree = "<group>"; };
+		E216A38E1E497BDF0034095B /* ESP@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "ESP@2x.jpg"; sourceTree = "<group>"; };
+		E216A38F1E497BDF0034095B /* HF@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "HF@2x.jpg"; sourceTree = "<group>"; };
+		E216A3901E497BDF0034095B /* MXCHIP@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "MXCHIP@2x.jpg"; sourceTree = "<group>"; };
+		E216A3911E497BDF0034095B /* QCA@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "QCA@2x.jpg"; sourceTree = "<group>"; };
+		E216A3921E497BDF0034095B /* RTK@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "RTK@2x.jpg"; sourceTree = "<group>"; };
+		E216A3931E497BDF0034095B /* TI@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "TI@2x.jpg"; sourceTree = "<group>"; };
+		E216A3941E497BDF0034095B /* WM@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "WM@2x.jpg"; sourceTree = "<group>"; };
+		E216A39C1E497D5C0034095B /* default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "default@2x.png"; sourceTree = "<group>"; };
 		E22680B91DDEF7AF008A40A9 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "zh-Hans"; path = "zh-Hans.lproj/GosUserLogoutTableViewCell.xib"; sourceTree = "<group>"; };
 		E22855681D94DE0D00F3B6A0 /* GosMain.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = GosMain.storyboard; sourceTree = "<group>"; };
+		E238C5531E4871F300FEE010 /* GosConfigModuleSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GosConfigModuleSelection.h; sourceTree = "<group>"; };
+		E238C5541E4871F300FEE010 /* GosConfigModuleSelection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GosConfigModuleSelection.m; sourceTree = "<group>"; };
+		E23EAF671E0B6AEF00319388 /* GosSharingQRCodeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GosSharingQRCodeViewController.h; sourceTree = "<group>"; };
+		E23EAF681E0B6AEF00319388 /* GosSharingQRCodeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GosSharingQRCodeViewController.m; sourceTree = "<group>"; };
+		E23EAF6A1E0B6B1200319388 /* GosSharingAccountViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GosSharingAccountViewController.h; sourceTree = "<group>"; };
+		E23EAF6B1E0B6B1200319388 /* GosSharingAccountViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GosSharingAccountViewController.m; sourceTree = "<group>"; };
+		E23EAF6E1E0BC11E00319388 /* GosSharingMessageTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GosSharingMessageTableViewController.h; sourceTree = "<group>"; };
+		E23EAF6F1E0BC11E00319388 /* GosSharingMessageTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GosSharingMessageTableViewController.m; sourceTree = "<group>"; };
+		E245F0581E0A296F00018A16 /* SSPullToRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSPullToRefresh.h; sourceTree = "<group>"; };
+		E245F0591E0A296F00018A16 /* SSPullToRefreshDefaultContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSPullToRefreshDefaultContentView.h; sourceTree = "<group>"; };
+		E245F05A1E0A296F00018A16 /* SSPullToRefreshDefaultContentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSPullToRefreshDefaultContentView.m; sourceTree = "<group>"; };
+		E245F05B1E0A296F00018A16 /* SSPullToRefreshSimpleContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSPullToRefreshSimpleContentView.h; sourceTree = "<group>"; };
+		E245F05C1E0A296F00018A16 /* SSPullToRefreshSimpleContentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSPullToRefreshSimpleContentView.m; sourceTree = "<group>"; };
+		E245F05D1E0A296F00018A16 /* SSPullToRefreshView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSPullToRefreshView.h; sourceTree = "<group>"; };
+		E245F05E1E0A296F00018A16 /* SSPullToRefreshView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSPullToRefreshView.m; sourceTree = "<group>"; };
+		E245F0651E0A32B200018A16 /* GosMessageCenterTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GosMessageCenterTableViewController.h; sourceTree = "<group>"; };
+		E245F0661E0A32B200018A16 /* GosMessageCenterTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GosMessageCenterTableViewController.m; sourceTree = "<group>"; };
+		E245F0681E0A32C900018A16 /* GosPersonalCenterTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GosPersonalCenterTableViewController.h; sourceTree = "<group>"; };
+		E245F0691E0A32C900018A16 /* GosPersonalCenterTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GosPersonalCenterTableViewController.m; sourceTree = "<group>"; };
+		E245F06F1E0A650B00018A16 /* GosSharingListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GosSharingListViewController.h; sourceTree = "<group>"; };
+		E245F0701E0A650B00018A16 /* GosSharingListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GosSharingListViewController.m; sourceTree = "<group>"; };
+		E245F0721E0A68C900018A16 /* GosSharingMessageCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GosSharingMessageCell.h; path = Cell/GosSharingMessageCell.h; sourceTree = "<group>"; };
+		E245F0731E0A68C900018A16 /* GosSharingMessageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GosSharingMessageCell.m; path = Cell/GosSharingMessageCell.m; sourceTree = "<group>"; };
+		E245F0781E0A777F00018A16 /* GosSharingManagerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GosSharingManagerViewController.h; sourceTree = "<group>"; };
+		E245F0791E0A777F00018A16 /* GosSharingManagerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GosSharingManagerViewController.m; sourceTree = "<group>"; };
+		E245F07B1E0A7EF500018A16 /* GosAddSharingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GosAddSharingViewController.h; sourceTree = "<group>"; };
+		E245F07C1E0A7EF500018A16 /* GosAddSharingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GosAddSharingViewController.m; sourceTree = "<group>"; };
+		E254F2871E1DE5FD00C0F369 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "zh-Hans"; path = "zh-Hans.lproj/GosSharing.storyboard"; sourceTree = "<group>"; };
+		E254F28E1E1DE79300C0F369 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/GosSharing.storyboard; sourceTree = "<group>"; };
+		E254F2901E1DF47000C0F369 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "zh-Hans"; path = "zh-Hans.lproj/GosSharingMessageCell.xib"; sourceTree = "<group>"; };
+		E264B2E31E28844A007D6542 /* yellow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yellow@2x.png"; sourceTree = "<group>"; };
+		E264B2E51E28865E007D6542 /* user@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "user@2x.png"; sourceTree = "<group>"; };
+		E264B2E71E288691007D6542 /* message@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "message@2x.png"; sourceTree = "<group>"; };
+		E264B2E91E288716007D6542 /* friends@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "friends@2x.png"; sourceTree = "<group>"; };
+		E264B2EB1E28871F007D6542 /* scan@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "scan@2x.png"; sourceTree = "<group>"; };
 		E26E42651DF80F7C005BF72D /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = GOpenSourceModules/SettingsModule/en.lproj/GosUserManager.storyboard; sourceTree = SOURCE_ROOT; };
 		E26E42671DF80F86005BF72D /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "zh-Hans"; path = "GOpenSourceModules/SettingsModule/zh-Hans.lproj/GosUserManager.storyboard"; sourceTree = SOURCE_ROOT; };
+		E2767AB01E1E93FB00415736 /* GosDeviceAcceptSharingInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GosDeviceAcceptSharingInfo.h; sourceTree = "<group>"; };
+		E2767AB11E1E93FB00415736 /* GosDeviceAcceptSharingInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GosDeviceAcceptSharingInfo.m; sourceTree = "<group>"; };
+		E2767AB61E1E9CA300415736 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "zh-Hans"; path = "zh-Hans.lproj/GosDeviceAcceptSharingInfo.xib"; sourceTree = "<group>"; };
+		E2767AB81E1E9CAE00415736 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/GosDeviceAcceptSharingInfo.xib; sourceTree = "<group>"; };
 		E27E52521DF517EF00F9D148 /* aes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aes.h; sourceTree = "<group>"; };
 		E27E52531DF517EF00F9D148 /* asn1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asn1.h; sourceTree = "<group>"; };
 		E27E52541DF517EF00F9D148 /* asn1_mac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asn1_mac.h; sourceTree = "<group>"; };
@@ -381,6 +454,7 @@
 		E2C46AC21DDF0CF500743859 /* GosUserPasswordTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GosUserPasswordTableViewCell.m; sourceTree = "<group>"; };
 		E2C46AC31DDF0CF500743859 /* GosUserPasswordTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GosUserPasswordTableViewCell.xib; sourceTree = "<group>"; };
 		E2C918861D95053400F422CB /* GOpenSourceAppKit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GOpenSourceAppKit.entitlements; sourceTree = "<group>"; };
+		E2D29DB01E1DF4EC00DAD658 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/GosSharingMessageCell.xib; sourceTree = "<group>"; };
 		E2E6505D1E012DE5002D2632 /* GizKeychainRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GizKeychainRecorder.h; sourceTree = "<group>"; };
 		E2E6505E1E012DE5002D2632 /* GizKeychainRecorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GizKeychainRecorder.m; sourceTree = "<group>"; };
 		E2ED6ECA1DDEB64600297595 /* GosUserManagementCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GosUserManagementCell.h; sourceTree = "<group>"; };
@@ -398,6 +472,8 @@
 		E2ED6EE51DDEF6F100297595 /* GosUserLogoutTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GosUserLogoutTableViewCell.h; sourceTree = "<group>"; };
 		E2ED6EE61DDEF6F100297595 /* GosUserLogoutTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GosUserLogoutTableViewCell.m; sourceTree = "<group>"; };
 		E2ED6EEB1DDEF74300297595 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/GosUserLogoutTableViewCell.xib; sourceTree = "<group>"; };
+		E2F5B2651E278FCD00E4CE53 /* circle-add@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "circle-add@2x.png"; sourceTree = "<group>"; };
+		E2F5B26A1E27921900E4CE53 /* grid@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "grid@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -480,6 +556,7 @@
 				1A35CD201CE99B3C0073627C /* Log */,
 				1A35CD291CE99B3C0073627C /* QRcode */,
 				1A35CD231CE99B3C0073627C /* MBProgress */,
+				E245F0571E0A296F00018A16 /* SSPullToRefresh */,
 				1A35CD2F1CE99B3C0073627C /* RadioButton */,
 				1A35CD351CE99B3C0073627C /* UAProgressView */,
 				1A35CD381CE99B3C0073627C /* UIImageView-PlayGIF */,
@@ -550,8 +627,6 @@
 			children = (
 				1A35CD391CE99B3C0073627C /* UIImageView+PlayGIF.h */,
 				1A35CD3A1CE99B3C0073627C /* UIImageView+PlayGIF.m */,
-				1A35CD3B1CE99B3C0073627C /* YFGIFImageView.h */,
-				1A35CD3C1CE99B3C0073627C /* YFGIFImageView.m */,
 			);
 			path = "UIImageView-PlayGIF";
 			sourceTree = "<group>";
@@ -666,12 +741,12 @@
 				1AAC34371CFC3D6300A5D1A9 /* GosAirLink.storyboard */,
 				1AAC33611CF6FBFC00A5D1A9 /* GosConfigStart.h */,
 				1AAC33621CF6FBFC00A5D1A9 /* GosConfigStart.m */,
-				1A0805071D000B4800DF3FD6 /* GosConfigModuleSelection.h */,
-				1A0805081D000B4800DF3FD6 /* GosConfigModuleSelection.m */,
 				1AAC335F1CF6FBFC00A5D1A9 /* GosConfigAirlinkTips.h */,
 				1AAC33601CF6FBFC00A5D1A9 /* GosConfigAirlinkTips.m */,
 				1AAC33631CF6FBFC00A5D1A9 /* GosConfigWaiting.h */,
 				1AAC33641CF6FBFC00A5D1A9 /* GosConfigWaiting.m */,
+				E238C5531E4871F300FEE010 /* GosConfigModuleSelection.h */,
+				E238C5541E4871F300FEE010 /* GosConfigModuleSelection.m */,
 			);
 			path = AirLink;
 			sourceTree = "<group>";
@@ -720,6 +795,9 @@
 				1AAC337A1CF6FBFC00A5D1A9 /* GosDeviceController.h */,
 				1AAC337B1CF6FBFC00A5D1A9 /* GosDeviceController.m */,
 				1AAC337C1CF6FBFC00A5D1A9 /* GosDeviceController.xib */,
+				E2767AB01E1E93FB00415736 /* GosDeviceAcceptSharingInfo.h */,
+				E2767AB11E1E93FB00415736 /* GosDeviceAcceptSharingInfo.m */,
+				E2767AB71E1E9CA300415736 /* GosDeviceAcceptSharingInfo.xib */,
 			);
 			path = DeviceModule;
 			sourceTree = "<group>";
@@ -727,6 +805,7 @@
 		1AAC337F1CF6FBFC00A5D1A9 /* SettingsModule */ = {
 			isa = PBXGroup;
 			children = (
+				E245F0621E0A329400018A16 /* Tabs */,
 				E2ED6EDC1DDEF1F000297595 /* UserManager */,
 				E2ED6EC91DDEB61E00297595 /* Cell */,
 				1AAC34311CFC3BAC00A5D1A9 /* GosSettings.storyboard */,
@@ -769,6 +848,14 @@
 		1ADE5FF71D3F31DE00FC2BFE /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				E216A37F1E496C790034095B /* gagents */,
+				E264B2EB1E28871F007D6542 /* scan@2x.png */,
+				E264B2E91E288716007D6542 /* friends@2x.png */,
+				E264B2E31E28844A007D6542 /* yellow@2x.png */,
+				E2F5B26A1E27921900E4CE53 /* grid@2x.png */,
+				E264B2E51E28865E007D6542 /* user@2x.png */,
+				E264B2E71E288691007D6542 /* message@2x.png */,
+				E2F5B2651E278FCD00E4CE53 /* circle-add@2x.png */,
 				1AAB22FC1D474438000F49E9 /* nav_btn_update@2x.png */,
 				1AAB22F81D4741FE000F49E9 /* launch@2x.png */,
 				1AAB22F91D4741FE000F49E9 /* launch@3x.png */,
@@ -795,6 +882,94 @@
 				1ADE60101D3F31DE00FC2BFE /* wechat.png */,
 			);
 			path = Images;
+			sourceTree = "<group>";
+		};
+		E216A37F1E496C790034095B /* gagents */ = {
+			isa = PBXGroup;
+			children = (
+				E216A39C1E497D5C0034095B /* default@2x.png */,
+				E216A38E1E497BDF0034095B /* ESP@2x.jpg */,
+				E216A38F1E497BDF0034095B /* HF@2x.jpg */,
+				E216A3901E497BDF0034095B /* MXCHIP@2x.jpg */,
+				E216A3911E497BDF0034095B /* QCA@2x.jpg */,
+				E216A3921E497BDF0034095B /* RTK@2x.jpg */,
+				E216A3931E497BDF0034095B /* TI@2x.jpg */,
+				E216A3941E497BDF0034095B /* WM@2x.jpg */,
+			);
+			path = gagents;
+			sourceTree = "<group>";
+		};
+		E245F0571E0A296F00018A16 /* SSPullToRefresh */ = {
+			isa = PBXGroup;
+			children = (
+				E245F0581E0A296F00018A16 /* SSPullToRefresh.h */,
+				E245F0591E0A296F00018A16 /* SSPullToRefreshDefaultContentView.h */,
+				E245F05A1E0A296F00018A16 /* SSPullToRefreshDefaultContentView.m */,
+				E245F05B1E0A296F00018A16 /* SSPullToRefreshSimpleContentView.h */,
+				E245F05C1E0A296F00018A16 /* SSPullToRefreshSimpleContentView.m */,
+				E245F05D1E0A296F00018A16 /* SSPullToRefreshView.h */,
+				E245F05E1E0A296F00018A16 /* SSPullToRefreshView.m */,
+			);
+			path = SSPullToRefresh;
+			sourceTree = "<group>";
+		};
+		E245F0621E0A329400018A16 /* Tabs */ = {
+			isa = PBXGroup;
+			children = (
+				E245F0631E0A329400018A16 /* MessageCenter */,
+				E245F0641E0A329400018A16 /* PersonalCenter */,
+			);
+			path = Tabs;
+			sourceTree = "<group>";
+		};
+		E245F0631E0A329400018A16 /* MessageCenter */ = {
+			isa = PBXGroup;
+			children = (
+				E245F0651E0A32B200018A16 /* GosMessageCenterTableViewController.h */,
+				E245F0661E0A32B200018A16 /* GosMessageCenterTableViewController.m */,
+				E23EAF6E1E0BC11E00319388 /* GosSharingMessageTableViewController.h */,
+				E23EAF6F1E0BC11E00319388 /* GosSharingMessageTableViewController.m */,
+			);
+			path = MessageCenter;
+			sourceTree = "<group>";
+		};
+		E245F0641E0A329400018A16 /* PersonalCenter */ = {
+			isa = PBXGroup;
+			children = (
+				E245F06C1E0A5DAD00018A16 /* Sharing */,
+				E245F0681E0A32C900018A16 /* GosPersonalCenterTableViewController.h */,
+				E245F0691E0A32C900018A16 /* GosPersonalCenterTableViewController.m */,
+			);
+			path = PersonalCenter;
+			sourceTree = "<group>";
+		};
+		E245F06C1E0A5DAD00018A16 /* Sharing */ = {
+			isa = PBXGroup;
+			children = (
+				E245F0771E0A68CC00018A16 /* Cell */,
+				E254F2881E1DE5FD00C0F369 /* GosSharing.storyboard */,
+				E245F06F1E0A650B00018A16 /* GosSharingListViewController.h */,
+				E245F0701E0A650B00018A16 /* GosSharingListViewController.m */,
+				E245F0781E0A777F00018A16 /* GosSharingManagerViewController.h */,
+				E245F0791E0A777F00018A16 /* GosSharingManagerViewController.m */,
+				E245F07B1E0A7EF500018A16 /* GosAddSharingViewController.h */,
+				E245F07C1E0A7EF500018A16 /* GosAddSharingViewController.m */,
+				E23EAF671E0B6AEF00319388 /* GosSharingQRCodeViewController.h */,
+				E23EAF681E0B6AEF00319388 /* GosSharingQRCodeViewController.m */,
+				E23EAF6A1E0B6B1200319388 /* GosSharingAccountViewController.h */,
+				E23EAF6B1E0B6B1200319388 /* GosSharingAccountViewController.m */,
+			);
+			path = Sharing;
+			sourceTree = "<group>";
+		};
+		E245F0771E0A68CC00018A16 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				E245F0721E0A68C900018A16 /* GosSharingMessageCell.h */,
+				E245F0731E0A68C900018A16 /* GosSharingMessageCell.m */,
+				E254F2911E1DF47000C0F369 /* GosSharingMessageCell.xib */,
+			);
+			name = Cell;
 			sourceTree = "<group>";
 		};
 		E27E52511DF517EF00F9D148 /* openssl */ = {
@@ -986,43 +1161,59 @@
 				1AAC34291CFC1C6100A5D1A9 /* GosDevice.storyboard in Resources */,
 				1AAC34231CF85AFC00A5D1A9 /* GosVerificationCell.xib in Resources */,
 				1AAB22FD1D474438000F49E9 /* nav_btn_update@2x.png in Resources */,
+				E216A3991E497BDF0034095B /* RTK@2x.jpg in Resources */,
 				1AAC33301CF6F80300A5D1A9 /* Assets.xcassets in Resources */,
 				E2ED6EEA1DDEF74300297595 /* GosUserLogoutTableViewCell.xib in Resources */,
 				E2ED6ED41DDEB66F00297595 /* GosUserLoginCell.xib in Resources */,
+				E264B2E81E288691007D6542 /* message@2x.png in Resources */,
+				E216A3961E497BDF0034095B /* HF@2x.jpg in Resources */,
 				E2ED6ED81DDEB7F700297595 /* GosUserManagementCell.xib in Resources */,
 				1ADE601B1D3F31DE00FC2BFE /* 08-icon-add@2x.png in Resources */,
+				E264B2EC1E28871F007D6542 /* scan@2x.png in Resources */,
+				E254F28F1E1DF47000C0F369 /* GosSharingMessageCell.xib in Resources */,
 				1AAC33B81CF6FBFC00A5D1A9 /* GosDeviceController.xib in Resources */,
 				E26E42661DF80F7C005BF72D /* GosUserManager.storyboard in Resources */,
+				E264B2EA1E288716007D6542 /* friends@2x.png in Resources */,
 				1ADE60231D3F31DE00FC2BFE /* LoginBanner.png in Resources */,
 				1AAC34351CFC3D6300A5D1A9 /* GosAirLink.storyboard in Resources */,
 				1ADE602A1D3F31DE00FC2BFE /* wechat.png in Resources */,
 				1A35CD4B1CE99B3C0073627C /* QRCodeBackBtn@2x.png in Resources */,
 				1AAB22FA1D4741FE000F49E9 /* launch@2x.png in Resources */,
+				E2F5B2661E278FCD00E4CE53 /* circle-add@2x.png in Resources */,
 				1A35CD491CE99B3C0073627C /* QRCodeFrame@2x.png in Resources */,
 				1ADE5FE41D3F2F6400FC2BFE /* README.txt in Resources */,
+				E2F5B26D1E27921900E4CE53 /* grid@2x.png in Resources */,
 				1ADE601F1D3F31DE00FC2BFE /* Icon@2x.png in Resources */,
+				E2767AB51E1E9CA300415736 /* GosDeviceAcceptSharingInfo.xib in Resources */,
 				1ADE60131D3F31DE00FC2BFE /* 01-iconfont-xianshimima@2x.png in Resources */,
+				E216A3971E497BDF0034095B /* MXCHIP@2x.jpg in Resources */,
 				E2C46AC51DDF0CF500743859 /* GosUserPasswordTableViewCell.xib in Resources */,
 				1ADE60191D3F31DE00FC2BFE /* 04-softap.gif in Resources */,
 				1ADE601D1D3F31DE00FC2BFE /* back_arrow@2x.png in Resources */,
 				1ADE601C1D3F31DE00FC2BFE /* 08-icon-Device@2x.png in Resources */,
 				1ADE60241D3F31DE00FC2BFE /* more@2x.png in Resources */,
+				E216A39B1E497BDF0034095B /* WM@2x.jpg in Resources */,
 				1ADE601E1D3F31DE00FC2BFE /* check.png in Resources */,
 				1ADE60181D3F31DE00FC2BFE /* 04-softap-tips.gif in Resources */,
 				1ADE60261D3F31DE00FC2BFE /* qq.png in Resources */,
 				1ADE602D1D3F349600FC2BFE /* UIConfig.json in Resources */,
+				E216A3951E497BDF0034095B /* ESP@2x.jpg in Resources */,
 				1A083C451D111E5A0050B161 /* TencentOpenApi_IOS_Bundle.bundle in Resources */,
 				E2C46ABD1DDF0C1800743859 /* GosUserChangeTableViewCell.xib in Resources */,
 				1ADE5FEA1D3F2FAA00FC2BFE /* GosWifiPasswordCell.xib in Resources */,
 				1AAC341D1CF85ABD00A5D1A9 /* GosTextCell.xib in Resources */,
 				1ADE60171D3F31DE00FC2BFE /* 02-airlink.gif in Resources */,
 				1AAC34021CF8541600A5D1A9 /* Localizable.strings in Resources */,
+				E254F2861E1DE5FD00C0F369 /* GosSharing.storyboard in Resources */,
 				1ADE60201D3F31DE00FC2BFE /* icon_notice@2x.png in Resources */,
 				1A35CD4A1CE99B3C0073627C /* QRCodeLine@2x.png in Resources */,
+				E216A39A1E497BDF0034095B /* TI@2x.jpg in Resources */,
 				1A35CD4C1CE99B3C0073627C /* checked@2x.png in Resources */,
 				1A083C3C1D08112A0050B161 /* GosDeviceListCell.xib in Resources */,
+				E216A39D1E497D5C0034095B /* default@2x.png in Resources */,
 				1ADE60251D3F31DE00FC2BFE /* phone.png in Resources */,
 				1AAB22FB1D4741FE000F49E9 /* launch@3x.png in Resources */,
+				E264B2E41E28844A007D6542 /* yellow@2x.png in Resources */,
 				1ADE60211D3F31DE00FC2BFE /* login_password.png in Resources */,
 				1AAC340D1CF859D200A5D1A9 /* GosPasswordCell.xib in Resources */,
 				1ADE601A1D3F31DE00FC2BFE /* 06-softap-fail@2x.png in Resources */,
@@ -1031,6 +1222,8 @@
 				E22855691D94DE0D00F3B6A0 /* GosMain.storyboard in Resources */,
 				1A35CD4D1CE99B3C0073627C /* unchecked@2x.png in Resources */,
 				1ADE60291D3F31DE00FC2BFE /* sms.png in Resources */,
+				E264B2E61E28865E007D6542 /* user@2x.png in Resources */,
+				E216A3981E497BDF0034095B /* QCA@2x.jpg in Resources */,
 				1ADE60221D3F31DE00FC2BFE /* login_user.png in Resources */,
 				1AAC342F1CFC3BAC00A5D1A9 /* GosSettings.storyboard in Resources */,
 			);
@@ -1047,6 +1240,7 @@
 				E2E6505F1E012DE5002D2632 /* GizKeychainRecorder.m in Sources */,
 				1AAC33AB1CF6FBFC00A5D1A9 /* GosConfigStart.m in Sources */,
 				E29D03251D8649FD0011588C /* GosAnonymousLogin.m in Sources */,
+				E245F07A1E0A777F00018A16 /* GosSharingManagerViewController.m in Sources */,
 				1AAC33B01CF6FBFC00A5D1A9 /* GosConfigSoftAPHelp.m in Sources */,
 				1AAC33BD1CF6FBFC00A5D1A9 /* GosForgetViewController.m in Sources */,
 				1AAC33B41CF6FBFC00A5D1A9 /* GosReachability.m in Sources */,
@@ -1057,37 +1251,48 @@
 				1ADE5FE71D3F2F8E00FC2BFE /* GosWifiPasswordCell.m in Sources */,
 				1A35CD441CE99B3C0073627C /* GizLog.m in Sources */,
 				1AAC33911CF6FBFC00A5D1A9 /* GosSSIDCell.m in Sources */,
+				E245F06A1E0A32C900018A16 /* GosPersonalCenterTableViewController.m in Sources */,
 				1AAC33BF1CF6FBFC00A5D1A9 /* GosRegisterViewController.m in Sources */,
 				1AAC33AE1CF6FBFC00A5D1A9 /* GosConfigSoftAPCheckPwd.m in Sources */,
 				E2ED6ED21DDEB65200297595 /* GosUserLoginCell.m in Sources */,
-				1A0805091D000B4800DF3FD6 /* GosConfigModuleSelection.m in Sources */,
+				E245F0611E0A296F00018A16 /* SSPullToRefreshView.m in Sources */,
+				E245F07D1E0A7EF500018A16 /* GosAddSharingViewController.m in Sources */,
 				1AAC33931CF6FBFC00A5D1A9 /* GosTextCell.m in Sources */,
 				1AAC33951CF6FBFC00A5D1A9 /* GosVerificationCell.m in Sources */,
+				E245F0671E0A32B200018A16 /* GosMessageCenterTableViewController.m in Sources */,
 				1A35CD501CE99B3C0073627C /* UIImageView+PlayGIF.m in Sources */,
 				1AAC338F1CF6FBFC00A5D1A9 /* GosPhoneCell.m in Sources */,
 				E2ED6EE41DDEF23900297595 /* GosChangeUserPasswordViewController.m in Sources */,
+				E2767AB31E1E93FB00415736 /* GosDeviceAcceptSharingInfo.m in Sources */,
 				E2ED6EE11DDEF22000297595 /* GosUserManagerViewController.m in Sources */,
 				1AAC33BB1CF6FBFC00A5D1A9 /* GosAboutViewController.m in Sources */,
 				1AAC33B31CF6FBFC00A5D1A9 /* GosConfigSoftAPWaiting.m in Sources */,
 				E2C46AC41DDF0CF500743859 /* GosUserPasswordTableViewCell.m in Sources */,
 				E2C46ABB1DDF0B9E00743859 /* GosUserChangeTableViewCell.m in Sources */,
 				1AAC33971CF6FBFC00A5D1A9 /* GosCommon.m in Sources */,
-				1A35CD511CE99B3C0073627C /* YFGIFImageView.m in Sources */,
+				E23EAF701E0BC11E00319388 /* GosSharingMessageTableViewController.m in Sources */,
+				E245F05F1E0A296F00018A16 /* SSPullToRefreshDefaultContentView.m in Sources */,
 				1A35CD4E1CE99B3C0073627C /* RadioButton.m in Sources */,
 				E2ED6EE81DDEF6F100297595 /* GosUserLogoutTableViewCell.m in Sources */,
 				1A083C3B1D08112A0050B161 /* GosDeviceListCell.m in Sources */,
 				1AAC33AA1CF6FBFC00A5D1A9 /* GosConfigAirlinkTips.m in Sources */,
+				E245F0711E0A650B00018A16 /* GosSharingListViewController.m in Sources */,
 				1A35CD4F1CE99B3C0073627C /* UAProgressView.m in Sources */,
 				1A35CD481CE99B3C0073627C /* QRCodeController.m in Sources */,
+				E23EAF691E0B6AEF00319388 /* GosSharingQRCodeViewController.m in Sources */,
 				1AAC33B71CF6FBFC00A5D1A9 /* GosDeviceController.m in Sources */,
 				1AAC33B51CF6FBFC00A5D1A9 /* GosSoftAPDetection.m in Sources */,
 				1A35CD451CE99B3C0073627C /* MBProgressHUD.m in Sources */,
+				E238C5551E4871F300FEE010 /* GosConfigModuleSelection.m in Sources */,
 				1AAC33B11CF6FBFC00A5D1A9 /* GosConfigSoftAPNotSame.m in Sources */,
 				1A083C901D17CB420050B161 /* GosPushManager.m in Sources */,
+				E245F0751E0A68C900018A16 /* GosSharingMessageCell.m in Sources */,
 				1AAC33AC1CF6FBFC00A5D1A9 /* GosConfigWaiting.m in Sources */,
+				E23EAF6C1E0B6B1200319388 /* GosSharingAccountViewController.m in Sources */,
 				1AAC33B91CF6FBFC00A5D1A9 /* GosDeviceListViewController.m in Sources */,
 				1AAC338D1CF6FBFC00A5D1A9 /* GosPasswordCell.m in Sources */,
 				1AAC33341CF6F80300A5D1A9 /* main.m in Sources */,
+				E245F0601E0A296F00018A16 /* SSPullToRefreshSimpleContentView.m in Sources */,
 				1AAC33BE1CF6FBFC00A5D1A9 /* GosLoginViewController.m in Sources */,
 				E2ED6ECD1DDEB64600297595 /* GosUserManagementCell.m in Sources */,
 			);
@@ -1195,6 +1400,25 @@
 			name = GosWifiPasswordCell.xib;
 			sourceTree = "<group>";
 		};
+		E254F2881E1DE5FD00C0F369 /* GosSharing.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E254F2871E1DE5FD00C0F369 /* zh-Hans */,
+				E254F28E1E1DE79300C0F369 /* en */,
+			);
+			name = GosSharing.storyboard;
+			sourceTree = "<group>";
+		};
+		E254F2911E1DF47000C0F369 /* GosSharingMessageCell.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E254F2901E1DF47000C0F369 /* zh-Hans */,
+				E2D29DB01E1DF4EC00DAD658 /* en */,
+			);
+			name = GosSharingMessageCell.xib;
+			path = Cell;
+			sourceTree = "<group>";
+		};
 		E26E42641DF80F7C005BF72D /* GosUserManager.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1202,6 +1426,15 @@
 				E26E42671DF80F86005BF72D /* zh-Hans */,
 			);
 			name = GosUserManager.storyboard;
+			sourceTree = "<group>";
+		};
+		E2767AB71E1E9CA300415736 /* GosDeviceAcceptSharingInfo.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E2767AB61E1E9CA300415736 /* zh-Hans */,
+				E2767AB81E1E9CAE00415736 /* en */,
+			);
+			name = GosDeviceAcceptSharingInfo.xib;
 			sourceTree = "<group>";
 		};
 		E2C46ABF1DDF0C1800743859 /* GosUserChangeTableViewCell.xib */ = {
@@ -1349,17 +1582,14 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Library/OpenSSL",
-					"$(PROJECT_DIR)/Library/GizWifiSDK",
 					"$(PROJECT_DIR)$(LOCAL_LIBRARY_DIR)/GizWifiSDK",
-					"$(PROJECT_DIR)$(LOCAL_LIBRARY_DIR)/OpenSSL",
 					"$(PROJECT_DIR)$(LOCAL_LIBRARY_DIR)/BPush",
 					"$(PROJECT_DIR)$(LOCAL_LIBRARY_DIR)/JPush",
 					"$(PROJECT_DIR)$(LOCAL_LIBRARY_DIR)/WechatOpenSDK",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.gizwits.opensourceappkit;
 				PRODUCT_NAME = GOpenSourceAppKit;
-				PROVISIONING_PROFILE = "47600152-d819-463c-bacc-4f7b1f59957d";
+				PROVISIONING_PROFILE = "2dbf06ea-b5a7-4219-a1db-d70389a27bc4";
 				PROVISIONING_PROFILE_SPECIFIER = "Gizwits OpenSource AppKit Development";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -1383,10 +1613,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Library/OpenSSL",
-					"$(PROJECT_DIR)/Library/GizWifiSDK",
 					"$(PROJECT_DIR)$(LOCAL_LIBRARY_DIR)/GizWifiSDK",
-					"$(PROJECT_DIR)$(LOCAL_LIBRARY_DIR)/OpenSSL",
 					"$(PROJECT_DIR)$(LOCAL_LIBRARY_DIR)/BPush",
 					"$(PROJECT_DIR)$(LOCAL_LIBRARY_DIR)/JPush",
 					"$(PROJECT_DIR)$(LOCAL_LIBRARY_DIR)/WechatOpenSDK",

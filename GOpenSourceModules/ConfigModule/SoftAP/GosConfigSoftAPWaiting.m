@@ -58,7 +58,7 @@
     GIZ_LOG_BIZ("softap_config_start", "success", "start softap config, current ssid: %s, config ssid: %s", GetCurrentSSID().UTF8String, dataCommon.ssid.UTF8String);
     
     [GizWifiSDK sharedInstance].delegate = self;
-//    [[GizWifiSDK sharedInstance] setDeviceWifi:dataCommon.ssid key:key mode:XPGWifiSDKSoftAPMode softAPSSIDPrefix:SSID_PREFIX timeout:CONFIG_TIMEOUT wifiGAgentType:nil];
+    [GizWifiSDK disableLAN:NO]; //配置之前需启用小循环，否则上电广播无法收到
     [[GizWifiSDK sharedInstance] setDeviceOnboarding:dataCommon.ssid key:key configMode:GizWifiSoftAP softAPSSIDPrefix:SSID_PREFIX timeout:CONFIG_TIMEOUT wifiGAgentType:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onWillEnterForeground) name:UIApplicationWillEnterForegroundNotification object:nil];
@@ -67,6 +67,7 @@
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [GizWifiSDK sharedInstance].delegate = nil;
+    [GizWifiSDK disableLAN:YES];
     [self.timer invalidate];
     
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];

@@ -19,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
-                        <segue destination="1aQ-H0-RTz" kind="relationship" relationship="rootViewController" id="qQE-Zw-uyW"/>
+                        <segue destination="Bf4-f3-pcF" kind="relationship" relationship="rootViewController" id="WAX-2V-VhJ"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2XV-3Z-LJ4" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -27,87 +27,79 @@
             <point key="canvasLocation" x="-404" y="322"/>
         </scene>
         <!--My Devices-->
-        <scene sceneID="3Yt-4y-aXG">
+        <scene sceneID="RfK-0o-WLV">
             <objects>
-                <viewController id="1aQ-H0-RTz" customClass="GosDeviceListViewController" sceneMemberID="viewController">
+                <viewController id="Bf4-f3-pcF" customClass="GosDeviceListViewController" sceneMemberID="viewController">
                     <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="Qqh-eu-H7z"/>
-                        <viewControllerLayoutGuide type="bottom" id="1bv-JN-mNy"/>
+                        <viewControllerLayoutGuide type="top" id="NYo-Lg-kBs"/>
+                        <viewControllerLayoutGuide type="bottom" id="Rsy-ON-v02"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="l1g-Xe-McI">
+                    <view key="view" contentMode="scaleToFill" id="8EM-cg-wsJ">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="dgv-1j-SMt">
-                                <rect key="frame" x="0.0" y="64" width="375" height="559"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
-                                    <outlet property="dataSource" destination="1aQ-H0-RTz" id="WCM-pq-ZHp"/>
-                                    <outlet property="delegate" destination="1aQ-H0-RTz" id="WIr-BY-X6E"/>
+                                    <outlet property="dataSource" destination="Bf4-f3-pcF" id="WpS-hb-pSg"/>
+                                    <outlet property="delegate" destination="Bf4-f3-pcF" id="SCa-hu-ApB"/>
                                 </connections>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tzp-eJ-eiN">
                                 <rect key="frame" x="128" y="187.5" width="119" height="86"/>
                                 <state key="normal" image="08-icon-add.png"/>
                                 <connections>
-                                    <action selector="toAirLink:" destination="1aQ-H0-RTz" eventType="touchUpInside" id="ZFd-ui-Qzr"/>
+                                    <action selector="toAirLink:" destination="Bf4-f3-pcF" eventType="touchUpInside" id="yq0-7l-jAD"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ge6-cj-r94">
-                                <rect key="frame" x="56" y="313.5" width="263" height="40"/>
+                                <rect key="frame" x="66" y="313.5" width="263" height="40"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="rxW-d0-iFe"/>
+                                    <constraint firstAttribute="height" constant="40" id="FIm-Yv-8Ci"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <state key="normal" title="No devices, please add">
                                     <color key="titleColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                                 <connections>
-                                    <action selector="toAirLink:" destination="1aQ-H0-RTz" eventType="touchUpInside" id="Vus-Lk-g9d"/>
+                                    <action selector="toAirLink:" destination="Bf4-f3-pcF" eventType="touchUpInside" id="Hz4-RB-dia"/>
                                 </connections>
                             </button>
                         </subviews>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="dgv-1j-SMt" secondAttribute="trailing" id="24q-ee-dIJ"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="Ge6-cj-r94" secondAttribute="trailing" constant="40" id="V73-PK-BXH"/>
-                            <constraint firstItem="1bv-JN-mNy" firstAttribute="top" secondItem="dgv-1j-SMt" secondAttribute="bottom" id="YVI-w2-God"/>
-                            <constraint firstItem="Ge6-cj-r94" firstAttribute="top" secondItem="tzp-eJ-eiN" secondAttribute="bottom" constant="40" id="YYh-IK-SPs"/>
-                            <constraint firstItem="dgv-1j-SMt" firstAttribute="top" secondItem="Qqh-eu-H7z" secondAttribute="bottom" id="aJS-QT-cCY"/>
-                            <constraint firstItem="Ge6-cj-r94" firstAttribute="centerY" secondItem="l1g-Xe-McI" secondAttribute="centerY" id="ekM-tB-Rmf"/>
-                            <constraint firstItem="Ge6-cj-r94" firstAttribute="leading" secondItem="l1g-Xe-McI" secondAttribute="leadingMargin" constant="40" id="fdQ-ue-SWQ"/>
-                            <constraint firstItem="tzp-eJ-eiN" firstAttribute="centerX" secondItem="l1g-Xe-McI" secondAttribute="centerX" id="jfs-pt-uJ9"/>
-                            <constraint firstItem="dgv-1j-SMt" firstAttribute="leading" secondItem="l1g-Xe-McI" secondAttribute="leading" id="lOU-wZ-L5d"/>
+                            <constraint firstAttribute="trailing" secondItem="dgv-1j-SMt" secondAttribute="trailing" id="1Rd-RQ-hrQ"/>
+                            <constraint firstItem="Rsy-ON-v02" firstAttribute="top" secondItem="dgv-1j-SMt" secondAttribute="bottom" id="BD0-fA-ZI3"/>
+                            <constraint firstItem="Ge6-cj-r94" firstAttribute="centerY" secondItem="8EM-cg-wsJ" secondAttribute="centerY" id="PwH-FB-gly"/>
+                            <constraint firstItem="Ge6-cj-r94" firstAttribute="top" secondItem="tzp-eJ-eiN" secondAttribute="bottom" constant="40" id="WEV-uG-sJY"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="Ge6-cj-r94" secondAttribute="trailing" constant="30" id="bke-HY-f5J"/>
+                            <constraint firstItem="tzp-eJ-eiN" firstAttribute="centerX" secondItem="8EM-cg-wsJ" secondAttribute="centerX" id="c8b-f6-7o6"/>
+                            <constraint firstItem="dgv-1j-SMt" firstAttribute="leading" secondItem="8EM-cg-wsJ" secondAttribute="leading" id="ecD-Qe-1Ww"/>
+                            <constraint firstItem="dgv-1j-SMt" firstAttribute="top" secondItem="8EM-cg-wsJ" secondAttribute="top" id="xUI-d7-mk2"/>
+                            <constraint firstItem="Ge6-cj-r94" firstAttribute="leading" secondItem="8EM-cg-wsJ" secondAttribute="leadingMargin" constant="50" id="y8a-EY-yNw"/>
                         </constraints>
                     </view>
-                    <toolbarItems/>
-                    <navigationItem key="navigationItem" title="My Devices" id="dLD-Q7-c39">
-                        <barButtonItem key="leftBarButtonItem" image="nav_btn_update" id="B4l-tb-xv3">
+                    <navigationItem key="navigationItem" title="My Devices" id="Eh1-XR-B8h">
+                        <barButtonItem key="rightBarButtonItem" image="more" id="A2d-kA-1sH">
                             <connections>
-                                <action selector="refreshBtnPressed:" destination="1aQ-H0-RTz" id="1eN-od-64l"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" image="more" id="chy-rk-J3i">
-                            <connections>
-                                <action selector="actionSheet:" destination="1aQ-H0-RTz" id="ZQS-5b-UTy"/>
+                                <action selector="actionSheet:" destination="Bf4-f3-pcF" id="Ynt-4x-42h"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
-                        <outlet property="addDeviceImageBtn" destination="tzp-eJ-eiN" id="ym7-JR-693"/>
-                        <outlet property="addDeviceLabelBtn" destination="Ge6-cj-r94" id="ei7-gW-Qlp"/>
-                        <outlet property="deviceListTableView" destination="dgv-1j-SMt" id="8Ec-9t-Td4"/>
+                        <outlet property="addDeviceImageBtn" destination="tzp-eJ-eiN" id="dhN-vV-Bpg"/>
+                        <outlet property="addDeviceLabelBtn" destination="Ge6-cj-r94" id="oV0-Rw-Xpa"/>
+                        <outlet property="deviceListTableView" destination="dgv-1j-SMt" id="7BS-Lc-HxJ"/>
                     </connections>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="UZv-d0-Dbp" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="RKh-wa-7NM" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="264" y="322"/>
+            <point key="canvasLocation" x="449" y="322"/>
         </scene>
     </scenes>
     <resources>
         <image name="08-icon-add.png" width="119" height="86"/>
         <image name="more" width="119" height="86"/>
-        <image name="nav_btn_update" width="119" height="86"/>
     </resources>
 </document>

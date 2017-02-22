@@ -138,7 +138,7 @@
     
     NSString *token = [GosCommon sharedInstance].token;
     [[GizWifiSDK sharedInstance] changeUserPassword:token oldPassword:self.textOrigin.text newPassword:self.textNew.text];
-    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    showHUDAddedTo(self.view, YES);
 }
 
 - (void)wifiSDK:(GizWifiSDK *)wifiSDK didChangeUserPassword:(NSError *)result {

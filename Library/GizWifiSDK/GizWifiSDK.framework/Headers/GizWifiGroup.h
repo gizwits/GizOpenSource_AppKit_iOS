@@ -13,6 +13,7 @@
 /*
  GizWifiGroupDelegate 是 GizWifiGroup 类的委托协议，为 APP 开发者处理子设备添加、子设备删除、获取子设备列表提供委托函数
  */
+NS_CLASS_DEPRECATED_IOS(1_0, 2_0, "GizWifiGroupDelegate is deprecated.")
 @protocol GizWifiGroupDelegate <NSObject>
 @optional
 
@@ -29,7 +30,7 @@
  @see 触发函数：[GizWifiGroup getDevices]、[GizWifiGroup addDevice:withSubDevice:]、[GizWifiGroup removeDevice:withSubDevice:]
  @see GizWifiErrorCode
  */
-- (void)group:(GizWifiGroup *)group didGetDevices:(NSError *)result deviceList:(NSArray *)deviceList;
+- (void)group:(GizWifiGroup *)group didGetDevices:(NSError *)result deviceList:(NSArray *)deviceList DEPRECATED_ATTRIBUTE;
 
 /*
  @deprecated 此接口已废弃，不再提供支持。请使用替代接口：[GizWifiGroupDelegate group:didGetDevices:deviceList:]

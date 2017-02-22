@@ -19,6 +19,9 @@
 #import "GosPushManager.h"
 #import "GosAnonymousLogin.h"
 
+#import "GosMessageCenterTableViewController.h"
+#import "GosPersonalCenterTableViewController.h"
+
 #if USE_UMENG
 #import <UMMobClick/MobClick.h>
 #endif
@@ -46,6 +49,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    //注册微信
+    [WXApi registerApp:WECHAT_APP_ID];
 
     //虚线
     CAShapeLayer *shapeLayer = [CAShapeLayer layer];
@@ -63,20 +69,6 @@
     [shapeLayer setPath:path];
     CGPathRelease(path);
     [[self.loginBtnsBar layer] addSublayer:shapeLayer];
-    
-    BOOL qqOn = [GosCommon sharedInstance].qqOn;
-    BOOL wechatOn = [GosCommon sharedInstance].wechatOn;
-    if (!qqOn) {
-        self.loginQQBtn.hidden = YES;
-    }
-    
-    if (!wechatOn) {
-        self.loginWechatBtn.hidden = YES;
-    }
-    
-    if (!qqOn && !wechatOn) {
-        self.loginBtnsBar.hidden = YES;
-    }
     
     self.loginBtn.backgroundColor = [GosCommon sharedInstance].buttonColor;
     [self.loginBtn setTitleColor:[GosCommon sharedInstance].buttonTextColor forState:UIControlStateNormal];
@@ -125,6 +117,18 @@
 }
 
 - (void)autoLogin {
+    BOOL qqOn = [GosCommon sharedInstance].qqOn;
+    BOOL wechatOn = [GosCommon sharedInstance].wechatOn && [WXApi isWXAppInstalled];//微信比较特殊，需要在页面切换、后台切换时检测应用是否存在
+    if (!qqOn) {
+        self.loginQQBtn.hidden = YES;
+    }
+    if (!qqOn && !wechatOn) {
+        self.loginBtnsBar.hidden = YES;
+    }
+    if (!wechatOn) {
+        self.loginWechatBtn.hidden = YES;
+    }
+
     NSString *username = [[NSUserDefaults standardUserDefaults] objectForKey:@"username"];
     NSString *password = [[NSUserDefaults standardUserDefaults] objectForKey:@"password"];
     if (![MBProgressHUD HUDForView:self.view] && //上次没有执行登录操作
@@ -158,7 +162,6 @@
         [[[UIAlertView alloc] initWithTitle:nil message:@"请替换 GOpenSourceModules/CommonModule/UIConfig.json 中的参数定义为您申请到的微信登录授权 app id 及 app secret" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil] show];
         return;
     }
-    [WXApi registerApp:WECHAT_APP_ID];
     if (![WXApi isWXAppInstalled]) {
         NSString *message = NSLocalizedString(@"haven't WeChat Application", @"未检测到微信，请安装后重试");
         NSString *confirm = NSLocalizedString(@"OK", @"确定");
@@ -172,12 +175,14 @@
     req.state = @"123" ;
     //第三方向微信终端发送一个SendAuthReq消息结构
     [WXApi sendReq:req];
+    __weak __typeof(self)weakSelf = self;
     [GosCommon sharedInstance].WXApiOnRespHandler = ^(BaseResp *resp) {
+        __strong __typeof(weakSelf)strongSelf = weakSelf;
         SendAuthResp *aresp = (SendAuthResp *)resp;
         if (aresp.errCode== 0) {
             NSString *code = aresp.code;
-            [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-            [self getAccessToken:code];
+            showHUDAddedTo(strongSelf.view, YES);
+            [strongSelf getAccessToken:code];
         }
     };
 }
@@ -281,7 +286,7 @@
         [common showAlert:NSLocalizedString(@"please input password", nil) disappear:YES];
         return;
     }
-    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    showHUDAddedTo(self.view, YES);
     [[GosCommon sharedInstance] saveUserDefaults:username password:password uid:nil token:nil];
     [GosCommon sharedInstance].isThirdAccount = NO;
     [[GizWifiSDK sharedInstance] userLogin:username password:password];
@@ -312,13 +317,11 @@
         [[GosCommon sharedInstance] saveUserDefaults:nil password:nil uid:uid token:token];
         self.textCell.textInput.text = @"";
         self.passwordCell.textPassword.text = @"";
-        UINavigationController *navCtrl = [[UIStoryboard storyboardWithName:@"GosDevice" bundle:nil] instantiateInitialViewController];
-        GosDeviceListViewController *devListCtrl = navCtrl.viewControllers.firstObject;
-        devListCtrl.parent = self;
         [GosCommon sharedInstance].currentLoginStatus = GizLoginUser;
         [GosPushManager unbindToGDMS:NO];
         [GosPushManager bindToGDMS];
         if (self.navigationController.viewControllers.lastObject == self) {
+            UIViewController *devListCtrl = [self getDeviceListController];
             [self.navigationController pushViewController:devListCtrl animated:YES];
         }
     } else {
@@ -344,7 +347,7 @@
     GIZ_LOG_DEBUG("tencent login successed");
     if (self.tencentOAuth.accessToken && 0 != [self.tencentOAuth.accessToken length])
     {
-        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        showHUDAddedTo(self.view, YES);
         [GosCommon sharedInstance].isThirdAccount = YES;
         [[GizWifiSDK sharedInstance] userLoginWithThirdAccount:GizThirdQQ uid:self.tencentOAuth.openId token:self.tencentOAuth.accessToken];
     }
@@ -418,11 +421,37 @@
     [self.passwordCell.textPassword resignFirstResponder];
 }
 
+- (UIViewController *)getDeviceListController {
+    UINavigationController *navCtrl = [[UIStoryboard storyboardWithName:@"GosDevice" bundle:nil] instantiateInitialViewController];
+    GosDeviceListViewController *devListCtrl = navCtrl.viewControllers.firstObject;
+    devListCtrl.parent = self;
+    
+    if ([GosCommon sharedInstance].devlistTabOn) {
+        UITabBarController *tabCtrl =  [[UITabBarController alloc] init];
+        tabCtrl.navigationItem.hidesBackButton = YES;
+        tabCtrl.tabBar.tintColor = [UIColor blackColor];
+        tabCtrl.tabBar.barTintColor = [GosCommon sharedInstance].navigationBarColor;
+        
+        GosMessageCenterTableViewController *messageCtrl = [[GosMessageCenterTableViewController alloc] initWithStyle:UITableViewStyleGrouped];
+        GosPersonalCenterTableViewController *personalCtrl = [[GosPersonalCenterTableViewController alloc] initWithStyle:UITableViewStyleGrouped];
+        
+        devListCtrl.tabBarItem.title = devListCtrl.navigationItem.title;
+        devListCtrl.tabBarItem.image = [UIImage imageNamed:@"grid.png"];
+        messageCtrl.tabBarItem.title = NSLocalizedString(@"Messages", nil);
+        messageCtrl.tabBarItem.image = [UIImage imageNamed:@"message.png"];
+        personalCtrl.tabBarItem.title = NSLocalizedString(@"Personal Center", nil);
+        personalCtrl.tabBarItem.image = [UIImage imageNamed:@"user.png"];
+
+        [tabCtrl setViewControllers:@[devListCtrl, messageCtrl, personalCtrl] animated:YES];
+        return tabCtrl;
+    }
+    
+    return devListCtrl;
+}
+
 - (void)toDeviceListWithoutLogin:(BOOL)animated {
     dispatch_async(dispatch_get_main_queue(), ^{
-        UINavigationController *navCtrl = [[UIStoryboard storyboardWithName:@"GosDevice" bundle:nil] instantiateInitialViewController];
-        GosDeviceListViewController *devListCtrl = navCtrl.viewControllers.firstObject;
-        devListCtrl.parent = self;
+        UIViewController *devListCtrl = [self getDeviceListController];
         [self.navigationController pushViewController:devListCtrl animated:animated];
     });
 }

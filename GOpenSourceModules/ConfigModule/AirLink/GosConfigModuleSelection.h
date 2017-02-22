@@ -1,17 +1,13 @@
 //
 //  GosConfigModuleSelection.h
-//  GOpenSourceAppKit
+//  GOpenSource_AppKit
 //
-//  Created by Zono on 16/6/2.
-//  Copyright © 2016年 Gizwits. All rights reserved.
+//  Created by Tom on 2017/2/6.
+//  Copyright © 2017年 Gizwits. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-//typedef void (^ReturnConfigModule)(NSString *text, NSInteger index);
 
-@interface GosConfigModuleSelection : UITableViewController
-
-//@property (nonatomic, copy) ReturnConfigModule ReturnConfigModuleBlock;
-//- (void)returnConfigModule:(ReturnConfigModule)block;
+@interface GosConfigModuleSelection : UICollectionViewController
 
 @end

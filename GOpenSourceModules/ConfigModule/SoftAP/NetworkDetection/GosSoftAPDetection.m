@@ -142,31 +142,26 @@ typedef NS_ENUM(NSInteger, GizNetStatus) {
             }
             
             if ([ssid hasPrefix:strongSelf.ssidPrefix_atomic]) {
-                /*
-                 * 1. 状态 4 次（1 ～ 1.5s）无变化
-                 * 2. 状态发生变化且变为已连接状态
-                 */
-                if (!strongSelf.netStatusChanged_atomic && !strongSelf.netReach_atomic.isConnectingWiFi) {
-                    counter ++;
-                    if (counter == 4) {
+                // 状态不变，500ms内没有变化
+                // 状态变为已连接状态后，500ms内没有变化
+                if (strongSelf.netStatus_atomic == GizNetStatusConnected && !strongSelf.netReach_atomic.isConnectingWiFi) {
+                    if (strongSelf.netStatusChanged_atomic) {
+                        strongSelf.netStatusChanged_atomic = NO;
+                    } else {
+                        counter++;
+                    }
+                    
+                    if (counter >= 5) {
                         if ([strongSelf.delegate_atomic didSoftAPModeDetected:ssid]) {
                             break;
                         }
-                    }
-//                } else if (GizNetStatusConnecting != strongSelf.netStatus_atomic) {
-                } else if (GizNetStatusConnected == strongSelf.netStatus_atomic) {
-                    counter = 5;
-                    strongSelf.netStatusChanged_atomic = NO;
-                    strongSelf.netStatus_atomic = GizNetStatusDisconnected;
-                    if ([strongSelf.delegate_atomic didSoftAPModeDetected:ssid]) {
-                        break;
                     }
                 }
             } else {
                 strongSelf.netStatusChanged_atomic = NO;
             }
 
-            usleep(250000);
+            usleep(100000);
         }
         
         GIZ_LOG_DEBUG("background detect softap mode stoped");
