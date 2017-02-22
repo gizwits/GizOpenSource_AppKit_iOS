@@ -21,5 +21,6 @@
     "addDeviceTitle":"",
     "qq": false,
     "wechat": false,
-    "anonymousLogin": true
+    "anonymousLogin": true,
+    "devlistTab": false
 }
